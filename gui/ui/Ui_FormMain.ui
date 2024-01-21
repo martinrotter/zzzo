@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FormMain</class>
+ <widget class="QMainWindow" name="FormMain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Soubor">
+    <property name="title">
+     <string>&amp;Soubor</string>
+    </property>
+    <addaction name="m_actionOpen"/>
+    <addaction name="m_actionSave"/>
+    <addaction name="m_actionExport"/>
+    <addaction name="separator"/>
+    <addaction name="m_actionQuit"/>
+   </widget>
+   <addaction name="menu_Soubor"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="m_actionOpen">
+   <property name="text">
+    <string>&amp;Otevřít...</string>
+   </property>
+  </action>
+  <action name="m_actionSave">
+   <property name="text">
+    <string>&amp;Uložit...</string>
+   </property>
+  </action>
+  <action name="m_actionExport">
+   <property name="text">
+    <string>&amp;Exportovat...</string>
+   </property>
+  </action>
+  <action name="m_actionQuit">
+   <property name="text">
+    <string>&amp;Ukončit</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
