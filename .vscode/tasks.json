@@ -1,0 +1,9 @@
+{
+  "version": "2.0.0",
+  "tasks": [{
+      "label": "pyuic",
+      "command": "pyuic6 ui/FormMain.ui -o ui/FormMain.py",
+      //"args": ["test"],
+      "type": "shell"
+  }]
+}
