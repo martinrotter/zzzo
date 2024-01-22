@@ -1,4 +1,4 @@
-from PyQt6 import QtWidgets
+from PySide6 import QtWidgets
 
 from gui.ui.Ui_FormMain import Ui_FormMain
 
