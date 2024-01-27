@@ -3,16 +3,60 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:zzzoCommon="clr-namespace:ZZZO.Common;assembly=ZZZO.Common"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
+        Icon="Resources/AppIcon.png"
         FontFamily="{materialDesign:MaterialDesignFont}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="{x:Static zzzoCommon:Constants+Names.AppLongName}" Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen">
   <Grid>
-    <Button Content="CAScas">
-    </Button>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="25" Grid.Row="0">
+      <MenuItem Header="_Soubor">
+        <MenuItem Header="_Ukončit" Click="QuitApp" />
+      </MenuItem>
+      <MenuItem Header="?">
+        <MenuItem Header="_O aplikaci" Click="ShowAboutAppDialog" />
+      </MenuItem>
+    </Menu>
+    <TabControl
+      Margin="0 20 0 0"
+      Grid.Row="1"
+      TabStripPlacement="Left">
+      <TabItem
+        Header="Základní informace">
+        <Grid></Grid>
+      </TabItem>
+      <TabItem
+        Header="Program">
+        <Grid></Grid>
+      </TabItem>
+      <TabItem
+        Header="TAB 3 Diff Width">
+        <TextBlock
+          Margin="8"
+          Text="Tab 3 with different width" />
+      </TabItem>
+      <TabItem
+        Header="TAB 4 Looong">
+        <TextBlock
+          Margin="8"
+          Text="Tab 4 with long width" />
+      </TabItem>
+      <TabItem
+        Header="TABB 5">
+        <TextBlock
+          Margin="8"
+          Text="Left placement tabb 5" />
+      </TabItem>
+    </TabControl>
   </Grid>
 </Window>

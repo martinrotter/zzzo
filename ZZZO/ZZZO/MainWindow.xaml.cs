@@ -1,28 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Data;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ZZZO.Common;
 
 namespace ZZZO
 {
   /// <summary>
-  /// Interaction logic for MainWindow.xaml
+  ///   Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window
   {
     public MainWindow()
     {
       InitializeComponent();
+    }
+
+    private void ShowAboutAppDialog(object sender, RoutedEventArgs e)
+    {
+      MessageBox.Show($"{Constants.Names.AppShortName} - {Constants.Names.AppLongName}\n\n" +
+                      $"Verze: {Constants.Names.AppVersion}\n\n\n" +
+                      $"Některé ikony poskytl: {Constants.Names.Freepik}", "O aplikaci",
+        MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void QuitApp(object sender, RoutedEventArgs e)
+    {
+      Close();
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      base.OnClosing(e);
     }
   }
 }
