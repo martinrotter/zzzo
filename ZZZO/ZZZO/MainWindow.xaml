@@ -6,6 +6,7 @@
         xmlns:zzzoCommon="clr-namespace:ZZZO.Common;assembly=ZZZO.Common"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:zzzoCcontrols="clr-namespace:ZZZO.Controls"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
@@ -21,7 +22,10 @@
     </Grid.RowDefinitions>
     <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="25" Grid.Row="0">
       <MenuItem Header="_Soubor">
-        <MenuItem Header="_Ukončit" Click="QuitApp" />
+        <MenuItem Header="_Nový" Click="QuitApp" />
+        <MenuItem Header="N_ačíst" Click="QuitApp" />
+        <MenuItem Header="_Uložit" Click="QuitApp" />
+        <MenuItem Header="_Konec" Click="QuitApp" />
       </MenuItem>
       <MenuItem Header="?">
         <MenuItem Header="_O aplikaci" Click="ShowAboutAppDialog" />
@@ -30,10 +34,11 @@
     <TabControl
       Margin="0 20 0 0"
       Grid.Row="1"
+      Padding="10 0 10 10"
       TabStripPlacement="Left">
       <TabItem
         Header="Základní informace">
-        <Grid></Grid>
+        <zzzoCcontrols:BasicCityInfo></zzzoCcontrols:BasicCityInfo>
       </TabItem>
       <TabItem
         Header="Program">
