@@ -1,8 +1,0 @@
-{
-  "version": "2.0.0",
-  "tasks": [{
-      "label": "uic",
-      "command": "pyside6-uic gui/ui/Ui_FormMain.ui -o gui/ui/Ui_FormMain.py",
-      "type": "shell"
-  }]
-}

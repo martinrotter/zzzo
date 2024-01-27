@@ -1,2 +1,4 @@
-gui/ui/*.py
-__pycache__
+ZZZO/packages
+ZZZO/ZZZO/obj
+ZZZO/ZZZO/bin
+ZZZO/.vs
