@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using ZZZO.Common;
 using ZZZO.Common.API;
 
@@ -45,7 +43,7 @@ namespace ZZZO
 
     private void NewZasedani(object sender, RoutedEventArgs e)
     {
-      App.Current.ResetZasedani(new Zasedani()
+      App.Current.ResetZasedani(new Zasedani
       {
         NazevObce = "Svésedlice",
         Zastupitele = new ObservableCollection<Zastupitel>
@@ -99,6 +97,11 @@ namespace ZZZO
     private void SaveZasedani(object sender, RoutedEventArgs e)
     {
       App.Current.SaveZasedani();
+    }
+
+    private void LoadZasedani(object sender, RoutedEventArgs e)
+    {
+      App.Current.LoadZasedani(this);
     }
   }
 }

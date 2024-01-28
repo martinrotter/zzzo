@@ -29,8 +29,8 @@ namespace ZZZO
 
       window.DataContext = new
       {
-        Zasedani = Current.Zasedani,
-        App = App.Current
+        Current.Zasedani,
+        App = Current
       };
     }
 
@@ -46,12 +46,9 @@ namespace ZZZO
 
     public void SaveZasedani()
     {
-      if (Zasedani == null)
-      {
-        return;
-      }
+      if (Zasedani == null) return;
 
-      SaveFileDialog d = new SaveFileDialog();
+      var d = new SaveFileDialog();
 
       d.OverwritePrompt = true;
       d.AddExtension = true;
@@ -59,10 +56,19 @@ namespace ZZZO
       d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
       d.Title = "Zvolte lokaci pro uložení zasedání do souboru";
 
-      if (d.ShowDialog().GetValueOrDefault())
-      {
-        Zasedani.SaveToFile(d.FileName);
-      }
+      if (d.ShowDialog().GetValueOrDefault()) Zasedani.SaveToFile(d.FileName);
+    }
+
+    public void LoadZasedani(MainWindow mw)
+    {
+      var d = new OpenFileDialog();
+
+      d.AddExtension = true;
+      d.CheckPathExists = true;
+      d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
+      d.Title = "Zvolte lokaci pro načtení zasedání ze souboru";
+
+      if (d.ShowDialog().GetValueOrDefault()) ResetZasedani(Zasedani.LoadFromFile(d.FileName), mw);
     }
   }
 }

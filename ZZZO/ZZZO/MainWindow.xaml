@@ -17,7 +17,7 @@
     <Menu Grid.Row="0">
       <MenuItem Header="_Soubor">
         <MenuItem Header="_Nový" Click="NewZasedani" />
-        <MenuItem Header="N_ačíst" Click="QuitApp" />
+        <MenuItem Header="N_ačíst" Click="LoadZasedani" />
         <MenuItem Header="_Uložit" Click="SaveZasedani" />
         <MenuItem Header="_Konec" Click="QuitApp" />
       </MenuItem>
@@ -32,31 +32,43 @@
       IsEnabled="{Binding App.ZasedaniLoaded}"
       Padding="10 10 10 10"
       TabStripPlacement="Left">
+      <TabControl.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+          <Setter Property="Margin" Value="10 0 10 10" />
+          <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="{x:Type Button}">
+          <Setter Property="Margin" Value="10"></Setter>
+        </Style>
+
+        <Style TargetType="{x:Type TextBox}">
+          <Setter Property="Margin" Value="10 0 10 10" />
+          <Setter Property="MinWidth" Value="250" />
+        </Style>
+
+        <Style TargetType="{x:Type ListView}">
+          <Setter Property="Margin" Value="10 0 10 10" />
+        </Style>
+
+        <Style TargetType="{x:Type CheckBox}">
+          <Setter Property="Margin" Value="10 0 10 10" />
+        </Style>
+      </TabControl.Resources>
+
       <TabItem
         Header="Základní informace">
         <zzzoCcontrols:BasicCityInfo />
       </TabItem>
       <TabItem
         Header="Program">
-        <Grid />
+        <zzzoCcontrols:Program />
       </TabItem>
       <TabItem
-        Header="TAB 3 Diff Width">
+        Header="Generátor">
         <TextBlock
           Margin="8"
           Text="Tab 3 with different width" />
-      </TabItem>
-      <TabItem
-        Header="TAB 4 Looong">
-        <TextBlock
-          Margin="8"
-          Text="Tab 4 with long width" />
-      </TabItem>
-      <TabItem
-        Header="TABB 5">
-        <TextBlock
-          Margin="8"
-          Text="Left placement tabb 5" />
       </TabItem>
     </TabControl>
   </Grid>

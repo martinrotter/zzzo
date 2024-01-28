@@ -96,6 +96,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Program.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ProgramEntry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,6 +114,12 @@
     </Compile>
     <Compile Include="Controls\BasicCityInfo.xaml.cs">
       <DependentUpon>BasicCityInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Program.xaml.cs">
+      <DependentUpon>Program.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProgramEntry.xaml.cs">
+      <DependentUpon>ProgramEntry.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

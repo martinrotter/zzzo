@@ -6,30 +6,13 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
   <Grid>
-    <Grid.Resources>
-      <Style TargetType="{x:Type TextBlock}">
-        <Setter Property="Margin" Value="10 0 10 10" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-      </Style>
-
-      <Style TargetType="{x:Type TextBox}">
-        <Setter Property="Margin" Value="10 0 10 10" />
-        <Setter Property="MinWidth" Value="250" />
-      </Style>
-
-      <Style TargetType="{x:Type ListView}">
-        <Setter Property="Margin" Value="10 0 10 10" />
-      </Style>
-
-      <Style TargetType="{x:Type CheckBox}">
-        <Setter Property="Margin" Value="10 0 10 10" />
-      </Style>
-    </Grid.Resources>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="250" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
@@ -46,7 +29,7 @@
       Grid.Row="1" Grid.Column="1" Text="{Binding Zasedani.Poradi, UpdateSourceTrigger=PropertyChanged}" />
 
     <TextBlock Grid.Row="2" VerticalAlignment="Top" Grid.Column="0">Zastupitelé</TextBlock>
-    <ListView Name="lvZastupitele" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Zasedani.Zastupitele}">
+    <ListView KeyUp="KeyPressedInListOfZastupitele" Name="LvZastupitele" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Zasedani.Zastupitele}">
       <ListView.View>
         <GridView>
           <GridViewColumn Header="Jméno" Width="70" DisplayMemberBinding="{Binding Jmeno}" />
@@ -60,14 +43,15 @@
       </ListView.View>
     </ListView>
 
-    <Grid IsEnabled="{Binding ElementName=lvZastupitele, Path=SelectedItems.Count}"
-          DataContext="{Binding ElementName=lvZastupitele, Path=SelectedValue}" Grid.Row="2"
+    <Grid IsEnabled="{Binding ElementName=LvZastupitele, Path=SelectedItems.Count}"
+          DataContext="{Binding ElementName=LvZastupitele, Path=SelectedValue}" Grid.Row="2"
           Grid.Column="2">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
@@ -85,6 +69,23 @@
 
       <TextBlock Grid.Row="2" Grid.Column="0">Přítomen</TextBlock>
       <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding JePritomen, UpdateSourceTrigger=PropertyChanged}" />
+
+      <TextBlock Grid.Row="3" Grid.Column="0">Řídící</TextBlock>
+      <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding JeRidici, UpdateSourceTrigger=PropertyChanged}" />
+
+      <TextBlock Grid.Row="4" Grid.Column="0">Zapisovatel</TextBlock>
+      <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding JeZapisovatel, UpdateSourceTrigger=PropertyChanged}" />
+
+      <TextBlock Grid.Row="5" Grid.Column="0">Ověřovatel</TextBlock>
+      <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding JeOverovatel, UpdateSourceTrigger=PropertyChanged}" />
+
+      <TextBlock Grid.Row="6" Grid.Column="0">Starosta</TextBlock>
+      <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
     </Grid>
+
+    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
+      <Button Click="AddZastupitel">_Přidat</Button>
+      <Button Click="RemoveZastupitel" IsEnabled="{Binding ElementName=LvZastupitele, Path=SelectedItems.Count}">_Smazat</Button>
+    </StackPanel>
   </Grid>
 </UserControl>

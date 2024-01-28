@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ZZZO.Common.API;
 
 namespace ZZZO.Controls
 {
@@ -23,6 +24,31 @@ namespace ZZZO.Controls
     public BasicCityInfo()
     {
       InitializeComponent();
+    }
+
+    private void AddZastupitel(object sender, RoutedEventArgs e)
+    {
+      App.Current.Zasedani.Zastupitele.Add(new Zastupitel
+      {
+        Jmeno = "Pepa",
+        Prijmeni = "Z Depa"
+      });
+    }
+
+    private void RemoveZastupitel(object sender, RoutedEventArgs e)
+    {
+      if (LvZastupitele.SelectedValue is Zastupitel zast)
+      {
+        App.Current.Zasedani.Zastupitele.Remove(zast);
+      }
+    }
+
+    private void KeyPressedInListOfZastupitele(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Delete)
+      {
+        RemoveZastupitel(this, e);
+      }
     }
   }
 }

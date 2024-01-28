@@ -31,7 +31,7 @@ public class Zasedani
     File.WriteAllText(file, json, Encoding.UTF8);
   }
 
-  public static Zasedani FromFile(string file)
+  public static Zasedani LoadFromFile(string file)
   {
     return JsonConvert.DeserializeObject<Zasedani>(File.ReadAllText(file, Encoding.UTF8));
   }
