@@ -1,7 +1,10 @@
-﻿using System.ComponentModel;
-using System.Data;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using ZZZO.Common;
+using ZZZO.Common.API;
 
 namespace ZZZO
 {
@@ -13,6 +16,7 @@ namespace ZZZO
     public MainWindow()
     {
       InitializeComponent();
+      App.Current.ResetZasedani(null, this);
     }
 
     private void ShowAboutAppDialog(object sender, RoutedEventArgs e)
@@ -31,6 +35,70 @@ namespace ZZZO
     protected override void OnClosing(CancelEventArgs e)
     {
       base.OnClosing(e);
+
+      if ((App.Current.Zasedani?.Spinave).GetValueOrDefault())
+      {
+        MessageBox.Show("Neuložené zasedání.", "Neuložené zasedání", MessageBoxButton.OK);
+        e.Cancel = true;
+      }
+    }
+
+    private void NewZasedani(object sender, RoutedEventArgs e)
+    {
+      App.Current.ResetZasedani(new Zasedani()
+      {
+        NazevObce = "Svésedlice",
+        Zastupitele = new ObservableCollection<Zastupitel>
+        {
+          new Zastupitel
+          {
+            JeOverovatel = true,
+            Jmeno = "Pepa",
+            Prijmeni = "Vyskoč"
+          },
+          new Zastupitel
+          {
+            JeOverovatel = false,
+            Jmeno = "Pep 2a",
+            Prijmeni = "Vyskoč 2"
+          },
+          new Zastupitel
+          {
+            JeOverovatel = false,
+            Jmeno = "Pep 2a",
+            Prijmeni = "Vyskoč 2"
+          },
+          new Zastupitel
+          {
+            JeOverovatel = false,
+            Jmeno = "Pep 2a",
+            Prijmeni = "Vyskoč 2"
+          },
+          new Zastupitel
+          {
+            JeOverovatel = false,
+            Jmeno = "Pep 2a",
+            Prijmeni = "Vyskoč 2"
+          },
+          new Zastupitel
+          {
+            JeOverovatel = false,
+            Jmeno = "Pep 2a",
+            Prijmeni = "Vyskoč 2"
+          },
+          new Zastupitel
+          {
+            JeOverovatel = false,
+            Jmeno = "Pep 2a",
+            Prijmeni = "Vyskoč 2"
+          }
+        }
+      }, this);
+    }
+
+    private void SaveZasedani(object sender, RoutedEventArgs e)
+    {
+      App.Current.SaveZasedani();
     }
   }
 }

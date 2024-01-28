@@ -12,28 +12,79 @@
         <Setter Property="VerticalAlignment" Value="Center" />
       </Style>
 
-      <Style BasedOn="{StaticResource MaterialDesignOutlinedTextBox}" TargetType="{x:Type TextBox}">
+      <Style TargetType="{x:Type TextBox}">
+        <Setter Property="Margin" Value="10 0 10 10" />
+        <Setter Property="MinWidth" Value="250" />
+      </Style>
+
+      <Style TargetType="{x:Type ListView}">
+        <Setter Property="Margin" Value="10 0 10 10" />
+      </Style>
+
+      <Style TargetType="{x:Type CheckBox}">
         <Setter Property="Margin" Value="10 0 10 10" />
       </Style>
     </Grid.Resources>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
+      <RowDefinition Height="250" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="200" />
+      <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
 
     <TextBlock Grid.Row="0" Grid.Column="0">Název obce</TextBlock>
     <TextBox
-      Grid.Row="0" Grid.Column="1" />
+      Grid.Row="0" Grid.Column="1" Text="{Binding Zasedani.NazevObce, UpdateSourceTrigger=PropertyChanged}" />
 
     <TextBlock Grid.Row="1" Grid.Column="0">Pořadí zasedání ZO</TextBlock>
     <TextBox
-      Grid.Row="1" Grid.Column="1" />
+      Grid.Row="1" Grid.Column="1" Text="{Binding Zasedani.Poradi, UpdateSourceTrigger=PropertyChanged}" />
+
+    <TextBlock Grid.Row="2" VerticalAlignment="Top" Grid.Column="0">Zastupitelé</TextBlock>
+    <ListView Name="lvZastupitele" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Zasedani.Zastupitele}">
+      <ListView.View>
+        <GridView>
+          <GridViewColumn Header="Jméno" Width="70" DisplayMemberBinding="{Binding Jmeno}" />
+          <GridViewColumn Header="Příjmení" Width="70" DisplayMemberBinding="{Binding Prijmeni}" />
+          <GridViewColumn Header="Přítomen" Width="60" DisplayMemberBinding="{Binding JePritomen}" />
+          <GridViewColumn Header="Řídící" Width="40" DisplayMemberBinding="{Binding JeRidici}" />
+          <GridViewColumn Header="Zapisovatel" Width="70" DisplayMemberBinding="{Binding JeZapisovatel}" />
+          <GridViewColumn Header="Ověřovatel" Width="70" DisplayMemberBinding="{Binding JeOverovatel}" />
+          <GridViewColumn Header="Starosta" Width="50" DisplayMemberBinding="{Binding JeStarosta}" />
+        </GridView>
+      </ListView.View>
+    </ListView>
+
+    <Grid IsEnabled="{Binding ElementName=lvZastupitele, Path=SelectedItems.Count}"
+          DataContext="{Binding ElementName=lvZastupitele, Path=SelectedValue}" Grid.Row="2"
+          Grid.Column="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <TextBlock Grid.Row="0" Grid.Column="0">Jméno</TextBlock>
+      <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Jmeno, UpdateSourceTrigger=PropertyChanged}" />
+
+      <TextBlock Grid.Row="1" Grid.Column="0">Příjmení</TextBlock>
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Prijmeni, UpdateSourceTrigger=PropertyChanged}" />
+
+      <TextBlock Grid.Row="2" Grid.Column="0">Přítomen</TextBlock>
+      <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding JePritomen, UpdateSourceTrigger=PropertyChanged}" />
+    </Grid>
   </Grid>
 </UserControl>

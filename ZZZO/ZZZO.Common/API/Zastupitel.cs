@@ -13,5 +13,7 @@
     public bool JeZapisovatel { get; set; }
 
     public bool JeOverovatel { get; set; }
+
+    public bool JeStarosta { get; set; }
   }
 }

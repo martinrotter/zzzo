@@ -1,20 +1,38 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Net.Mime;
+using System.Text;
+using Newtonsoft.Json;
 
-namespace ZZZO.Common.API
+namespace ZZZO.Common.API;
+
+public class Zasedani
 {
-  public class Zasedani
+  public DateTime DatumCas { get; set; } = DateTime.Now;
+
+  public int PocetHostu { get; set; }
+
+  public int Poradi { get; set; } = 1;
+
+  public string NazevObce { get; set; }
+
+  public Adresa AdresaKonani { get; set; }
+
+  public ObservableCollection<Zastupitel> Zastupitele { get; set; }
+
+  [JsonIgnore]
+  public bool Spinave { get; set; }
+
+  public void SaveToFile(string file)
   {
-    public DateTime DatumCas { get; set; }
+    var json = JsonConvert.SerializeObject(this, Formatting.Indented);
 
-    public int PocetHostu { get; set; }
+    File.WriteAllText(file, json, Encoding.UTF8);
+  }
 
-    public int Poradi { get; set; }
-
-    public string NazevObce { get; set; }
-
-    public Adresa AdresaKonani { get; set; }
-
-    public ObservableCollection<Zastupitel> Zastupitele { get; set; }
+  public static Zasedani FromFile(string file)
+  {
+    return JsonConvert.DeserializeObject<Zasedani>(File.ReadAllText(file, Encoding.UTF8));
   }
 }

@@ -5,14 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:zzzoCommon="clr-namespace:ZZZO.Common;assembly=ZZZO.Common"
         mc:Ignorable="d"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:zzzoCcontrols="clr-namespace:ZZZO.Controls"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.FontWeight="Medium"
-        TextElement.FontSize="14"
         Icon="Resources/AppIcon.png"
-        FontFamily="{materialDesign:MaterialDesignFont}"
         Title="{x:Static zzzoCommon:Constants+Names.AppLongName}" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen">
   <Grid>
@@ -20,11 +14,11 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
-    <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="25" Grid.Row="0">
+    <Menu Grid.Row="0">
       <MenuItem Header="_Soubor">
-        <MenuItem Header="_Nový" Click="QuitApp" />
+        <MenuItem Header="_Nový" Click="NewZasedani" />
         <MenuItem Header="N_ačíst" Click="QuitApp" />
-        <MenuItem Header="_Uložit" Click="QuitApp" />
+        <MenuItem Header="_Uložit" Click="SaveZasedani" />
         <MenuItem Header="_Konec" Click="QuitApp" />
       </MenuItem>
       <MenuItem Header="?">
@@ -34,15 +28,17 @@
     <TabControl
       Margin="0 20 0 0"
       Grid.Row="1"
-      Padding="10 0 10 10"
+      Name="TcZasedani"
+      IsEnabled="{Binding App.ZasedaniLoaded}"
+      Padding="10 10 10 10"
       TabStripPlacement="Left">
       <TabItem
         Header="Základní informace">
-        <zzzoCcontrols:BasicCityInfo></zzzoCcontrols:BasicCityInfo>
+        <zzzoCcontrols:BasicCityInfo />
       </TabItem>
       <TabItem
         Header="Program">
-        <Grid></Grid>
+        <Grid />
       </TabItem>
       <TabItem
         Header="TAB 3 Diff Width">
