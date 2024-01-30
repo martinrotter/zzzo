@@ -57,6 +57,7 @@ public class Zastupitel : ObservableObject
       {
         _jeRidici = value;
 
+        /*
         if (value)
         {
           foreach (Zastupitel zastupitel in Zasedani.Zastupitele)
@@ -68,6 +69,7 @@ public class Zastupitel : ObservableObject
             }
           }
         }
+        */
 
         OnPropertyChanged();
       }
@@ -83,6 +85,7 @@ public class Zastupitel : ObservableObject
       {
         _jeStarosta = value;
 
+        /*
         if (value)
         {
           foreach (Zastupitel zastupitel in Zasedani.Zastupitele)
@@ -94,6 +97,7 @@ public class Zastupitel : ObservableObject
             }
           }
         }
+        */
 
         OnPropertyChanged();
       }
@@ -109,6 +113,7 @@ public class Zastupitel : ObservableObject
       {
         _jeZapisovatel = value;
 
+        /*
         if (value)
         {
           foreach (Zastupitel zastupitel in Zasedani.Zastupitele)
@@ -120,6 +125,7 @@ public class Zastupitel : ObservableObject
             }
           }
         }
+        */
 
         OnPropertyChanged();
       }
