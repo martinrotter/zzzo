@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>ZZZO.App</StartupObject>
@@ -96,11 +98,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Generator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Program.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ProgramEntry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Resolution.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -115,12 +125,20 @@
     <Compile Include="Controls\BasicCityInfo.xaml.cs">
       <DependentUpon>BasicCityInfo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Generator.xaml.cs">
+      <DependentUpon>Generator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Program.xaml.cs">
       <DependentUpon>Program.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProgramEntry.xaml.cs">
       <DependentUpon>ProgramEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Resolution.xaml.cs">
+      <DependentUpon>Resolution.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Extensions\Xaml.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

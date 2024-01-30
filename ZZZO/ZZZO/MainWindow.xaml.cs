@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using ZZZO.Common;
 using ZZZO.Common.API;
@@ -7,28 +6,21 @@ using ZZZO.Common.API;
 namespace ZZZO
 {
   /// <summary>
-  ///   Interaction logic for MainWindow.xaml
+  /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window
   {
+    #region Konstruktory
+
     public MainWindow()
     {
       InitializeComponent();
       App.Current.ResetZasedani(null, this);
     }
 
-    private void ShowAboutAppDialog(object sender, RoutedEventArgs e)
-    {
-      MessageBox.Show($"{Constants.Names.AppShortName} - {Constants.Names.AppLongName}\n\n" +
-                      $"Verze: {Constants.Names.AppVersion}\n\n\n" +
-                      $"Některé ikony poskytl: {Constants.Names.Freepik}", "O aplikaci",
-        MessageBoxButton.OK, MessageBoxImage.Information);
-    }
+    #endregion
 
-    private void QuitApp(object sender, RoutedEventArgs e)
-    {
-      Close();
-    }
+    #region Metody
 
     protected override void OnClosing(CancelEventArgs e)
     {
@@ -41,57 +33,32 @@ namespace ZZZO
       }
     }
 
+    private void LoadZasedani(object sender, RoutedEventArgs e)
+    {
+      App.Current.LoadZasedani(this);
+    }
+
     private void NewZasedani(object sender, RoutedEventArgs e)
     {
-      App.Current.ResetZasedani(new Zasedani
+      Zasedani zas = new Zasedani();
+
+      zas.AddZastupitel(new Zastupitel
       {
-        NazevObce = "Svésedlice",
-        Zastupitele = new ObservableCollection<Zastupitel>
-        {
-          new Zastupitel
-          {
-            JeOverovatel = true,
-            Jmeno = "Pepa",
-            Prijmeni = "Vyskoč"
-          },
-          new Zastupitel
-          {
-            JeOverovatel = false,
-            Jmeno = "Pep 2a",
-            Prijmeni = "Vyskoč 2"
-          },
-          new Zastupitel
-          {
-            JeOverovatel = false,
-            Jmeno = "Pep 2a",
-            Prijmeni = "Vyskoč 2"
-          },
-          new Zastupitel
-          {
-            JeOverovatel = false,
-            Jmeno = "Pep 2a",
-            Prijmeni = "Vyskoč 2"
-          },
-          new Zastupitel
-          {
-            JeOverovatel = false,
-            Jmeno = "Pep 2a",
-            Prijmeni = "Vyskoč 2"
-          },
-          new Zastupitel
-          {
-            JeOverovatel = false,
-            Jmeno = "Pep 2a",
-            Prijmeni = "Vyskoč 2"
-          },
-          new Zastupitel
-          {
-            JeOverovatel = false,
-            Jmeno = "Pep 2a",
-            Prijmeni = "Vyskoč 2"
-          }
-        }
-      }, this);
+        Prijmeni = "csacsa",
+        Jmeno = "csacas",
+        JeOverovatel = false,
+        JeStarosta = false,
+        JePritomen = true
+      });
+
+      App.Current.ResetZasedani(zas, this);
+
+      App.Current.Zasedani.InitializeTree();
+    }
+
+    private void QuitApp(object sender, RoutedEventArgs e)
+    {
+      Close();
     }
 
     private void SaveZasedani(object sender, RoutedEventArgs e)
@@ -99,9 +66,14 @@ namespace ZZZO
       App.Current.SaveZasedani();
     }
 
-    private void LoadZasedani(object sender, RoutedEventArgs e)
+    private void ShowAboutAppDialog(object sender, RoutedEventArgs e)
     {
-      App.Current.LoadZasedani(this);
+      MessageBox.Show($"{Constants.Names.AppShortName} - {Constants.Names.AppLongName}\n\n" +
+                      $"Verze: {Constants.Names.AppVersion}\n\n\n" +
+                      $"Některé ikony poskytl: {Constants.Names.Freepik}", "O aplikaci",
+        MessageBoxButton.OK, MessageBoxImage.Information);
     }
+
+    #endregion
   }
 }

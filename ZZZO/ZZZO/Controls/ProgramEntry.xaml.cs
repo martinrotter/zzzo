@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ZZZO.Common.API;
 
 namespace ZZZO.Controls
 {
@@ -20,9 +9,38 @@ namespace ZZZO.Controls
   /// </summary>
   public partial class ProgramEntry : UserControl
   {
+    #region Vlastnosti
+
+    private BodProgramu BodProgramu
+    {
+      get => DataContext as BodProgramu;
+    }
+
+    #endregion
+
+    #region Konstruktory
+
     public ProgramEntry()
     {
       InitializeComponent();
     }
+
+    #endregion
+
+    #region Metody
+
+    private void AddUsneseni(object sender, RoutedEventArgs e)
+    {
+      App.Current.Zasedani.AddUsneseni(BodProgramu, new Usneseni
+      {
+        Text = "Text usnesení"
+      });
+    }
+
+    private void RemoveUsneseni(object sender, RoutedEventArgs e)
+    {
+    }
+
+    #endregion
   }
 }

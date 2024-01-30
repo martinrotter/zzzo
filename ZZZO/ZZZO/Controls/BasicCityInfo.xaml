@@ -29,7 +29,8 @@
       Grid.Row="1" Grid.Column="1" Text="{Binding Zasedani.Poradi, UpdateSourceTrigger=PropertyChanged}" />
 
     <TextBlock Grid.Row="2" VerticalAlignment="Top" Grid.Column="0">Zastupitelé</TextBlock>
-    <ListView KeyUp="KeyPressedInListOfZastupitele" Name="LvZastupitele" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Zasedani.Zastupitele}">
+    <ListView KeyUp="KeyPressedInListOfZastupitele" Name="LvZastupitele" Grid.Row="2" Grid.Column="1"
+              ItemsSource="{Binding Zasedani.Zastupitele}">
       <ListView.View>
         <GridView>
           <GridViewColumn Header="Jméno" Width="70" DisplayMemberBinding="{Binding Jmeno}" />

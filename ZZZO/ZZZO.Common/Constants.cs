@@ -2,17 +2,29 @@
 {
   public static class Constants
   {
+    #region Vnořené typy
+
     public static class Names
     {
-      public const string AppShortName = "ZZZO";
+      #region Statické prvky
+
       public const string AppLongName = "Zápisník zasedání zastupitelstev obcí";
+      public const string AppShortName = "ZZZO";
       public const string Freepik = "www.freepik.com";
       public static string AppVersion;
+
+      #endregion
+
+      #region Konstruktory
 
       static Names()
       {
         AppVersion = Utils.GetExecutingAssemblyVersion();
       }
+
+      #endregion
     }
+
+    #endregion
   }
 }

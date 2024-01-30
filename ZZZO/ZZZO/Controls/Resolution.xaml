@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="ZZZO.Controls.Resolution"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ZZZO.Controls"
+             xmlns:converters="clr-namespace:ZZZO.Converters"
+             xmlns:extensions="clr-namespace:ZZZO.Extensions"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+  </UserControl.Resources>
+  <Grid Background="DodgerBlue">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <TextBlock Grid.Row="0" Grid.Column="0">Text</TextBlock>
+    <TextBox MinHeight="60" TextWrapping="Wrap" AcceptsReturn="True" Grid.Row="0"
+             IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}"
+             Grid.Column="1" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+
+    <TextBlock Grid.Row="1" Grid.Column="0">ZO bere na vědomí</TextBlock>
+    <CheckBox Name="CbBereNaVedomi" Grid.Row="1" Grid.Column="1"
+              IsChecked="{Binding ZoBereNaVedomi, UpdateSourceTrigger=PropertyChanged}" />
+
+    <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Hlasování">
+      <DataGrid CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False"
+                CanUserResizeRows="false" CanUserAddRows="False" AutoGenerateColumns="False"
+                ItemsSource="{Binding VolbyZastupitelu}"
+                extensions:DataGridExtensions.DefaultSorting="A:JmenoPrijmeniZastupitele">
+        <DataGrid.RowStyle>
+          <Style TargetType="{x:Type DataGridRow}">
+            <Setter Property="IsEnabled" Value="{Binding Zastupitel.JePritomen}" />
+
+            <Style.Triggers>
+              <DataTrigger
+                Binding="{Binding Zastupitel.JePritomen}"
+                Value="False">
+                <Setter Property="Background" Value="Orange" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </DataGrid.RowStyle>
+
+        <DataGrid.Columns>
+          <DataGridTextColumn IsReadOnly="True" Header="Zastupitel" Binding="{Binding JmenoPrijmeniZastupitele}" />
+          <DataGridTemplateColumn Header="Volba">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <ComboBox IsEnabled="{Binding Path=Zastupitel.JePritomen}" ItemsSource="{Binding Volby}"
+                          SelectedValue="{Binding Volba, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTextColumn IsReadOnly="True" Width="*" Header="Poznámka" Binding="{Binding Poznamka}" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </GroupBox>
+  </Grid>
+</UserControl>

@@ -39,7 +39,7 @@
         </Style>
 
         <Style TargetType="{x:Type Button}">
-          <Setter Property="Margin" Value="10"></Setter>
+          <Setter Property="Margin" Value="10" />
         </Style>
 
         <Style TargetType="{x:Type TextBox}">
@@ -66,9 +66,7 @@
       </TabItem>
       <TabItem
         Header="Generátor">
-        <TextBlock
-          Margin="8"
-          Text="Tab 3 with different width" />
+        <zzzoCcontrols:Generator />
       </TabItem>
     </TabControl>
   </Grid>

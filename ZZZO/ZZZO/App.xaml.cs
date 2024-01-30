@@ -3,11 +3,41 @@ using System.Threading;
 using System.Windows;
 using Microsoft.Win32;
 using ZZZO.Common.API;
+using ZZZO.Common.Generators;
 
 namespace ZZZO
 {
   public partial class App : Application
   {
+    #region Vlastnosti
+
+    public new static App Current
+    {
+      get;
+      private set;
+    }
+
+    public GeneratorDocx GeneratorDocx
+    {
+      get;
+      set;
+    } = new GeneratorDocx();
+
+    public Zasedani Zasedani
+    {
+      get;
+      set;
+    }
+
+    public bool ZasedaniLoaded
+    {
+      get => Zasedani != null;
+    }
+
+    #endregion
+
+    #region Konstruktory
+
     public App()
     {
       Current = this;
@@ -17,11 +47,24 @@ namespace ZZZO
       Thread.CurrentThread.CurrentUICulture = new CultureInfo("cs-CZ");
     }
 
-    public Zasedani Zasedani { get; set; }
+    #endregion
 
-    public bool ZasedaniLoaded => Zasedani != null;
+    #region Metody
 
-    public new static App Current { get; private set; }
+    public void LoadZasedani(MainWindow mw)
+    {
+      OpenFileDialog d = new OpenFileDialog();
+
+      d.AddExtension = true;
+      d.CheckPathExists = true;
+      d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
+      d.Title = "Zvolte lokaci pro načtení zasedání ze souboru";
+
+      if (d.ShowDialog().GetValueOrDefault())
+      {
+        ResetZasedani(Zasedani.LoadFromFile(d.FileName), mw);
+      }
+    }
 
     public void ResetZasedani(Zasedani newZasedani, MainWindow window)
     {
@@ -34,21 +77,14 @@ namespace ZZZO
       };
     }
 
-    protected override void OnStartup(StartupEventArgs e)
-    {
-      base.OnStartup(e);
-    }
-
-    protected override void OnExit(ExitEventArgs e)
-    {
-      base.OnExit(e);
-    }
-
     public void SaveZasedani()
     {
-      if (Zasedani == null) return;
+      if (Zasedani == null)
+      {
+        return;
+      }
 
-      var d = new SaveFileDialog();
+      SaveFileDialog d = new SaveFileDialog();
 
       d.OverwritePrompt = true;
       d.AddExtension = true;
@@ -56,19 +92,22 @@ namespace ZZZO
       d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
       d.Title = "Zvolte lokaci pro uložení zasedání do souboru";
 
-      if (d.ShowDialog().GetValueOrDefault()) Zasedani.SaveToFile(d.FileName);
+      if (d.ShowDialog().GetValueOrDefault())
+      {
+        Zasedani.SaveToFile(d.FileName);
+      }
     }
 
-    public void LoadZasedani(MainWindow mw)
+    protected override void OnExit(ExitEventArgs e)
     {
-      var d = new OpenFileDialog();
-
-      d.AddExtension = true;
-      d.CheckPathExists = true;
-      d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
-      d.Title = "Zvolte lokaci pro načtení zasedání ze souboru";
-
-      if (d.ShowDialog().GetValueOrDefault()) ResetZasedani(Zasedani.LoadFromFile(d.FileName), mw);
+      base.OnExit(e);
     }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+      base.OnStartup(e);
+    }
+
+    #endregion
   }
 }

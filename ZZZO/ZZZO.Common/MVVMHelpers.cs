@@ -6,17 +6,32 @@ using System.Runtime.CompilerServices;
 namespace ZZZO.Common;
 
 /// <summary>
-///   Observable object with INotifyPropertyChanged implemented
+/// Observable object with INotifyPropertyChanged implemented
 /// </summary>
 public class ObservableObject : INotifyPropertyChanged
 {
+  #region Implementace rozhraní
+
   /// <summary>
-  ///   Occurs when property changed.
+  /// Occurs when property changed.
   /// </summary>
   public event PropertyChangedEventHandler? PropertyChanged;
 
+  #endregion
+
+  #region Metody
+
   /// <summary>
-  ///   Sets the property.
+  /// Raises the property changed event.
+  /// </summary>
+  /// <param name="propertyName">Property name.</param>
+  protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
+  {
+    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+  }
+
+  /// <summary>
+  /// Sets the property.
   /// </summary>
   /// <returns><c>true</c>, if property was set, <c>false</c> otherwise.</returns>
   /// <param name="backingStore">Backing store.</param>
@@ -33,11 +48,15 @@ public class ObservableObject : INotifyPropertyChanged
   {
     //if value didn't change
     if (EqualityComparer<T>.Default.Equals(backingStore, value))
+    {
       return false;
+    }
 
     //if value changed but didn't validate
     if (validateValue != null && !validateValue(backingStore, value))
+    {
       return false;
+    }
 
     backingStore = value;
     onChanged?.Invoke();
@@ -45,12 +64,5 @@ public class ObservableObject : INotifyPropertyChanged
     return true;
   }
 
-  /// <summary>
-  ///   Raises the property changed event.
-  /// </summary>
-  /// <param name="propertyName">Property name.</param>
-  protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
-  {
-    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-  }
+  #endregion
 }
