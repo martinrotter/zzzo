@@ -17,6 +17,7 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="3*" />
       <RowDefinition Height="Auto" />
       <RowDefinition />
@@ -28,15 +29,18 @@
     <TextBlock Grid.Row="1" Grid.Column="0">Text</TextBlock>
     <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
 
-    <TextBlock Grid.Row="2" Grid.Column="0">Podbod předchozího bodu programu</TextBlock>
-    <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding JePodbod, UpdateSourceTrigger=PropertyChanged}" />
+    <TextBlock Grid.Row="2" Grid.Column="0">Schvalování programu</TextBlock>
+    <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding SchvalovaniProgramu, UpdateSourceTrigger=PropertyChanged}" />
 
-    <TextBlock Grid.Row="3" Grid.Column="0">Doplněný bod programu</TextBlock>
-    <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding JeDoplneny, UpdateSourceTrigger=PropertyChanged}" />
+    <TextBlock Grid.Row="3" Grid.Column="0">Podbod předchozího bodu programu</TextBlock>
+    <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding JePodbod, UpdateSourceTrigger=PropertyChanged}" />
 
-    <TextBlock Grid.Row="4" Grid.Column="0">Seznam usnesení</TextBlock>
+    <TextBlock Grid.Row="4" Grid.Column="0">Doplněný bod programu</TextBlock>
+    <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding JeDoplneny, UpdateSourceTrigger=PropertyChanged}" />
+
+    <TextBlock Grid.Row="5" Grid.Column="0">Seznam usnesení</TextBlock>
     <ComboBox Name="CmbUsneseni" IsEnabled="{Binding ElementName=CmbUsneseni, Path=HasItems}"
-              ItemsSource="{Binding Usneseni}" Grid.Row="4" Grid.Column="1">
+              ItemsSource="{Binding Usneseni}" Grid.Row="5" Grid.Column="1">
       <ComboBox.ItemTemplate>
         <DataTemplate>
           <TextBlock Text="{Binding Text}" />
@@ -44,7 +48,7 @@
       </ComboBox.ItemTemplate>
     </ComboBox>
 
-    <local:Resolution DataContext="{Binding ElementName=CmbUsneseni, Path=SelectedValue}" Grid.Row="5" Grid.Column="1">
+    <local:Resolution DataContext="{Binding ElementName=CmbUsneseni, Path=SelectedValue}" Grid.Row="6" Grid.Column="1">
       <local:Resolution.Style>
         <Style>
           <Style.Triggers>
@@ -58,7 +62,7 @@
       </local:Resolution.Style>
     </local:Resolution>
 
-    <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="1">
+    <WrapPanel Orientation="Horizontal" Grid.Row="7" Grid.Column="1">
       <Button Click="AddUsneseni">_Přidat</Button>
       <Button Click="RemoveUsneseni" Content="_Smazat">
         <Button.Style>
@@ -73,6 +77,6 @@
           </Style>
         </Button.Style>
       </Button>
-    </StackPanel>
+    </WrapPanel>
   </Grid>
 </UserControl>

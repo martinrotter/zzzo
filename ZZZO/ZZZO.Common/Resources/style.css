@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+body {
+  font-family: 'Ubuntu', sans-serif;
+}
+
+ol > ol {
+  list-style: lower-alpha;
+}
+
+.signature {
+  margin-top: 40px;
+}
+
+.resolution {
+  break-inside: avoid-page;
+  border-radius: 10px;
+  width: fit-content;
+  padding: 0px 10px;
+  print-color-adjust: exact;
+  margin: auto;
+}
+
+.success {
+  background-color: lightgreen;
+  border: 1px solid lightgreen;
+}
+
+.failure {
+  background-color: lightsalmon;
+  border: 1px solid lightsalmon;
+}
+
+/* Targets all the pages */
+@page {
+  size: a4 portrait;
+  margin: 1cm;
+}

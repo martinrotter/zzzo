@@ -27,7 +27,7 @@ namespace ZZZO.Controls
     {
       Progress<int> prog = new Progress<int>(progress => { PbGenerator.Value = progress; });
 
-      Task<byte[]> tsk = App.Current.GeneratorDocx.Generate(App.Current.Zasedani, prog);
+      Task<byte[]> tsk = generator.Generate(App.Current.Zasedani, prog);
 
       await tsk;
 
@@ -57,6 +57,7 @@ namespace ZZZO.Controls
 
     private void GenerateHtml(object sender, RoutedEventArgs e)
     {
+      Generate(App.Current.GeneratorHtml);
     }
 
     #endregion

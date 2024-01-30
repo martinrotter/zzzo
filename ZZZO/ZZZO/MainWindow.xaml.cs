@@ -47,8 +47,90 @@ namespace ZZZO
         Prijmeni = "csacsa",
         Jmeno = "csacas",
         JeOverovatel = false,
+        JeStarosta = true,
+        JeZapisovatel = true,
+        JePritomen = true
+      });
+      zas.AddZastupitel(new Zastupitel
+      {
+        Prijmeni = "csacsa",
+        Jmeno = "csacas",
+        JeOverovatel = true,
+        JeStarosta = false,
+        JeRidici = true,
+        JePritomen = true
+      });
+      zas.AddZastupitel(new Zastupitel
+      {
+        Prijmeni = "csacsa",
+        Jmeno = "csacas",
+        JeOverovatel = true,
         JeStarosta = false,
         JePritomen = true
+      });
+      zas.AddZastupitel(new Zastupitel
+      {
+        Prijmeni = "csacsa",
+        Jmeno = "csacas",
+        JeOverovatel = true,
+        JeStarosta = false,
+        JePritomen = true
+      });
+      zas.AddZastupitel(new Zastupitel
+      {
+        Prijmeni = "csacsa",
+        Jmeno = "csacas",
+        JeOverovatel = true,
+        JeStarosta = false,
+        JePritomen = true
+      });
+      zas.AddZastupitel(new Zastupitel
+      {
+        Prijmeni = "csacsa",
+        Jmeno = "csacas",
+        JeOverovatel = false,
+        JeStarosta = false,
+        JePritomen = false
+      });
+
+      zas.AdresaKonani = new Adresa
+      {
+        CisloPopisneOrientacni = "12",
+        Obec = "Krakatit",
+        Psc = "779 00",
+        Ulice = "Ulicce",
+        PopisMista = "zasedací místnost"
+      };
+
+      zas.Program.BodyProgramu.Add(new BodProgramu
+      {
+        SchvalovaniProgramu = true,
+        Nadpis = "Schvalování programu"
+      });
+
+      zas.Program.BodyProgramu.Add(new BodProgramu
+      {
+        Nadpis = "První"
+      });
+      zas.Program.BodyProgramu.Add(new BodProgramu
+      {
+        Nadpis = "Druhy",
+        JePodbod = true
+      });
+      zas.Program.BodyProgramu.Add(new BodProgramu
+      {
+        Nadpis = "Treti",
+        JePodbod = true
+      });
+      zas.Program.BodyProgramu.Add(new BodProgramu
+      {
+        Nadpis = "Ctvrty"
+      });
+      zas.Program.BodyProgramu.Add(new BodProgramu
+      {
+        Nadpis = "Paty",
+        JeDoplneny = true,
+        JePodbod = true
       });
 
       App.Current.ResetZasedani(zas, this);

@@ -33,4 +33,9 @@ public class Usneseni
   }
 
   #endregion
+
+  public string GenerateTitle(int order, Zasedani zas)
+  {
+    return $"Č. {order}-{zas.DatumCas.Month}/{zas.DatumCas.Year} - {Text}";
+  }
 }

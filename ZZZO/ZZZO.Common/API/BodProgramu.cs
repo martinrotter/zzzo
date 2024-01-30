@@ -18,6 +18,12 @@ public class BodProgramu
     set;
   }
 
+  public bool SchvalovaniProgramu
+  {
+    get;
+    set;
+  }
+
   public string Nadpis
   {
     get;

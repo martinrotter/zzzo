@@ -16,6 +16,11 @@ namespace ZZZO
       get;
       private set;
     }
+    public GeneratorHtml GeneratorHtml
+    {
+      get;
+      set;
+    } = new GeneratorHtml();
 
     public GeneratorDocx GeneratorDocx
     {

@@ -4,6 +4,11 @@
   {
     #region Vlastnosti
 
+    public override string ToString()
+    {
+      return $"{Ulice} {CisloPopisneOrientacni}, {Psc} {Obec}";
+    }
+
     public string CisloPopisneOrientacni
     {
       get;
