@@ -4,8 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ZZZO.Controls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             FontFamily="{materialDesign:MaterialDesignFont}"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="900">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
@@ -16,15 +22,16 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <ListView Name="LvProgram" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
+    <ListView Background="Lime" Name="LvProgram" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
       <ListView.ItemTemplate>
         <DataTemplate>
           <WrapPanel>
-            <TextBlock Text="{Binding Nadpis}" />
+            <TextBlock Background="Blue" Text="{Binding Nadpis}" />
           </WrapPanel>
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
+    
     <local:ProgramEntry DataContext="{Binding ElementName=LvProgram, Path=SelectedValue}"
                         IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}" Grid.Row="0"
                         Grid.Column="1" />

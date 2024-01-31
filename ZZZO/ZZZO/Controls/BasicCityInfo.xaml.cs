@@ -1,6 +1,10 @@
-﻿using System.Windows;
+﻿using System.Configuration;
+using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 using ZZZO.Common.API;
 
 namespace ZZZO.Controls
@@ -47,5 +51,20 @@ namespace ZZZO.Controls
     }
 
     #endregion
+
+    private void UpdateVillageLogo(object sender, RoutedEventArgs e)
+    {
+      OpenFileDialog d = new OpenFileDialog();
+
+      d.AddExtension = true;
+      d.CheckPathExists = true;
+      d.Filter = "Obrázky (PNG, JPG)|*.png;*.jpg;*.jpeg";
+      d.Title = "Zvolte lokaci pro načtení loga ze souboru";
+
+      if (d.ShowDialog().GetValueOrDefault())
+      {
+        App.Current.Zasedani.LogoObceData = File.ReadAllBytes(d.FileName);
+      }
+    }
   }
 }

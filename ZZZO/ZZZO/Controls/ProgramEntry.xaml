@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ZZZO.Controls"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
-  <Grid Background="Aqua">
+  <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />

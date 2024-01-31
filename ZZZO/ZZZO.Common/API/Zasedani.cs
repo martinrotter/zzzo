@@ -1,63 +1,207 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Mime;
 using System.Text;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 
 namespace ZZZO.Common.API;
 
-public class Zasedani
+public class Zasedani : ObservableObject
 {
+  private Adresa _adresaKonani = new Adresa();
+  private DateTime _datumCas = DateTime.Now;
+  private string _nazevObce;
+  private BitmapImage _logoObce;
+  private int _pocetHostu;
+  private int _poradi = 1;
+  private Program _program = new Program();
+  private bool _spinave;
+  private ObservableCollection<Zastupitel> _zastupitele = new ObservableCollection<Zastupitel>();
+
   #region Vlastnosti
 
   public Adresa AdresaKonani
   {
-    get;
-    set;
-  } = new Adresa();
+    get => _adresaKonani;
+    set
+    {
+      if (Equals(value, _adresaKonani))
+      {
+        return;
+      }
+
+      _adresaKonani = value;
+      OnPropertyChanged();
+    }
+  }
 
   public DateTime DatumCas
   {
-    get;
-    set;
-  } = DateTime.Now;
+    get => _datumCas;
+    set
+    {
+      if (value.Equals(_datumCas))
+      {
+        return;
+      }
+
+      _datumCas = value;
+      OnPropertyChanged();
+    }
+  }
 
   public string NazevObce
   {
-    get;
-    set;
+    get => _nazevObce;
+    set
+    {
+      if (value == _nazevObce)
+      {
+        return;
+      }
+
+      _nazevObce = value;
+      OnPropertyChanged();
+    }
+  }
+
+  [JsonProperty("LogoObce")]
+  public byte[] LogoObceData
+  {
+    get
+    {
+      if (LogoObce == null)
+      {
+        return null;
+      }
+
+      byte[] data;
+      PngBitmapEncoder encoder = new PngBitmapEncoder();
+      encoder.Frames.Add(BitmapFrame.Create(LogoObce));
+
+      using (MemoryStream ms = new MemoryStream())
+      {
+        encoder.Save(ms);
+        return ms.ToArray();
+      }
+    }
+
+    set
+    {
+      if (value == null)
+      {
+        return;
+      }
+
+      using (var stream = new MemoryStream(value))
+      {
+        var bitmap = new BitmapImage();
+        bitmap.BeginInit();
+        bitmap.StreamSource = stream;
+        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+        bitmap.EndInit();
+        bitmap.Freeze();
+
+        LogoObce = bitmap;
+      }
+    }
+  }
+
+  [JsonIgnore]
+  public BitmapImage LogoObce
+  {
+    get => _logoObce;
+    set
+    {
+      if (Equals(value, _logoObce))
+      {
+        return;
+      }
+
+      _logoObce = value;
+      OnPropertyChanged();
+    }
   }
 
   public int PocetHostu
   {
-    get;
-    set;
+    get => _pocetHostu;
+    set
+    {
+      if (value == _pocetHostu)
+      {
+        return;
+      }
+
+      _pocetHostu = value;
+      OnPropertyChanged();
+    }
   }
 
   public int Poradi
   {
-    get;
-    set;
-  } = 1;
+    get => _poradi;
+    set
+    {
+      if (value == _poradi)
+      {
+        return;
+      }
+
+      _poradi = value;
+      OnPropertyChanged();
+    }
+  }
 
   public Program Program
   {
-    get;
-    set;
-  } = new Program();
+    get => _program;
+    set
+    {
+      if (Equals(value, _program))
+      {
+        return;
+      }
+
+      _program = value;
+      OnPropertyChanged();
+    }
+  }
 
   [JsonIgnore]
   public bool Spinave
   {
-    get;
-    set;
+    get => _spinave;
+    set
+    {
+      if (value == _spinave)
+      {
+        return;
+      }
+
+      _spinave = value;
+      OnPropertyChanged();
+    }
   }
 
+  [JsonProperty("Zastupitele", ItemIsReference = true, Order = -2)]
   public ObservableCollection<Zastupitel> Zastupitele
   {
-    get;
-    set;
-  } = new ObservableCollection<Zastupitel>();
+    get => _zastupitele;
+    set
+    {
+      if (Equals(value, _zastupitele))
+      {
+        return;
+      }
+
+      _zastupitele = value;
+      OnPropertyChanged();
+    }
+  }
 
   #endregion
 
@@ -139,7 +283,12 @@ public class Zasedani
 
   public void SaveToFile(string file)
   {
-    string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+    string json = JsonConvert.SerializeObject(this, new JsonSerializerSettings
+    {
+      DateTimeZoneHandling = DateTimeZoneHandling.Local,
+      DateFormatString = "yyyy-MM-ddThh:mm",
+      Formatting = Formatting.Indented
+    });
 
     File.WriteAllText(file, json, Encoding.UTF8);
   }

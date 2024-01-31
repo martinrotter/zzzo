@@ -20,6 +20,7 @@ public class Usneseni
     set;
   }
 
+  //[JsonProperty("VolbyZastupitelu", ItemIsReference = true)]
   public ObservableCollection<HlasovaniZastupitele> VolbyZastupitelu
   {
     get;

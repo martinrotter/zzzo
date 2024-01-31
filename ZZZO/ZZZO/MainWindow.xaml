@@ -7,14 +7,17 @@
         mc:Ignorable="d"
         xmlns:zzzoCcontrols="clr-namespace:ZZZO.Controls"
         Icon="Resources/AppIcon.png"
-        Title="{x:Static zzzoCommon:Constants+Names.AppLongName}" Height="800" Width="1200"
-        WindowStartupLocation="CenterScreen">
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-    <Menu Grid.Row="0">
+        Title="{x:Static zzzoCommon:Constants+Names.AppLongName}" Height="900" Width="1200"
+        WindowStartupLocation="CenterScreen"
+
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="{materialDesign:MaterialDesignFont}">
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
       <MenuItem Header="_Soubor">
         <MenuItem Header="_Nový" Click="NewZasedani" />
         <MenuItem Header="N_ačíst" Click="LoadZasedani" />
@@ -26,35 +29,20 @@
       </MenuItem>
     </Menu>
     <TabControl
-      Margin="0 20 0 0"
-      Grid.Row="1"
       Name="TcZasedani"
       IsEnabled="{Binding App.ZasedaniLoaded}"
       Padding="10 10 10 10"
-      TabStripPlacement="Left">
+      materialDesign:ColorZoneAssist.Mode="PrimaryLight"
+      HorizontalContentAlignment="Left"
+      Style="{StaticResource MaterialDesignFilledTabControl}">
       <TabControl.Resources>
-        <Style TargetType="{x:Type TextBlock}">
-          <Setter Property="Margin" Value="10 0 10 10" />
-          <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-        <Style TargetType="{x:Type Button}">
-          <Setter Property="Margin" Value="10" />
-        </Style>
-
-        <Style TargetType="{x:Type TextBox}">
-          <Setter Property="Margin" Value="10 0 10 10" />
-          <Setter Property="MinWidth" Value="250" />
-        </Style>
-
-        <Style TargetType="{x:Type ListView}">
-          <Setter Property="Margin" Value="10 0 10 10" />
-        </Style>
-
-        <Style TargetType="{x:Type CheckBox}">
-          <Setter Property="Margin" Value="10 0 10 10" />
-        </Style>
       </TabControl.Resources>
+
+<TabControl.ContentTemplate>
+  <DataTemplate>
+    <ScrollViewer Content="{Binding}"></ScrollViewer>
+  </DataTemplate>
+</TabControl.ContentTemplate>
 
       <TabItem
         Header="Základní informace">
@@ -69,5 +57,5 @@
         <zzzoCcontrols:Generator />
       </TabItem>
     </TabControl>
-  </Grid>
+  </DockPanel>
 </Window>

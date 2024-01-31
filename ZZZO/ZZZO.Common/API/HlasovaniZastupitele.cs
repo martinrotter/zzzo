@@ -56,6 +56,7 @@ public class HlasovaniZastupitele
     };
   }
 
+  [JsonProperty("Zastupitel", IsReference = true)]
   public Zastupitel Zastupitel
   {
     get;

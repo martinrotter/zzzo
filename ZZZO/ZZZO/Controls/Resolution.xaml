@@ -11,7 +11,7 @@
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
   </UserControl.Resources>
-  <Grid Background="DodgerBlue">
+  <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />
