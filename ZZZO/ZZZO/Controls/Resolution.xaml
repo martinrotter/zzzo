@@ -7,15 +7,17 @@
              xmlns:converters="clr-namespace:ZZZO.Converters"
              xmlns:extensions="clr-namespace:ZZZO.Extensions"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:api="clr-namespace:ZZZO.Common.API;assembly=ZZZO.Common"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    <converters:EnumConverter x:Key="EnumConverter" />
   </UserControl.Resources>
   <StackPanel Orientation="Vertical">
     <TextBox
       materialDesign:HintAssist.Hint="Text usnesení"
-      MinHeight="60" TextWrapping="Wrap" AcceptsReturn="True"
+      MinLines="4" TextWrapping="Wrap" AcceptsReturn="True"
       IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}"
       Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -26,8 +28,12 @@
       <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2" Height="250" CanUserDeleteRows="False"
                 IsSynchronizedWithCurrentItem="True"
-                CanUserReorderColumns="False" CanUserResizeColumns="False"
-                CanUserResizeRows="false" CanUserAddRows="False" AutoGenerateColumns="False"
+                CanUserReorderColumns="False"
+                CanUserResizeColumns="False"
+                CanUserSortColumns="False"
+                CanUserResizeRows="false"
+                CanUserAddRows="False"
+                AutoGenerateColumns="False"
                 ItemsSource="{Binding VolbyZastupitelu}"
                 extensions:DataGridExtensions.DefaultSorting="A:JmenoPrijmeniZastupitele">
         <DataGrid.RowStyle>
@@ -50,8 +56,15 @@
           <DataGridTemplateColumn Header="Volba" Width="Auto">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <ComboBox Padding="2" Margin="0" IsEnabled="{Binding Path=Zastupitel.JePritomen}" ItemsSource="{Binding Volby}"
-                          SelectedValue="{Binding Volba, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox Padding="2" Margin="0" IsEnabled="{Binding Path=Zastupitel.JePritomen}"
+                          ItemsSource="{Binding Volby}"
+                          SelectedValue="{Binding Volba, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding Converter={StaticResource EnumConverter}}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>

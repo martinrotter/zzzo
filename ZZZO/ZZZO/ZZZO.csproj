@@ -77,6 +77,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\EnumConverter.cs" />
+    <Compile Include="Converters\NotNullConverter.cs" />
     <Compile Include="Validation\RegexValidationRule.cs" />
     <Page Include="Controls\BasicCityInfo.xaml">
       <SubType>Designer</SubType>

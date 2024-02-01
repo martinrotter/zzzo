@@ -23,7 +23,7 @@
             <Setter Property="Margin" Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type TextBox}">
+          <Style BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}" TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="{StaticResource FormMargin}" />
           </Style>
 
@@ -35,7 +35,7 @@
             <Setter Property="Margin" Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource {x:Type GroupBox}}" TargetType="{x:Type GroupBox}">
+          <Style BasedOn="{StaticResource MaterialDesignCardGroupBox}" TargetType="{x:Type GroupBox}">
             <Setter Property="Margin" Value="{StaticResource FormMargin}" />
           </Style>
 

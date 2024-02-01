@@ -5,12 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ZZZO.Controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:ZZZO.Converters"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="500">
+  <UserControl.Resources>
+    <converters:NotNullConverter x:Key="NotNullConverter" />
+  </UserControl.Resources>
   <WrapPanel Orientation="Vertical">
     <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
              Text="{Binding Nadpis, UpdateSourceTrigger=PropertyChanged}" />
     <TextBox materialDesign:HintAssist.Hint="Doplňkový text bodu programu"
+             TextWrapping="Wrap" AcceptsReturn="True"
+             MinLines="4"
              Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
     <CheckBox Content="Tento bod se týká schvalování programu"
               IsChecked="{Binding SchvalovaniProgramu, UpdateSourceTrigger=PropertyChanged}" />
@@ -19,7 +25,7 @@
     <CheckBox Content="Doplněný bod programu" IsChecked="{Binding JeDoplneny, UpdateSourceTrigger=PropertyChanged}" />
     <WrapPanel Orientation="Horizontal">
       <Button Click="AddUsneseni">_Přidat nové usnesení</Button>
-      <Button Click="RemoveUsneseni">_Smazat vybrané usnesení</Button>
+      <Button IsEnabled="{Binding ElementName=CmbUsneseni, Path=SelectedValue, Converter={StaticResource NotNullConverter}}" Click="RemoveUsneseni">_Smazat vybrané usnesení</Button>
     </WrapPanel>
     <ComboBox IsSynchronizedWithCurrentItem="True" Name="CmbUsneseni" IsEnabled="{Binding ElementName=CmbUsneseni, Path=HasItems}"
               ItemsSource="{Binding Usneseni}">

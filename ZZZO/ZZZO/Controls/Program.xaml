@@ -19,28 +19,46 @@
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <ListView IsSynchronizedWithCurrentItem="True" Name="LvProgram" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <WrapPanel>
-            <TextBlock Text="{Binding Nadpis}" />
-          </WrapPanel>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
+    <GroupBox Header="Body programu" Grid.Row="0" Grid.Column="0">
+      <StackPanel Orientation="Vertical">
+        <ListView IsSynchronizedWithCurrentItem="True" SelectionChanged="LvProgram_OnSelectionChanged" Name="LvProgram"
+                  ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <WrapPanel>
+                <TextBlock Text="{Binding Nadpis}" />
+              </WrapPanel>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+        <WrapPanel Orientation="Horizontal">
+          <Button Click="AddProgramEntry" ToolTip="Přidat">
+            <materialDesign:PackIcon Kind="PlusCircle" />
+          </Button>
+          <Button Click="RemoveProgramEntry" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+                  ToolTip="Smazat">
+            <materialDesign:PackIcon Kind="MinusCircle" />
+          </Button>
+          <Button Click="MoveProgramEntryUp" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+                  ToolTip="Posunout nahoru">
+            <materialDesign:PackIcon Kind="ArrowUpCircle" />
+          </Button>
+          <Button Click="MoveProgramEntryDown" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+                  ToolTip="Posunout dolů">
+            <materialDesign:PackIcon Kind="ArrowDownCircle" />
+          </Button>
 
-    <local:ProgramEntry DataContext="{Binding ElementName=LvProgram, Path=SelectedValue}"
-                        IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}" Grid.Row="0"
-                        Grid.Column="1" />
+        </WrapPanel>
+      </StackPanel>
 
-    <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
-      <Button Click="AddProgramEntry">_Přidat</Button>
-      <Button Click="RemoveProgramEntry" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}">_Smazat</Button>
-      <Button Click="MoveProgramEntryUp" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}">Posunout _nahoru</Button>
-      <Button Click="MoveProgramEntryDown" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}">Posunout _dolu</Button>
-    </StackPanel>
+    </GroupBox>
+
+    <GroupBox Header="Detail bodu programu" Grid.Row="0" Grid.Column="1">
+      <local:ProgramEntry DataContext="{Binding ElementName=LvProgram, Path=SelectedValue}"
+                          IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}" Grid.Row="0"
+                          Grid.Column="1" />
+    </GroupBox>
   </Grid>
 </UserControl>

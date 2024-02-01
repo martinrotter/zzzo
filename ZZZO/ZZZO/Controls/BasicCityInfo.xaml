@@ -101,8 +101,13 @@
           </DataGrid>
 
           <StackPanel Orientation="Horizontal">
-            <Button Click="AddZastupitel">_Přidat</Button>
-            <Button Click="RemoveZastupitel" IsEnabled="{Binding ElementName=LvZastupitele, Path=SelectedItems.Count}">_Smazat</Button>
+            <Button Click="AddZastupitel" ToolTip="Přidat">
+              <materialDesign:PackIcon Kind="PlusCircle" />
+            </Button>
+            <Button Click="RemoveZastupitel" IsEnabled="{Binding ElementName=LvZastupitele, Path=SelectedItems.Count}"
+                    ToolTip="Smazat">
+              <materialDesign:PackIcon Kind="MinusCircle" />
+            </Button>
           </StackPanel>
         </StackPanel>
       </GroupBox>

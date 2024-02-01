@@ -39,6 +39,10 @@ namespace ZZZO.Controls
 
     private void RemoveUsneseni(object sender, RoutedEventArgs e)
     {
+      if (CmbUsneseni.SelectedValue is Usneseni usneseni)
+      {
+        BodProgramu.Usneseni.Remove(usneseni);
+      }
     }
 
     #endregion

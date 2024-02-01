@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace ZZZO.Common.API;
@@ -9,8 +10,13 @@ public class HlasovaniZastupitele
 
   public enum VolbaHlasovani
   {
+    [Description("Pro")]
     Pro,
+
+    [Description("Proti")]
     Proti,
+
+    [Description("Zdržuje se")]
     ZdrzujeSe
   }
 
