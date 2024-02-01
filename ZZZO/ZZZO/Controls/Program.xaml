@@ -22,7 +22,7 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <ListView Name="LvProgram" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
+    <ListView IsSynchronizedWithCurrentItem="True" Name="LvProgram" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
       <ListView.ItemTemplate>
         <DataTemplate>
           <WrapPanel>

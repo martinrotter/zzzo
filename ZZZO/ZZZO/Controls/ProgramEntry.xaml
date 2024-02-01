@@ -21,7 +21,7 @@
       <Button Click="AddUsneseni">_Přidat nové usnesení</Button>
       <Button Click="RemoveUsneseni">_Smazat vybrané usnesení</Button>
     </WrapPanel>
-    <ComboBox Name="CmbUsneseni" IsEnabled="{Binding ElementName=CmbUsneseni, Path=HasItems}"
+    <ComboBox IsSynchronizedWithCurrentItem="True" Name="CmbUsneseni" IsEnabled="{Binding ElementName=CmbUsneseni, Path=HasItems}"
               ItemsSource="{Binding Usneseni}">
       <ComboBox.ItemTemplate>
         <DataTemplate>

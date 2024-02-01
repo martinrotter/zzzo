@@ -25,12 +25,13 @@
     <GroupBox Header="Hlasování">
       <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2" Height="250" CanUserDeleteRows="False"
+                IsSynchronizedWithCurrentItem="True"
                 CanUserReorderColumns="False" CanUserResizeColumns="False"
                 CanUserResizeRows="false" CanUserAddRows="False" AutoGenerateColumns="False"
                 ItemsSource="{Binding VolbyZastupitelu}"
                 extensions:DataGridExtensions.DefaultSorting="A:JmenoPrijmeniZastupitele">
         <DataGrid.RowStyle>
-          <Style TargetType="{x:Type DataGridRow}">
+          <Style BasedOn="{StaticResource MaterialDesignDataGridRow}" TargetType="{x:Type DataGridRow}">
             <Setter Property="IsEnabled" Value="{Binding Zastupitel.JePritomen}" />
 
             <Style.Triggers>
@@ -49,7 +50,7 @@
           <DataGridTemplateColumn Header="Volba" Width="Auto">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <ComboBox Margin="0" IsEnabled="{Binding Path=Zastupitel.JePritomen}" ItemsSource="{Binding Volby}"
+                <ComboBox Padding="2" Margin="0" IsEnabled="{Binding Path=Zastupitel.JePritomen}" ItemsSource="{Binding Volby}"
                           SelectedValue="{Binding Volba, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>

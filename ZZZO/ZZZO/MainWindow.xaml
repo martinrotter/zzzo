@@ -32,8 +32,7 @@
     <TabControl
       Name="TcZasedani"
       IsEnabled="{Binding App.ZasedaniLoaded}"
-      Padding="10 10 10 10"
-      materialDesign:ColorZoneAssist.Mode="PrimaryLight"
+      Padding="10"
       HorizontalContentAlignment="Left"
       Style="{StaticResource MaterialDesignFilledTabControl}">
       <TabItem
