@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Windows;
 using Microsoft.Win32;
@@ -16,17 +17,14 @@ namespace ZZZO
       get;
       private set;
     }
-    public GeneratorHtml GeneratorHtml
-    {
-      get;
-      set;
-    } = new GeneratorHtml();
 
-    public GeneratorDocx GeneratorDocx
+    public List<Generator> Generators
     {
       get;
-      set;
-    } = new GeneratorDocx();
+    } = new List<Generator>
+    {
+      new GeneratorHtml()
+    };
 
     public Zasedani Zasedani
     {
@@ -47,6 +45,8 @@ namespace ZZZO
     {
       Current = this;
 
+      CultureInfo.CurrentCulture = new CultureInfo("cs-CZ");
+      CultureInfo.CurrentUICulture = new CultureInfo("cs-CZ");
       CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("cs-CZ");
       Thread.CurrentThread.CurrentCulture = new CultureInfo("cs-CZ");
       Thread.CurrentThread.CurrentUICulture = new CultureInfo("cs-CZ");

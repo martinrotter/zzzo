@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Net.Mime;
 using System.Text;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 
@@ -11,15 +9,20 @@ namespace ZZZO.Common.API;
 
 public class Zasedani : ObservableObject
 {
+  #region Proměnné
+
   private Adresa _adresaKonani = new Adresa();
   private DateTime _datumCas = DateTime.Now;
-  private string _nazevObce;
   private BitmapImage _logoObce;
+  private string _nazevObce;
   private int _pocetHostu;
   private int _poradi = 1;
   private Program _program = new Program();
   private bool _spinave;
+  private string _vystupniSoubor;
   private ObservableCollection<Zastupitel> _zastupitele = new ObservableCollection<Zastupitel>();
+
+  #endregion
 
   #region Vlastnosti
 
@@ -38,6 +41,12 @@ public class Zasedani : ObservableObject
     }
   }
 
+  public DateTime CasKonani
+  {
+    get => DatumCas;
+    set => DatumCas = new DateTime(DatumCas.Year, DatumCas.Month, DatumCas.Day, value.Hour, value.Minute, value.Second);
+  }
+
   public DateTime DatumCas
   {
     get => _datumCas;
@@ -53,17 +62,24 @@ public class Zasedani : ObservableObject
     }
   }
 
-  public string NazevObce
+  public DateTime DatumKonani
   {
-    get => _nazevObce;
+    get => DatumCas;
+    set => DatumCas = new DateTime(value.Year, value.Month, value.Day, DatumCas.Hour, DatumCas.Minute, DatumCas.Second);
+  }
+
+  [JsonIgnore]
+  public BitmapImage LogoObce
+  {
+    get => _logoObce;
     set
     {
-      if (value == _nazevObce)
+      if (Equals(value, _logoObce))
       {
         return;
       }
 
-      _nazevObce = value;
+      _logoObce = value;
       OnPropertyChanged();
     }
   }
@@ -96,9 +112,9 @@ public class Zasedani : ObservableObject
         return;
       }
 
-      using (var stream = new MemoryStream(value))
+      using (MemoryStream stream = new MemoryStream(value))
       {
-        var bitmap = new BitmapImage();
+        BitmapImage bitmap = new BitmapImage();
         bitmap.BeginInit();
         bitmap.StreamSource = stream;
         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -110,18 +126,17 @@ public class Zasedani : ObservableObject
     }
   }
 
-  [JsonIgnore]
-  public BitmapImage LogoObce
+  public string NazevObce
   {
-    get => _logoObce;
+    get => _nazevObce;
     set
     {
-      if (Equals(value, _logoObce))
+      if (value == _nazevObce)
       {
         return;
       }
 
-      _logoObce = value;
+      _nazevObce = value;
       OnPropertyChanged();
     }
   }
@@ -183,6 +198,21 @@ public class Zasedani : ObservableObject
       }
 
       _spinave = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public string VystupniSoubor
+  {
+    get => _vystupniSoubor;
+    set
+    {
+      if (value == _vystupniSoubor)
+      {
+        return;
+      }
+
+      _vystupniSoubor = value;
       OnPropertyChanged();
     }
   }

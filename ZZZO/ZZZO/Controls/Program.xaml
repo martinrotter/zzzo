@@ -14,24 +14,24 @@
              d:DesignHeight="600" d:DesignWidth="900">
   <Grid>
     <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="3*" />
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <ListView Background="Lime" Name="LvProgram" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
+    <ListView Name="LvProgram" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
       <ListView.ItemTemplate>
         <DataTemplate>
           <WrapPanel>
-            <TextBlock Background="Blue" Text="{Binding Nadpis}" />
+            <TextBlock Text="{Binding Nadpis}" />
           </WrapPanel>
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-    
+
     <local:ProgramEntry DataContext="{Binding ElementName=LvProgram, Path=SelectedValue}"
                         IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}" Grid.Row="0"
                         Grid.Column="1" />

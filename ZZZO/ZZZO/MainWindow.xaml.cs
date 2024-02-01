@@ -51,6 +51,7 @@ namespace ZZZO
         JeZapisovatel = true,
         JePritomen = true
       });
+
       zas.AddZastupitel(new Zastupitel
       {
         Prijmeni = "csacsa",
@@ -60,6 +61,7 @@ namespace ZZZO
         JeRidici = true,
         JePritomen = true
       });
+
       zas.AddZastupitel(new Zastupitel
       {
         Prijmeni = "csacsa",
@@ -68,6 +70,7 @@ namespace ZZZO
         JeStarosta = false,
         JePritomen = true
       });
+
       zas.AddZastupitel(new Zastupitel
       {
         Prijmeni = "csacsa",
@@ -76,6 +79,7 @@ namespace ZZZO
         JeStarosta = false,
         JePritomen = true
       });
+
       zas.AddZastupitel(new Zastupitel
       {
         Prijmeni = "csacsa",
@@ -84,6 +88,7 @@ namespace ZZZO
         JeStarosta = false,
         JePritomen = true
       });
+
       zas.AddZastupitel(new Zastupitel
       {
         Prijmeni = "csacsa",
@@ -112,20 +117,24 @@ namespace ZZZO
       {
         Nadpis = "První"
       });
+
       zas.Program.BodyProgramu.Add(new BodProgramu
       {
         Nadpis = "Druhy",
         JePodbod = true
       });
+
       zas.Program.BodyProgramu.Add(new BodProgramu
       {
         Nadpis = "Treti",
         JePodbod = true
       });
+
       zas.Program.BodyProgramu.Add(new BodProgramu
       {
         Nadpis = "Ctvrty"
       });
+
       zas.Program.BodyProgramu.Add(new BodProgramu
       {
         Nadpis = "Paty",

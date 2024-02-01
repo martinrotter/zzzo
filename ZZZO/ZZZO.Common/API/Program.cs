@@ -2,15 +2,30 @@
 
 namespace ZZZO.Common.API
 {
-  public class Program
+  public class Program : ObservableObject
   {
+    #region Proměnné
+
+    private ObservableCollection<BodProgramu> _bodyProgramu = new ObservableCollection<BodProgramu>();
+
+    #endregion
+
     #region Vlastnosti
 
     public ObservableCollection<BodProgramu> BodyProgramu
     {
-      get;
-      set;
-    } = new ObservableCollection<BodProgramu>();
+      get => _bodyProgramu;
+      set
+      {
+        if (Equals(value, _bodyProgramu))
+        {
+          return;
+        }
+
+        _bodyProgramu = value;
+        OnPropertyChanged();
+      }
+    }
 
     #endregion
   }

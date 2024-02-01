@@ -11,13 +11,14 @@
         WindowStartupLocation="CenterScreen"
 
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:converters="clr-namespace:ZZZO.Converters"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}">
   <DockPanel>
-    <Menu DockPanel.Dock="Top">
+    <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="25" DockPanel.Dock="Top">
       <MenuItem Header="_Soubor">
         <MenuItem Header="_Nový" Click="NewZasedani" />
         <MenuItem Header="N_ačíst" Click="LoadZasedani" />
@@ -35,15 +36,6 @@
       materialDesign:ColorZoneAssist.Mode="PrimaryLight"
       HorizontalContentAlignment="Left"
       Style="{StaticResource MaterialDesignFilledTabControl}">
-      <TabControl.Resources>
-      </TabControl.Resources>
-
-<TabControl.ContentTemplate>
-  <DataTemplate>
-    <ScrollViewer Content="{Binding}"></ScrollViewer>
-  </DataTemplate>
-</TabControl.ContentTemplate>
-
       <TabItem
         Header="Základní informace">
         <zzzoCcontrols:BasicCityInfo />

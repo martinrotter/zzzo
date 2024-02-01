@@ -12,6 +12,11 @@ namespace ZZZO.Common.Generators
       get => "docx";
     }
 
+    public override string Title
+    {
+      get => "DocX";
+    }
+
     #endregion
 
     #region Metody

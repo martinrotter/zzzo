@@ -34,6 +34,11 @@ namespace ZZZO.Common.Generators
       }
     }
 
+    public abstract string Title
+    {
+      get;
+    }
+
     #endregion
 
     #region Metody

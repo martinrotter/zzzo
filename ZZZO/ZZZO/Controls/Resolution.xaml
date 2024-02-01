@@ -6,33 +6,26 @@
              xmlns:local="clr-namespace:ZZZO.Controls"
              xmlns:converters="clr-namespace:ZZZO.Converters"
              xmlns:extensions="clr-namespace:ZZZO.Extensions"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
   </UserControl.Resources>
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
+  <StackPanel Orientation="Vertical">
+    <TextBox
+      materialDesign:HintAssist.Hint="Text usnesení"
+      MinHeight="60" TextWrapping="Wrap" AcceptsReturn="True"
+      IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}"
+      Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
 
-    <TextBlock Grid.Row="0" Grid.Column="0">Text</TextBlock>
-    <TextBox MinHeight="60" TextWrapping="Wrap" AcceptsReturn="True" Grid.Row="0"
-             IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}"
-             Grid.Column="1" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-
-    <TextBlock Grid.Row="1" Grid.Column="0">ZO bere na vědomí</TextBlock>
-    <CheckBox Name="CbBereNaVedomi" Grid.Row="1" Grid.Column="1"
+    <CheckBox Name="CbBereNaVedomi" Content="ZO bere na vědomí"
               IsChecked="{Binding ZoBereNaVedomi, UpdateSourceTrigger=PropertyChanged}" />
 
-    <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Hlasování">
-      <DataGrid CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False"
+    <GroupBox Header="Hlasování">
+      <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
+                materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2" Height="250" CanUserDeleteRows="False"
+                CanUserReorderColumns="False" CanUserResizeColumns="False"
                 CanUserResizeRows="false" CanUserAddRows="False" AutoGenerateColumns="False"
                 ItemsSource="{Binding VolbyZastupitelu}"
                 extensions:DataGridExtensions.DefaultSorting="A:JmenoPrijmeniZastupitele">
@@ -51,18 +44,19 @@
         </DataGrid.RowStyle>
 
         <DataGrid.Columns>
-          <DataGridTextColumn IsReadOnly="True" Header="Zastupitel" Binding="{Binding JmenoPrijmeniZastupitele}" />
-          <DataGridTemplateColumn Header="Volba">
+          <DataGridTextColumn IsReadOnly="True" Width="Auto" Header="Zastupitel"
+                              Binding="{Binding JmenoPrijmeniZastupitele}" />
+          <DataGridTemplateColumn Header="Volba" Width="Auto">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <ComboBox IsEnabled="{Binding Path=Zastupitel.JePritomen}" ItemsSource="{Binding Volby}"
+                <ComboBox Margin="0" IsEnabled="{Binding Path=Zastupitel.JePritomen}" ItemsSource="{Binding Volby}"
                           SelectedValue="{Binding Volba, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTextColumn IsReadOnly="True" Width="*" Header="Poznámka" Binding="{Binding Poznamka}" />
+          <DataGridTextColumn IsReadOnly="True" Width="Auto" Header="Poznámka" Binding="{Binding Poznamka}" />
         </DataGrid.Columns>
       </DataGrid>
     </GroupBox>
-  </Grid>
+  </StackPanel>
 </UserControl>

@@ -17,6 +17,11 @@ namespace ZZZO.Converters
         throw new InvalidOperationException("The target must be a boolean");
       }
 
+      if (value is double d)
+      {
+        return d == 0.0;
+      }
+
       return !(bool)value;
     }
 

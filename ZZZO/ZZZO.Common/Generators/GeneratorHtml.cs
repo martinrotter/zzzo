@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Configuration;
 using System.Text;
 using System.Xml;
 using ZZZO.Common.API;
@@ -45,13 +44,18 @@ namespace ZZZO.Common.Generators
       get => "html";
     }
 
+    public override string Title
+    {
+      get => "HTML";
+    }
+
     #endregion
 
     #region Metody
 
     protected override byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress)
     {
-      progress.Report(0);
+      progress.Report(1);
 
       XmlDocument html = new XmlDocument();
       XmlElement html_elem = html.CreateElement("html");
@@ -60,6 +64,8 @@ namespace ZZZO.Common.Generators
 
       GenerateHeader(html_elem, zas, progress);
       GenerateBody(html_elem, zas, progress);
+
+      progress.Report(100);
 
       return DumpXmlToHtml(html);
     }
@@ -84,6 +90,11 @@ namespace ZZZO.Common.Generators
       IEnumerable<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => !prog.SchvalovaniProgramu);
 
       XmlElement body = html.AppendElem("body");
+
+      if (zas.LogoObce != null)
+      {
+        body.AppendElem("img").AppendClass("logo").SetAttr("src", $"data:image/png;base64,{Convert.ToBase64String(zas.LogoObceData)}");
+      }
 
       body.AppendElem("h1").InnerText = $"Zápis z {zas.Poradi}. zasedání zastupitelstva obce " +
                                         $"{zas.NazevObce} konaného dne {zas.DatumCas:d. M. yyyy}";
@@ -119,6 +130,8 @@ namespace ZZZO.Common.Generators
       body.AppendElem("p").InnerText =
         $"Zasedání ZO řídil pan {ridici.Jmeno} {ridici.Prijmeni}.";
 
+      progress.Report(30);
+
       ///
       /// Určení ověřovatelů atd.
       /// 
@@ -129,6 +142,8 @@ namespace ZZZO.Common.Generators
         $"{zapisovatel.Jmeno} {zapisovatel.Prijmeni} a ověřovateli zápisu jsou {string.Join(
           " a ",
           overovatele.Select(over => over.Jmeno + " " + over.Prijmeni))}.";
+
+      progress.Report(40);
 
       ///
       /// Program a jeho schvalování.
@@ -142,6 +157,8 @@ namespace ZZZO.Common.Generators
                                        "jsou veřejná a zastupitelé hlasují zdvižením ruky.";
 
       GenerateResolution(body, zas, schvaleniProgramu, schvaleniProgramu.Usneseni.First(), orderOfResolutions, "Hlasování o návrhu programu");
+
+      progress.Report(50);
 
       ///
       /// Kontrola zápisu.
@@ -182,6 +199,8 @@ namespace ZZZO.Common.Generators
       body.AppendElem("hr");
       body.AppendElem("p").InnerText = $"Celkem bylo přijato {acceptedResolutions.Count} usnesení.";
 
+      progress.Report(80);
+
       ///
       /// Podpisy.
       ///
@@ -201,16 +220,14 @@ namespace ZZZO.Common.Generators
     {
       XmlElement head = html.AppendElem("head");
 
-      // Fill styles.
       head.AppendElem("style").InnerText = Resources.style_css;
-
-      progress.Report(10);
-
       head.AppendElem("meta").SetAttr("charset", "UTF-8");
       head.AppendElem("meta").SetAttr("name", "viewport").SetAttr("content", "width=device-width, initial-scale=1.0");
 
       head.AppendElem("title").InnerText = $"Zápis z {zas.Poradi}. zasedání zastupitelstva obce " +
                                            $"{zas.NazevObce} konaného dne {zas.DatumCas:d. M. yyyy}";
+
+      progress.Report(10);
     }
 
     private void GenerateProgramEntries(XmlElement body, IEnumerable<BodProgramu> bodyProgramu)
@@ -270,7 +287,7 @@ namespace ZZZO.Common.Generators
       string choiceForStr = choiceFor.Count() + (choiceFor.Any() ? $" ({string.Join(", ", choiceFor.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})" : string.Empty);
       string choiceAgainstStr = choiceAgainst.Count() + (choiceAgainst.Any() ? $" ({string.Join(", ", choiceAgainst.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})" : string.Empty);
       string choiceDontKnowStr = choiceDontKnow.Count() + (choiceDontKnow.Any() ? $" ({string.Join(", ", choiceDontKnow.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})" : string.Empty);
-      bool accepted = choiceFor.Count() > (zas.Zastupitele.Count / 2);
+      bool accepted = choiceFor.Count() > zas.Zastupitele.Count / 2;
 
       XmlElement div = body.AppendElem("div").AppendClass("resolution").AppendClass(accepted ? "success" : "failure");
 

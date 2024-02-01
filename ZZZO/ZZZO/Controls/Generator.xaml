@@ -10,15 +10,26 @@
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
   </UserControl.Resources>
+
   <WrapPanel>
-    <Button IsEnabled="{Binding App.GeneratorDocx.IsGenerating, Converter={StaticResource InverseBooleanConverter}}"
-            Click="GenerateDocx">
-      Vygenerovat DOCX!
-    </Button>
-    <Button IsEnabled="{Binding App.GeneratorHtml.IsGenerating, Converter={StaticResource InverseBooleanConverter}}"
-            Click="GenerateHtml">
-      Vygenerovat HTML!
-    </Button>
-    <ProgressBar Name="PbGenerator" MinWidth="150" Minimum="0" Maximum="100" />
+    <GroupBox Header="Zvolte výstupní formát">
+      <ItemsControl ItemsSource="{Binding App.Generators}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Button
+              IsEnabled="{Binding ElementName=PbGenerator, Path=Value, Converter={StaticResource InverseBooleanConverter}}"
+              Content="{Binding Title}" Click="GenerateDocument" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Vertical" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+      </ItemsControl>
+    </GroupBox>
+
+    <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Name="PbGenerator" Width="40" Height="40"
+                 Minimum="0" Maximum="100" Value="0" />
   </WrapPanel>
 </UserControl>

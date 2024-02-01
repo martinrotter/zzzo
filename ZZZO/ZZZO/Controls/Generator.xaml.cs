@@ -23,17 +23,6 @@ namespace ZZZO.Controls
 
     #region Metody
 
-    private async void Generate(Common.Generators.Generator generator)
-    {
-      Progress<int> prog = new Progress<int>(progress => { PbGenerator.Value = progress; });
-
-      Task<byte[]> tsk = generator.Generate(App.Current.Zasedani, prog);
-
-      await tsk;
-
-      Generated(generator, tsk.Result);
-    }
-
     private void Generated(Common.Generators.Generator generator, byte[] docxData)
     {
       SaveFileDialog d = new SaveFileDialog();
@@ -46,18 +35,29 @@ namespace ZZZO.Controls
 
       if (d.ShowDialog().GetValueOrDefault())
       {
+        App.Current.Zasedani.VystupniSoubor = d.FileName;
+
         File.WriteAllBytes(d.FileName, docxData);
       }
     }
 
-    private async void GenerateDocx(object sender, RoutedEventArgs e)
+    private void GenerateDocument(object sender, RoutedEventArgs e)
     {
-      Generate(App.Current.GeneratorDocx);
+      Common.Generators.Generator generator = ((Button)e.Source).DataContext as Common.Generators.Generator;
+
+      GenerateWithGenerator(generator);
     }
 
-    private void GenerateHtml(object sender, RoutedEventArgs e)
+    private async void GenerateWithGenerator(Common.Generators.Generator generator)
     {
-      Generate(App.Current.GeneratorHtml);
+      IProgress<int> prog = new Progress<int>(progress => { PbGenerator.Value = progress; });
+
+      Task<byte[]> tsk = generator.Generate(App.Current.Zasedani, prog);
+
+      await tsk;
+
+      prog.Report(0);
+      Generated(generator, tsk.Result);
     }
 
     #endregion

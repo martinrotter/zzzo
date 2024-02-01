@@ -4,8 +4,16 @@ using Newtonsoft.Json;
 
 namespace ZZZO.Common.API;
 
-public class Usneseni
+public class Usneseni : ObservableObject
 {
+  #region Proměnné
+
+  private string _text;
+  private ObservableCollection<HlasovaniZastupitele> _volbyZastupitelu = new ObservableCollection<HlasovaniZastupitele>();
+  private bool _zoBereNaVedomi;
+
+  #endregion
+
   #region Vlastnosti
 
   [JsonIgnore]
@@ -16,27 +24,58 @@ public class Usneseni
 
   public string Text
   {
-    get;
-    set;
+    get => _text;
+    set
+    {
+      if (value == _text)
+      {
+        return;
+      }
+
+      _text = value;
+      OnPropertyChanged();
+    }
   }
 
   //[JsonProperty("VolbyZastupitelu", ItemIsReference = true)]
   public ObservableCollection<HlasovaniZastupitele> VolbyZastupitelu
   {
-    get;
-    set;
-  } = new ObservableCollection<HlasovaniZastupitele>();
+    get => _volbyZastupitelu;
+    set
+    {
+      if (Equals(value, _volbyZastupitelu))
+      {
+        return;
+      }
+
+      _volbyZastupitelu = value;
+      OnPropertyChanged();
+    }
+  }
 
   public bool ZoBereNaVedomi
   {
-    get;
-    set;
+    get => _zoBereNaVedomi;
+    set
+    {
+      if (value == _zoBereNaVedomi)
+      {
+        return;
+      }
+
+      _zoBereNaVedomi = value;
+      OnPropertyChanged();
+    }
   }
 
   #endregion
+
+  #region Metody
 
   public string GenerateTitle(int order, Zasedani zas)
   {
     return $"Č. {order}-{zas.DatumCas.Month}/{zas.DatumCas.Year} - {Text}";
   }
+
+  #endregion
 }

@@ -6,16 +6,52 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <materialDesign:BundledTheme BaseTheme="Inherit"
+        <materialDesign:BundledTheme BaseTheme="Light"
                                      ColorAdjustment="{materialDesign:ColorAdjustment}"
                                      PrimaryColor="DeepPurple"
                                      SecondaryColor="Lime" />
-
         <ResourceDictionary
           Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
         <ResourceDictionary
-          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.Light.xaml" />
+          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+        <ResourceDictionary
+          Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
 
+        <ResourceDictionary>
+          <Thickness x:Key="FormMargin">9,9,9,9</Thickness>
+
+          <Style BasedOn="{StaticResource MaterialDesignRaisedLightButton}" TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}" TargetType="{x:Type TextBox}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignDatePicker}" TargetType="{x:Type DatePicker}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignTimePicker}" TargetType="{x:Type materialDesign:TimePicker}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignGroupBox}" TargetType="{x:Type GroupBox}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignComboBox}" TargetType="{x:Type ComboBox}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="{x:Type CheckBox}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style TargetType="{x:Type Image}">
+            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          </Style>
+        </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

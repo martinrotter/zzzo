@@ -1,9 +1,9 @@
-﻿using System.Configuration;
+﻿using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Markup;
 using Microsoft.Win32;
 using ZZZO.Common.API;
 
@@ -19,6 +19,8 @@ namespace ZZZO.Controls
     public BasicCityInfo()
     {
       InitializeComponent();
+
+      DpDenKonani.Language = XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
     }
 
     #endregion
@@ -50,8 +52,6 @@ namespace ZZZO.Controls
       }
     }
 
-    #endregion
-
     private void UpdateVillageLogo(object sender, RoutedEventArgs e)
     {
       OpenFileDialog d = new OpenFileDialog();
@@ -66,5 +66,7 @@ namespace ZZZO.Controls
         App.Current.Zasedani.LogoObceData = File.ReadAllBytes(d.FileName);
       }
     }
+
+    #endregion
   }
 }
