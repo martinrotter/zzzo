@@ -9,6 +9,7 @@ public class BodProgramu : ObservableObject
   private bool _jeDoplneny;
   private bool _jePodbod;
   private string _nadpis;
+  private string _nadpisPoradi;
   private bool _schvalovaniProgramu;
   private string _text;
   private ObservableCollection<Usneseni> _usneseni = new ObservableCollection<Usneseni>();
@@ -58,6 +59,21 @@ public class BodProgramu : ObservableObject
       }
 
       _nadpis = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public string NadpisPoradi
+  {
+    get => _nadpisPoradi;
+    set
+    {
+      if (value == _nadpisPoradi)
+      {
+        return;
+      }
+
+      _nadpisPoradi = value;
       OnPropertyChanged();
     }
   }

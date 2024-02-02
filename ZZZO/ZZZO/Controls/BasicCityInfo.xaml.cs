@@ -58,7 +58,7 @@ namespace ZZZO.Controls
 
       d.AddExtension = true;
       d.CheckPathExists = true;
-      d.Filter = "Obrázky (PNG, JPG)|*.png;*.jpg;*.jpeg";
+      d.Filter = "Obrázky (BMP, PNG, JPG)|*.bmp;*.png;*.jpg;*.jpeg";
       d.Title = "Zvolte lokaci pro načtení loga ze souboru";
 
       if (d.ShowDialog().GetValueOrDefault())

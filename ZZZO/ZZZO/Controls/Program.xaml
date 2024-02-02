@@ -14,16 +14,20 @@
              d:DesignHeight="600" d:DesignWidth="900">
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="2*" />
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
     <GroupBox Header="Body programu" Grid.Row="0" Grid.Column="0">
-      <StackPanel Orientation="Vertical">
-        <ListView IsSynchronizedWithCurrentItem="True" SelectionChanged="LvProgram_OnSelectionChanged" Name="LvProgram"
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ListView IsSynchronizedWithCurrentItem="True" Name="LvProgram"
                   ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
           <ListView.ItemTemplate>
             <DataTemplate>
@@ -33,7 +37,7 @@
             </DataTemplate>
           </ListView.ItemTemplate>
         </ListView>
-        <WrapPanel Orientation="Horizontal">
+        <WrapPanel Grid.Row="1" DockPanel.Dock="Bottom" Orientation="Horizontal">
           <Button Click="AddProgramEntry" ToolTip="Přidat">
             <materialDesign:PackIcon Kind="PlusCircle" />
           </Button>
@@ -49,9 +53,8 @@
                   ToolTip="Posunout dolů">
             <materialDesign:PackIcon Kind="ArrowDownCircle" />
           </Button>
-
         </WrapPanel>
-      </StackPanel>
+      </Grid>
 
     </GroupBox>
 

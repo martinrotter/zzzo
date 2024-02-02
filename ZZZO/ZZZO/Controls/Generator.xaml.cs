@@ -32,11 +32,15 @@ namespace ZZZO.Controls
       d.CheckPathExists = true;
       d.Filter = $@"{generator.FileSuffix.ToUpper()} soubory (*.{generator.FileSuffix})|*.{generator.FileSuffix}";
       d.Title = $"Zvolte lokaci pro uložení zápisu zasedání do {generator.FileSuffix.ToUpper()} souboru";
+      
+      if (!string.IsNullOrWhiteSpace(App.Current.Zasedani.VystupniSoubor))
+      {
+        d.FileName = App.Current.Zasedani.VystupniSoubor;
+      }
 
       if (d.ShowDialog().GetValueOrDefault())
       {
         App.Current.Zasedani.VystupniSoubor = d.FileName;
-
         File.WriteAllBytes(d.FileName, docxData);
       }
     }

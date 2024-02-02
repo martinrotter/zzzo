@@ -64,9 +64,5 @@ namespace ZZZO.Controls
     }
 
     #endregion
-
-    private void LvProgram_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-    }
   }
 }

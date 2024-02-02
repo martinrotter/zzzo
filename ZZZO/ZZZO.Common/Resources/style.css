@@ -7,6 +7,7 @@ body {
 
 ol {
   list-style: none;
+  padding-left: 1.5em;
 }
 
 img {
@@ -20,27 +21,43 @@ img {
   margin-right: auto;
 }
 
+.signature-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
 .signature {
-  margin-top: 40px;
+  box-sizing: border-box;
+  padding-top: 60px;
+  text-align: center;
+}
+
+.signature > hr {
+  width: 85%;
 }
 
 .resolution {
   break-inside: avoid-page;
   border-radius: 10px;
-  width: 80%;
+  border-style: solid;
+  border-width: 3px;
+  width: 70%;
   padding: 0px 10px;
   print-color-adjust: exact;
   margin: auto;
 }
 
 .success {
-  background-color: rgb(186, 238, 186);
-  border: 1px solid rgb(186, 238, 186);
+  border-color: limegreen;
 }
 
 .failure {
-  background-color: rgb(250, 213, 198);
-  border: 1px solid rgb(250, 213, 198);
+  border-color: red;
+}
+
+.text-center {
+  text-align: center;
 }
 
 /* Targets all the pages */

@@ -39,21 +39,38 @@
       <Button VerticalAlignment="Center" Click="UpdateVillageLogo">Nastavit znak obce</Button>
     </WrapPanel>
 
-    <TextBox
-      ToolTip="Pořadí ZO. Zadejte číslo - o kolikáte zasedání se jedná. Bez tečky."
-      materialDesign:ValidationAssist.UsePopup="True"
-      materialDesign:HintAssist.Hint="Pořadí ZO"
-      Width="100" HorizontalAlignment="Left">
-      <TextBox.Text>
-        <Binding
-          Path="Zasedani.Poradi"
-          UpdateSourceTrigger="PropertyChanged">
-          <Binding.ValidationRules>
-            <validation:RegexValidationRule RegularExpression="\d{1,3}" ValidatesOnTargetUpdated="True" />
-          </Binding.ValidationRules>
-        </Binding>
-      </TextBox.Text>
-    </TextBox>
+    <WrapPanel Margin="0">
+      <TextBox
+        ToolTip="Pořadí ZO. Zadejte číslo - o kolikáte zasedání se jedná. Bez tečky."
+        materialDesign:ValidationAssist.UsePopup="True"
+        materialDesign:HintAssist.Hint="Pořadí ZO"
+        Width="100" HorizontalAlignment="Left">
+        <TextBox.Text>
+          <Binding
+            Path="Zasedani.Poradi"
+            UpdateSourceTrigger="PropertyChanged">
+            <Binding.ValidationRules>
+              <validation:RegexValidationRule RegularExpression="\d{1,3}" ValidatesOnTargetUpdated="True" />
+            </Binding.ValidationRules>
+          </Binding>
+        </TextBox.Text>
+      </TextBox>
+
+      <TextBox
+        materialDesign:ValidationAssist.UsePopup="True"
+        materialDesign:HintAssist.Hint="Počet hostů"
+        Width="100" HorizontalAlignment="Left">
+        <TextBox.Text>
+          <Binding
+            Path="Zasedani.PocetHostu"
+            UpdateSourceTrigger="PropertyChanged">
+            <Binding.ValidationRules>
+              <validation:RegexValidationRule RegularExpression="\d{1,3}" ValidatesOnTargetUpdated="True" />
+            </Binding.ValidationRules>
+          </Binding>
+        </TextBox.Text>
+      </TextBox>
+    </WrapPanel>
 
     <StackPanel Orientation="Horizontal">
       <GroupBox Header="Adresa konání">
@@ -66,7 +83,7 @@
                    Text="{Binding Zasedani.AdresaKonani.Obec, UpdateSourceTrigger=PropertyChanged}" />
           <TextBox materialDesign:HintAssist.Hint="PSČ"
                    Text="{Binding Zasedani.AdresaKonani.Psc, UpdateSourceTrigger=PropertyChanged}" />
-          <TextBox materialDesign:HintAssist.Hint="Popis místa"
+          <TextBox materialDesign:HintAssist.Hint="Popis místa (uvádějte v 6. pádu)"
                    Text="{Binding Zasedani.AdresaKonani.PopisMista, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
       </GroupBox>
@@ -87,16 +104,17 @@
                     CanUserResizeRows="False"
                     AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
                     CanUserDeleteRows="False"
-                    KeyUp="KeyPressedInListOfZastupitele" Name="LvZastupitele"
+                    KeyUp="KeyPressedInListOfZastupitele"
+                    Name="LvZastupitele"
                     ItemsSource="{Binding Zasedani.Zastupitele}">
             <DataGrid.Columns>
-              <DataGridTextColumn Header="Jméno" Width="Auto" Binding="{Binding Jmeno}" />
-              <DataGridTextColumn Header="Příjmení" Width="Auto" Binding="{Binding Prijmeni}" />
-              <DataGridCheckBoxColumn Header="Přítomen" Width="Auto" Binding="{Binding JePritomen}" />
-              <DataGridCheckBoxColumn Header="Řídící" Width="Auto" Binding="{Binding JeRidici}" />
-              <DataGridCheckBoxColumn Header="Zapisovatel" Width="Auto" Binding="{Binding JeZapisovatel}" />
-              <DataGridCheckBoxColumn Header="Ověřovatel" Width="Auto" Binding="{Binding JeOverovatel}" />
-              <DataGridCheckBoxColumn Header="Starosta" Width="Auto" Binding="{Binding JeStarosta}" />
+              <DataGridTextColumn Header="Jméno" Width="Auto" Binding="{Binding Jmeno, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridTextColumn Header="Příjmení" Width="Auto" Binding="{Binding Prijmeni, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Přítomen" Width="Auto" Binding="{Binding JePritomen, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Řídící" Width="Auto" Binding="{Binding JeRidici, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Zapisovatel" Width="Auto" Binding="{Binding JeZapisovatel, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Ověřovatel" Width="Auto" Binding="{Binding JeOverovatel, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Starosta" Width="Auto" Binding="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
             </DataGrid.Columns>
           </DataGrid>
 
