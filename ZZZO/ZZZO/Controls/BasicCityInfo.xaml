@@ -75,16 +75,51 @@
     <StackPanel Orientation="Horizontal">
       <GroupBox Header="Adresa konání">
         <StackPanel MinWidth="200" Orientation="Vertical">
-          <TextBox materialDesign:HintAssist.Hint="Ulice"
-                   Text="{Binding Zasedani.AdresaKonani.Ulice, UpdateSourceTrigger=PropertyChanged}" />
-          <TextBox materialDesign:HintAssist.Hint="Číslo popisné"
-                   Text="{Binding Zasedani.AdresaKonani.CisloPopisneOrientacni, UpdateSourceTrigger=PropertyChanged}" />
-          <TextBox materialDesign:HintAssist.Hint="Obec"
-                   Text="{Binding Zasedani.AdresaKonani.Obec, UpdateSourceTrigger=PropertyChanged}" />
-          <TextBox materialDesign:HintAssist.Hint="PSČ"
-                   Text="{Binding Zasedani.AdresaKonani.Psc, UpdateSourceTrigger=PropertyChanged}" />
-          <TextBox materialDesign:HintAssist.Hint="Popis místa (uvádějte v 6. pádu)"
-                   Text="{Binding Zasedani.AdresaKonani.PopisMista, UpdateSourceTrigger=PropertyChanged}" />
+          <TextBox materialDesign:HintAssist.Hint="Ulice">
+            <TextBox.Text>
+              <Binding Path="Zasedani.AdresaKonani.Ulice" UpdateSourceTrigger="PropertyChanged">
+                <Binding.ValidationRules>
+                  <validation:RegexValidationRule RegularExpression=".+" ValidatesOnTargetUpdated="True" />
+                </Binding.ValidationRules>
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
+          <TextBox materialDesign:HintAssist.Hint="Číslo popisné">
+            <TextBox.Text>
+              <Binding Path="Zasedani.AdresaKonani.CisloPopisneOrientacni" UpdateSourceTrigger="PropertyChanged">
+                <Binding.ValidationRules>
+                  <validation:RegexValidationRule RegularExpression=".+" ValidatesOnTargetUpdated="True" />
+                </Binding.ValidationRules>
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
+          <TextBox materialDesign:HintAssist.Hint="Obec">
+            <TextBox.Text>
+              <Binding Path="Zasedani.AdresaKonani.Obec" UpdateSourceTrigger="PropertyChanged">
+                <Binding.ValidationRules>
+                  <validation:RegexValidationRule RegularExpression=".+" ValidatesOnTargetUpdated="True" />
+                </Binding.ValidationRules>
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
+          <TextBox materialDesign:HintAssist.Hint="PSČ">
+            <TextBox.Text>
+              <Binding Path="Zasedani.AdresaKonani.Psc" UpdateSourceTrigger="PropertyChanged">
+                <Binding.ValidationRules>
+                  <validation:RegexValidationRule RegularExpression="\d{3} ?\d{2}" ValidatesOnTargetUpdated="True" />
+                </Binding.ValidationRules>
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
+          <TextBox materialDesign:HintAssist.Hint="Popis místa (uvádějte v 6. pádu)">
+            <TextBox.Text>
+              <Binding Path="Zasedani.AdresaKonani.PopisMista" UpdateSourceTrigger="PropertyChanged">
+                <Binding.ValidationRules>
+                  <validation:RegexValidationRule RegularExpression=".+" ValidatesOnTargetUpdated="True" />
+                </Binding.ValidationRules>
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
         </StackPanel>
       </GroupBox>
 
@@ -104,7 +139,6 @@
                     CanUserResizeRows="False"
                     AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
                     CanUserDeleteRows="False"
-                    KeyUp="KeyPressedInListOfZastupitele"
                     Name="LvZastupitele"
                     ItemsSource="{Binding Zasedani.Zastupitele}">
             <DataGrid.Columns>
@@ -119,11 +153,11 @@
           </DataGrid>
 
           <StackPanel Orientation="Horizontal">
-            <Button Click="AddZastupitel" ToolTip="Přidat">
+            <Button Click="AddZastupitel" ToolTip="Přidat zasupitele">
               <materialDesign:PackIcon Kind="PlusCircle" />
             </Button>
             <Button Click="RemoveZastupitel" IsEnabled="{Binding ElementName=LvZastupitele, Path=SelectedItems.Count}"
-                    ToolTip="Smazat">
+                    ToolTip="Smazat zastupitele">
               <materialDesign:PackIcon Kind="MinusCircle" />
             </Button>
           </StackPanel>

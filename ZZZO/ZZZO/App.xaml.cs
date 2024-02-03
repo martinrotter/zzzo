@@ -5,6 +5,7 @@ using System.Windows;
 using Microsoft.Win32;
 using ZZZO.Common.API;
 using ZZZO.Common.Generators;
+using ZZZO.Windows;
 
 namespace ZZZO
 {

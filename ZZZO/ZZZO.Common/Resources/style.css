@@ -37,6 +37,24 @@ img {
   width: 85%;
 }
 
+.resolution-vote {
+	width: 1.5em;
+	display: inline-block;
+	height: 1em;
+}
+
+.resolution-success {
+  color: limegreen;
+}
+
+.resolution-failure {
+  color: red;
+}
+
+.resolution-dontknow {
+  color: orange;
+}
+
 .resolution {
   break-inside: avoid-page;
   border-radius: 10px;

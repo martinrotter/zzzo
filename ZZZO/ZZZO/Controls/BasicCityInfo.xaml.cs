@@ -36,14 +36,6 @@ namespace ZZZO.Controls
       });
     }
 
-    private void KeyPressedInListOfZastupitele(object sender, KeyEventArgs e)
-    {
-      if (e.Key == Key.Delete)
-      {
-        RemoveZastupitel(this, e);
-      }
-    }
-
     private void RemoveZastupitel(object sender, RoutedEventArgs e)
     {
       if (LvZastupitele.SelectedValue is Zastupitel zast)

@@ -3,7 +3,7 @@ using System.Windows;
 using ZZZO.Common;
 using ZZZO.Common.API;
 
-namespace ZZZO
+namespace ZZZO.Windows
 {
   /// <summary>
   /// Interaction logic for MainWindow.xaml
@@ -159,10 +159,19 @@ namespace ZZZO
 
     private void ShowAboutAppDialog(object sender, RoutedEventArgs e)
     {
+      var d = new AboutWindow
+      {
+        Owner = this
+      };
+
+      d.ShowDialog();
+
+      /*
       MessageBox.Show($"{Constants.Names.AppShortName} - {Constants.Names.AppLongName}\n\n" +
                       $"Verze: {Constants.Names.AppVersion}\n\n\n" +
                       $"Některé ikony poskytl: {Constants.Names.Freepik}", "O aplikaci",
         MessageBoxButton.OK, MessageBoxImage.Information);
+      */
     }
 
     #endregion

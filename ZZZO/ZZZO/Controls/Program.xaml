@@ -32,11 +32,11 @@
           <RowDefinition Height="*" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView IsSynchronizedWithCurrentItem="True" Name="LvProgram"
+        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"  IsSynchronizedWithCurrentItem="True" Name="LvProgram"
                   ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
           <ListView.ItemTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding Nadpis}"
+              <TextBlock TextWrapping="Wrap" Text="{Binding Nadpis}"
                          Margin="{
                   Binding JePodbod,
                   Converter={StaticResource ConditionalMarginConverter},
@@ -45,19 +45,19 @@
           </ListView.ItemTemplate>
         </ListView>
         <WrapPanel Grid.Row="1" DockPanel.Dock="Bottom" Orientation="Horizontal">
-          <Button Click="AddProgramEntry" ToolTip="Přidat">
+          <Button Click="AddProgramEntry" ToolTip="Přidat bod programu">
             <materialDesign:PackIcon Kind="PlusCircle" />
           </Button>
           <Button Click="RemoveProgramEntry" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
-                  ToolTip="Smazat">
+                  ToolTip="Smazat vybraný bod programu">
             <materialDesign:PackIcon Kind="MinusCircle" />
           </Button>
           <Button Click="MoveProgramEntryUp" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
-                  ToolTip="Posunout nahoru">
+                  ToolTip="Posunout bod nahoru">
             <materialDesign:PackIcon Kind="ArrowUpCircle" />
           </Button>
           <Button Click="MoveProgramEntryDown" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
-                  ToolTip="Posunout dolů">
+                  ToolTip="Posunout bod dolů">
             <materialDesign:PackIcon Kind="ArrowDownCircle" />
           </Button>
         </WrapPanel>

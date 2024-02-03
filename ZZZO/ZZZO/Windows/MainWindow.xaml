@@ -1,4 +1,4 @@
-﻿<Window x:Class="ZZZO.MainWindow"
+﻿<Window x:Class="ZZZO.Windows.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:zzzoCommon="clr-namespace:ZZZO.Common;assembly=ZZZO.Common"
         mc:Ignorable="d"
         xmlns:zzzoCcontrols="clr-namespace:ZZZO.Controls"
-        Icon="Resources/AppIcon.png"
+        Icon="../Resources/AppIcon.png"
         Title="{x:Static zzzoCommon:Constants+Names.AppLongName}" Height="900" Width="1200"
         WindowStartupLocation="CenterScreen"
 

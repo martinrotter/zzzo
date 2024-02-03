@@ -112,7 +112,7 @@ namespace ZZZO.Common.Generators
 
       body.AppendElem("p").InnerText =
         $"Zasedání zastupitelstva obce (dále jen ZO) {zas.NazevObce} bylo zahájeno dne " +
-        $"{zas.DatumCas:d. M. yyyy v hh:mm} SEČ na adrese {zas.AdresaKonani} v {zas.AdresaKonani.PopisMista}.";
+        $"{zas.DatumCas:d. M. yyyy v H:mm} SEČ na adrese {zas.AdresaKonani} v {zas.AdresaKonani.PopisMista}.";
 
       body.AppendElem("p").InnerText =
         $"Zúčastnění zastupitelé: {string.Join(
@@ -325,19 +325,19 @@ namespace ZZZO.Common.Generators
       XmlElement div = body.AppendElem("div").AppendClass("resolution").AppendClass(accepted ? "success" : "failure");
 
       div.AppendElem("p").InnerText = $"{replacementTitle ?? "Hlasování o návrhu usnesení"}:";
-
+      
       div.AppendElem("p").InnerText =
-        $"\u2713 PRO: {choiceForStr}<br/>" +
-        $"\u2718 PROTI: {choiceAgainstStr}<br/>" +
-        $"\u2753 ZDRŽUJE SE: {choiceDontKnowStr}";
+        $"<span class=\"resolution-vote resolution-success\">\u2713</span> PRO: {choiceForStr}<br/>" +
+        $"<span class=\"resolution-vote resolution-failure\">\u00D7</span> PROTI: {choiceAgainstStr}<br/>" +
+        $"<span class=\"resolution-vote resolution-dontknow\">?</span> ZDRŽUJE SE: {choiceDontKnowStr}";
 
       if (accepted)
       {
-        div.AppendElem("p").InnerText = "\u2713 Návrh byl přijat.";
+        div.AppendElem("p").InnerText = "<span class=\"resolution-success\">\u2713</span> Návrh byl přijat.";
       }
       else
       {
-        div.AppendElem("p").InnerText = "\u2718 Návrh nebyl přijat.";
+        div.AppendElem("p").InnerText = "<span class=\"resolution-failure\">\u00D7</span> Návrh nebyl přijat.";
       }
 
       return accepted ? generatedResolutionTitle : null;

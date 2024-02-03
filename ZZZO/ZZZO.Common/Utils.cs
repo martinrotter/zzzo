@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Windows;
 
 namespace ZZZO.Common
 {
@@ -7,9 +8,9 @@ namespace ZZZO.Common
   {
     #region Metody
 
-    public static string GetExecutingAssemblyVersion()
+    public static FileVersionInfo GetExecutingAssemblyVersionInfo()
     {
-      return FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductVersion;
+      return FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
     }
 
     #endregion
