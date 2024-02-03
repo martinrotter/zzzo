@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ZZZO.Controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:ZZZO.Converters"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontWeight="Medium"
@@ -12,6 +13,10 @@
              FontFamily="{materialDesign:MaterialDesignFont}"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="900">
+  <UserControl.Resources>
+    <converters:ConditionalMarginConverter x:Key="ConditionalMarginConverter" />
+    <Thickness x:Key="PodbodMargin">10,0,0,0</Thickness>
+  </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
@@ -31,9 +36,11 @@
                   ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
           <ListView.ItemTemplate>
             <DataTemplate>
-              <WrapPanel>
-                <TextBlock Text="{Binding Nadpis}" />
-              </WrapPanel>
+              <TextBlock Text="{Binding Nadpis}"
+                         Margin="{
+                  Binding JePodbod,
+                  Converter={StaticResource ConditionalMarginConverter},
+                  ConverterParameter={StaticResource PodbodMargin}}" />
             </DataTemplate>
           </ListView.ItemTemplate>
         </ListView>
