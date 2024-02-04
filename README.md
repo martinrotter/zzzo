@@ -10,7 +10,7 @@ Utilita umožňuje načítání/ukládání rozpracovaných zápisů a následn�
 2. Rozbalte aplikaci ze staženého zip archivu do libovolné složky.
 3. Spusťte aplikaci poklepáním na soubor `ZZZO.exe`.
     1. Pokud aplikace neběží či hlásí chybu, je třeba nainstalovat sdílené běhové knihovny MSVC 2022 .
-    2. Knihovny stáhněte [zde](csacs)
+    2. Knihovny stáhněte [zde](raw/master/3rd-party/VC_redist.x86.exe) a nainstalujte.
 4. Hotovo!
 
 ### Seznam funkcí:
