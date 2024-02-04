@@ -13,7 +13,7 @@ Utilita umožňuje načítání/ukládání rozpracovaných zápisů a následn�
     2. Knihovny stáhněte [zde](https://github.com/martinrotter/generator-zasedani-zo/raw/master/3rd-party/VC_redist.x86.exe) nebo [zde](https://aka.ms/vs/17/release/vc_redist.x86.exe) a nainstalujte.
 4. Hotovo!
 
-### Seznam funkcí:
+### Seznam funkcí
 * rozpracované zápisy lze ukládat a načítat a kdykoliv tak pokračovat v práci,
 * vygenerované zápisy odpovídají § 95 odst. 1 zákona č. 128/2000 Sb. o obcích,
 * aplikace nevyžaduje instalaci a podporuje 32/64 bitovou variantu OS Windows (8+),
