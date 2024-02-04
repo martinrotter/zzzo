@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Threading;
 using System.Windows;
+using CefSharp.Wpf;
 using Microsoft.Win32;
 using ZZZO.Common.API;
 using ZZZO.Common.Generators;
@@ -19,13 +19,10 @@ namespace ZZZO
       private set;
     }
 
-    public List<Generator> Generators
+    public GeneratorHtml GeneratorHtml
     {
       get;
-    } = new List<Generator>
-    {
-      new GeneratorHtml()
-    };
+    } = new GeneratorHtml();
 
     public Zasedani Zasedani
     {
@@ -107,11 +104,13 @@ namespace ZZZO
     protected override void OnExit(ExitEventArgs e)
     {
       base.OnExit(e);
+      CefSharp.Cef.Shutdown();
     }
 
     protected override void OnStartup(StartupEventArgs e)
     {
       base.OnStartup(e);
+      CefSharp.Cef.Initialize(new CefSettings());
     }
 
     #endregion
