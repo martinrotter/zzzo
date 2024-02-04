@@ -16,7 +16,7 @@
       <WrapPanel DockPanel.Dock="Top">
         <Button
           IsEnabled="{Binding ElementName=PbGenerator, Path=Value, Converter={StaticResource InverseBooleanConverter}}"
-          Content="Generovat dokument" Click="GenerateDocument" />
+          Content="Přegenerovat dokument" Click="GenerateDocument" />
         <Button
           Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
           Margin="{StaticResource FormMargin}"
