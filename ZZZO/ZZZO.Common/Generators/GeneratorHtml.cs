@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using ZZZO.Common.API;
 using ZZZO.Common.Properties;
@@ -59,12 +60,11 @@ namespace ZZZO.Common.Generators
       progress.Report(1);
 
       XmlDocument html = new XmlDocument();
-      XmlElement html_elem = html.CreateElement("html");
+      XmlElement htmlElem = html.CreateElement("html");
 
-      html.AppendChild(html_elem);
-
-      GenerateHeader(html_elem, zas, progress);
-      GenerateBody(html_elem, zas, progress);
+      html.AppendChild(htmlElem);
+      GenerateHeader(htmlElem, zas, progress);
+      GenerateBody(htmlElem, zas, progress);
 
       progress.Report(100);
 

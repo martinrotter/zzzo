@@ -98,6 +98,8 @@
     <Compile Include="Converters\CollapseOnTrueConverter.cs" />
     <Compile Include="Converters\NotNullConverter.cs" />
     <Compile Include="Validation\RegexValidationRule.cs" />
+    <Compile Include="ViewModels\GeneratorViewModel.cs" />
+    <Compile Include="ZzzoCore.cs" />
     <Page Include="Controls\BasicCityInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -16,7 +16,7 @@
       <WrapPanel DockPanel.Dock="Top">
         <Button
           IsEnabled="{Binding ElementName=PbGenerator, Path=Value, Converter={StaticResource InverseBooleanConverter}}"
-          Content="Přegenerovat dokument" Click="GenerateDocument" />
+          Content="Přegenerovat dokument" Command="{Binding GenerateDocumentCmd}" />
         <Button
           Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
           Margin="{StaticResource FormMargin}"
@@ -34,7 +34,7 @@
           Content="Tisknout" Click="PrintOnPrinter" />
         <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Name="PbGenerator" Width="40"
                      Height="40"
-                     Minimum="0" Maximum="100" Value="0" />
+                     Minimum="0" Maximum="100" Value="{Binding GenerateProgress}" />
       </WrapPanel>
       <wpf:ChromiumWebBrowser Name="WebBrowser" />
     </DockPanel>

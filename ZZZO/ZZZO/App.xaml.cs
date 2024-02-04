@@ -5,7 +5,9 @@ using CefSharp.Wpf;
 using Microsoft.Win32;
 using ZZZO.Common.API;
 using ZZZO.Common.Generators;
+using ZZZO.ViewModels;
 using ZZZO.Windows;
+using Generator = ZZZO.Controls.Generator;
 
 namespace ZZZO
 {
@@ -19,10 +21,10 @@ namespace ZZZO
       private set;
     }
 
-    public GeneratorHtml GeneratorHtml
+    public ZzzoCore Core
     {
       get;
-    } = new GeneratorHtml();
+    } = new ZzzoCore();
 
     public Zasedani Zasedani
     {
@@ -78,6 +80,8 @@ namespace ZZZO
         Current.Zasedani,
         App = Current
       };
+
+      window.UcGenerator.DataContext = new GeneratorViewModel(window.UcGenerator, Core);
     }
 
     public void SaveZasedani()

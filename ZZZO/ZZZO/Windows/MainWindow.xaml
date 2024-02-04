@@ -45,7 +45,7 @@
       </TabItem>
       <TabItem
         Header="Generátor">
-        <zzzoCcontrols:Generator />
+        <zzzoCcontrols:Generator  x:Name="UcGenerator"></zzzoCcontrols:Generator>
       </TabItem>
     </TabControl>
   </DockPanel>

@@ -1,11 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using CefSharp;
-using CefSharp.Wpf;
 using Microsoft.Win32;
 
 namespace ZZZO.Controls
@@ -26,29 +23,10 @@ namespace ZZZO.Controls
 
     #region Metody
 
-    private void Generated(Common.Generators.Generator generator, byte[] docxData)
+    public void NewDataGenerated(byte[] data)
     {
-      WebBrowser.LoadHtml(Encoding.UTF8.GetString(docxData), "https://document.zzzo");
+      WebBrowser.LoadHtml(Encoding.UTF8.GetString(data), "https://document.zzzo");
     }
-
-    private void GenerateDocument(object sender, RoutedEventArgs e)
-    {
-      GenerateWithGenerator(App.Current.GeneratorHtml);
-    }
-
-    private async void GenerateWithGenerator(Common.Generators.Generator generator)
-    {
-      IProgress<int> prog = new Progress<int>(progress => { PbGenerator.Value = progress; });
-
-      Task<byte[]> tsk = generator.Generate(App.Current.Zasedani, prog);
-
-      await tsk;
-
-      prog.Report(0);
-      Generated(generator, tsk.Result);
-    }
-
-    #endregion
 
     private string ChooseExportFile(string fileSuffix)
     {
@@ -93,7 +71,6 @@ namespace ZZZO.Controls
 
       if (!string.IsNullOrWhiteSpace(file))
       {
-
         WebBrowser.PrintToPdfAsync(file, new PdfPrintSettings
         {
           DisplayHeaderFooter = false,
@@ -108,5 +85,7 @@ namespace ZZZO.Controls
     {
       WebBrowser.Print();
     }
+
+    #endregion
   }
 }
