@@ -1,13 +1,12 @@
 ﻿using System.Globalization;
 using System.Threading;
 using System.Windows;
+using CefSharp;
 using CefSharp.Wpf;
 using Microsoft.Win32;
 using ZZZO.Common.API;
-using ZZZO.Common.Generators;
 using ZZZO.ViewModels;
 using ZZZO.Windows;
-using Generator = ZZZO.Controls.Generator;
 
 namespace ZZZO
 {
@@ -104,13 +103,13 @@ namespace ZZZO
     protected override void OnExit(ExitEventArgs e)
     {
       base.OnExit(e);
-      CefSharp.Cef.Shutdown();
+      Cef.Shutdown();
     }
 
     protected override void OnStartup(StartupEventArgs e)
     {
       base.OnStartup(e);
-      CefSharp.Cef.Initialize(new CefSettings());
+      Cef.Initialize(new CefSettings());
     }
 
     #endregion

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using ZZZO.Common;
 using ZZZO.Common.API;
 
 namespace ZZZO.Windows
@@ -157,7 +156,7 @@ namespace ZZZO.Windows
 
     private void ShowAboutAppDialog(object sender, RoutedEventArgs e)
     {
-      var d = new AboutWindow
+      AboutWindow d = new AboutWindow
       {
         Owner = this
       };

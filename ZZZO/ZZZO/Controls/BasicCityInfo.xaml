@@ -142,13 +142,20 @@
                     Name="LvZastupitele"
                     ItemsSource="{Binding Zasedani.Zastupitele}">
             <DataGrid.Columns>
-              <DataGridTextColumn Header="Jméno" Width="Auto" Binding="{Binding Jmeno, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridTextColumn Header="Příjmení" Width="Auto" Binding="{Binding Prijmeni, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Přítomen" Width="Auto" Binding="{Binding JePritomen, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Řídící" Width="Auto" Binding="{Binding JeRidici, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Zapisovatel" Width="Auto" Binding="{Binding JeZapisovatel, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Ověřovatel" Width="Auto" Binding="{Binding JeOverovatel, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Starosta" Width="Auto" Binding="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridTextColumn Header="Jméno" Width="Auto"
+                                  Binding="{Binding Jmeno, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridTextColumn Header="Příjmení" Width="Auto"
+                                  Binding="{Binding Prijmeni, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Přítomen" Width="Auto"
+                                      Binding="{Binding JePritomen, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Řídící" Width="Auto"
+                                      Binding="{Binding JeRidici, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Zapisovatel" Width="Auto"
+                                      Binding="{Binding JeZapisovatel, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Ověřovatel" Width="Auto"
+                                      Binding="{Binding JeOverovatel, UpdateSourceTrigger=PropertyChanged}" />
+              <DataGridCheckBoxColumn Header="Starosta" Width="Auto"
+                                      Binding="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
             </DataGrid.Columns>
           </DataGrid>
 

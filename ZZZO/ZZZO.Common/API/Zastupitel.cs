@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace ZZZO.Common.API;
+﻿namespace ZZZO.Common.API;
 
 public class Zastupitel : ObservableObject
 {

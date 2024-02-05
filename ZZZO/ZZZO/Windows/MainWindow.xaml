@@ -11,7 +11,6 @@
         WindowStartupLocation="CenterScreen"
 
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:converters="clr-namespace:ZZZO.Converters"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
@@ -45,7 +44,7 @@
       </TabItem>
       <TabItem
         Header="Generátor">
-        <zzzoCcontrols:Generator  x:Name="UcGenerator"></zzzoCcontrols:Generator>
+        <zzzoCcontrols:Generator x:Name="UcGenerator" />
       </TabItem>
     </TabControl>
   </DockPanel>

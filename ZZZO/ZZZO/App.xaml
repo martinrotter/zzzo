@@ -31,7 +31,8 @@
             <Setter Property="Margin" Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource {x:Type materialDesign:TimePicker}}" TargetType="{x:Type materialDesign:TimePicker}">
+          <Style BasedOn="{StaticResource {x:Type materialDesign:TimePicker}}"
+                 TargetType="{x:Type materialDesign:TimePicker}">
             <Setter Property="Margin" Value="{StaticResource FormMargin}" />
           </Style>
 

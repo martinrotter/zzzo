@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using ZZZO.Commands;
 using ZZZO.Common.Generators;
 using Generator = ZZZO.Controls.Generator;
@@ -73,6 +74,7 @@ namespace ZZZO.ViewModels
 
         _generateProgress = value;
         OnPropertyChanged();
+        CommandManager.InvalidateRequerySuggested();
       }
     }
 
@@ -91,7 +93,7 @@ namespace ZZZO.ViewModels
       NewDataGenerated += view.NewDataGenerated;
 
       Core = core;
-      GenerateDocumentCmd = new RelayCommand(GenerateDocument, IsNotGeneratingDocument);
+      GenerateDocumentCmd = new RelayCommand(GenerateDocument, obj => GenerateProgress <= 0);
     }
 
     #endregion
@@ -131,11 +133,6 @@ namespace ZZZO.ViewModels
       {
         prog.Report(0);
       }
-    }
-
-    private bool IsNotGeneratingDocument(object arg)
-    {
-      return !GeneratorHtml.IsGenerating;
     }
 
     #endregion

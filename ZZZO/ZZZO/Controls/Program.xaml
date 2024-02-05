@@ -32,7 +32,8 @@
           <RowDefinition Height="*" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"  IsSynchronizedWithCurrentItem="True" Name="LvProgram"
+        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" IsSynchronizedWithCurrentItem="True"
+                  Name="LvProgram"
                   ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
           <ListView.ItemTemplate>
             <DataTemplate>

@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using ZZZO.Common.API;
-using ZZZO.ViewModels;
+﻿using System.Windows;
 
 namespace ZZZO.Windows
 {
@@ -14,10 +11,6 @@ namespace ZZZO.Windows
       InitializeComponent();
     }
 
-    #endregion
-
-    #region Metody
-    
     #endregion
   }
 }

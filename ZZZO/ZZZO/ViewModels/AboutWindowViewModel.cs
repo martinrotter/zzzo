@@ -25,9 +25,5 @@ public class AboutWindowViewModel : ViewModelBase
 
   #region Konstruktory
 
-  public AboutWindowViewModel()
-  {
-  }
-
   #endregion
 }
