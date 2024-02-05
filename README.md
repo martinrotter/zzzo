@@ -3,6 +3,8 @@ Jednoduchá utilita na generování zápisů ze zasedání zastupitelstev obcí.
 
 Utilita umožňuje načítání/ukládání rozpracovaných zápisů a následné generování výstupu ve formátu HTML nebo PDF. Je možno zápisy i přímo tisknout.
 
+ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplikace - vaše data tak nejsou uložena v žádném cloudu a máte je tak vždy pod kontrolou.
+
 ### Nejnovější verzi aplikace lze stáhnout [zde](https://github.com/martinrotter/generator-zasedani-zo/releases).
 
 ### Instalace
@@ -15,6 +17,7 @@ Utilita umožňuje načítání/ukládání rozpracovaných zápisů a následn�
 
 ### Seznam funkcí
 * rozpracované zápisy lze ukládat a načítat a kdykoliv tak pokračovat v práci,
+* lze pohodlně editovat seznam zastupitelů, body programu a další související věci,
 * vygenerované zápisy odpovídají § 95 odst. 1 zákona č. 128/2000 Sb. o obcích,
 * aplikace nevyžaduje instalaci a podporuje 32/64 bitovou variantu OS Windows (8+),
 * aplikace má zcela otevřený [zdrojový kód](ZZZO), který kompletně podléhá licenci [GNU GPLv3](LICENSE).
