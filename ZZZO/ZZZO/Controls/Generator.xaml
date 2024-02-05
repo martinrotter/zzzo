@@ -5,8 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:ZZZO.Converters"
              xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
+             xmlns:viewmodels="clr-namespace:ZZZO.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:GeneratorViewModel}"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450"
+             d:DesignWidth="800">
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:NotNullConverter x:Key="NotNullConverter" />
@@ -15,26 +18,30 @@
   <GroupBox Header="HTML + PDF">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top">
-        <Button
-          Content="Přegenerovat dokument" Command="{Binding GenerateDocumentCmd}" />
-        <Button
-          Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
-          Margin="{StaticResource FormMargin}"
-          IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
-          Content="Exportovat do HTML" Click="ExportHtml" />
-        <Button
-          Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
-          Margin="{StaticResource FormMargin}"
-          IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
-          Content="Exportovat do PDF" Click="ExportPdf" />
-        <Button
-          Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
-          Margin="{StaticResource FormMargin}"
-          IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
-          Content="Tisknout" Click="PrintOnPrinter" />
-        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Name="PbGenerator" Width="40"
+        <Button Content="Přegenerovat dokument"
+                Command="{Binding GenerateDocumentCmd}" />
+        <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
+                Margin="{StaticResource FormMargin}"
+                IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
+                Content="Exportovat do HTML"
+                Click="ExportHtml" />
+        <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
+                Margin="{StaticResource FormMargin}"
+                IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
+                Content="Exportovat do PDF"
+                Click="ExportPdf" />
+        <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
+                Margin="{StaticResource FormMargin}"
+                IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
+                Content="Tisknout"
+                Click="PrintOnPrinter" />
+        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                     Name="PbGenerator"
+                     Width="40"
                      Height="40"
-                     Minimum="0" Maximum="100" Value="{Binding GenerateProgress}" />
+                     Minimum="0"
+                     Maximum="100"
+                     Value="{Binding GenerateProgress}" />
       </WrapPanel>
       <wpf:ChromiumWebBrowser Name="WebBrowser" />
     </DockPanel>

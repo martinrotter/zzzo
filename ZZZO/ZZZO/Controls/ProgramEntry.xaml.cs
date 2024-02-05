@@ -31,7 +31,7 @@ namespace ZZZO.Controls
 
     private void AddUsneseni(object sender, RoutedEventArgs e)
     {
-      App.Current.Zasedani.AddUsneseni(BodProgramu, new Usneseni
+      App.Current.Core.Zasedani.AddUsneseni(BodProgramu, new Usneseni
       {
         Text = "Text usnesení"
       });

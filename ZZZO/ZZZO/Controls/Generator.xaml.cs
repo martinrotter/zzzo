@@ -37,17 +37,18 @@ namespace ZZZO.Controls
       d.Filter = $@"{fileSuffix.ToUpper()} soubory (*.{fileSuffix})|*.{fileSuffix}";
       d.Title = $"Zvolte lokaci pro uložení zápisu zasedání do {fileSuffix.ToUpper()} souboru";
 
-      if (!string.IsNullOrWhiteSpace(App.Current.Zasedani.VystupniSoubor))
+      // Přesunout do viewmodelu? předavat parametr přes commandparameter
+      if (!string.IsNullOrWhiteSpace(App.Current.Core.Zasedani.VystupniSoubor))
       {
-        d.FileName = App.Current.Zasedani.VystupniSoubor + $".{fileSuffix}";
+        d.FileName = App.Current.Core.Zasedani.VystupniSoubor + $".{fileSuffix}";
       }
 
       if (d.ShowDialog().GetValueOrDefault())
       {
         string chosenDir = Path.GetDirectoryName(d.FileName);
         string chosenFile = Path.GetFileNameWithoutExtension(d.FileName);
-
-        App.Current.Zasedani.VystupniSoubor = Path.Combine(chosenDir, chosenFile);
+          
+        App.Current.Core.Zasedani.VystupniSoubor = Path.Combine(chosenDir, chosenFile);
 
         return d.FileName;
       }

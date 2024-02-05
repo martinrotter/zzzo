@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Icon="../Resources/AppIcon.png"
-        Title="O aplikaci" Height="290" Width="300"
+        Title="O aplikaci"
+        Height="290"
+        Width="300"
         WindowStartupLocation="CenterOwner"
         Name="Window"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -25,12 +27,20 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
-    <TextBox materialDesign:HintAssist.Hint="Verze programu" IsReadOnly="True"
+    <TextBox materialDesign:HintAssist.Hint="Verze programu"
+             IsReadOnly="True"
              Text="{Binding VerzeProgramu, Mode=OneTime}" />
-    <TextBox Grid.Row="1" materialDesign:HintAssist.Hint="Autor" IsReadOnly="True" Text="{Binding Autor, Mode=OneTime}" />
-    <TextBox Grid.Row="2" materialDesign:HintAssist.Hint="Poděkování" IsReadOnly="True"
+    <TextBox Grid.Row="1"
+             materialDesign:HintAssist.Hint="Autor"
+             IsReadOnly="True"
+             Text="{Binding Autor, Mode=OneTime}" />
+    <TextBox Grid.Row="2"
+             materialDesign:HintAssist.Hint="Poděkování"
+             IsReadOnly="True"
              Text="{Binding Podekovani, Mode=OneTime}" />
-    <Button HorizontalAlignment="Right" Grid.Row="3" VerticalAlignment="Bottom"
+    <Button HorizontalAlignment="Right"
+            Grid.Row="3"
+            VerticalAlignment="Bottom"
             Command="{Binding CloseWindowCommand}"
             CommandParameter="{Binding ElementName=Window}">
       _Zavřít

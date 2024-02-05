@@ -107,8 +107,9 @@ public class Zasedani : ObservableObject
 
     set
     {
-      if (value == null)
+      if (value == null || value.Length == 0)
       {
+        LogoObce = null;
         return;
       }
 

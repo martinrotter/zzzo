@@ -9,47 +9,58 @@
         <materialDesign:BundledTheme BaseTheme="Inherit"
                                      PrimaryColor="DeepPurple"
                                      SecondaryColor="Lime" />
-        <ResourceDictionary
-          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-        <ResourceDictionary
-          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
-        <ResourceDictionary
-          Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
 
         <ResourceDictionary>
           <Thickness x:Key="FormMargin">9,9,9,9</Thickness>
 
-          <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          <Style BasedOn="{StaticResource {x:Type Button}}"
+                 TargetType="{x:Type Button}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}" TargetType="{x:Type TextBox}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          <Style BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 TargetType="{x:Type TextBox}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource {x:Type DatePicker}}" TargetType="{x:Type DatePicker}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          <Style BasedOn="{StaticResource {x:Type DatePicker}}"
+                 TargetType="{x:Type DatePicker}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
 
           <Style BasedOn="{StaticResource {x:Type materialDesign:TimePicker}}"
                  TargetType="{x:Type materialDesign:TimePicker}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource MaterialDesignCardGroupBox}" TargetType="{x:Type GroupBox}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          <Style BasedOn="{StaticResource MaterialDesignCardGroupBox}"
+                 TargetType="{x:Type GroupBox}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource MaterialDesignOutlinedComboBox}" TargetType="{x:Type ComboBox}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          <Style BasedOn="{StaticResource MaterialDesignOutlinedComboBox}"
+                 TargetType="{x:Type ComboBox}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource {x:Type CheckBox}}" TargetType="{x:Type CheckBox}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+          <Style BasedOn="{StaticResource {x:Type CheckBox}}"
+                 TargetType="{x:Type CheckBox}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
 
           <Style TargetType="{x:Type Image}">
-            <Setter Property="Margin" Value="{StaticResource FormMargin}" />
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
           </Style>
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>

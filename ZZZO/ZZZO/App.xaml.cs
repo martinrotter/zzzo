@@ -3,8 +3,6 @@ using System.Threading;
 using System.Windows;
 using CefSharp;
 using CefSharp.Wpf;
-using Microsoft.Win32;
-using ZZZO.Common.API;
 using ZZZO.ViewModels;
 using ZZZO.Windows;
 
@@ -25,17 +23,6 @@ namespace ZZZO
       get;
     } = new ZzzoCore();
 
-    public Zasedani Zasedani
-    {
-      get;
-      set;
-    }
-
-    public bool ZasedaniLoaded
-    {
-      get => Zasedani != null;
-    }
-
     #endregion
 
     #region Konstruktory
@@ -55,49 +42,11 @@ namespace ZZZO
 
     #region Metody
 
-    public void LoadZasedani(MainWindow mw)
+    public void SetDataContexts(MainWindow window)
     {
-      OpenFileDialog d = new OpenFileDialog();
-
-      d.AddExtension = true;
-      d.CheckPathExists = true;
-      d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
-      d.Title = "Zvolte lokaci pro načtení zasedání ze souboru";
-
-      if (d.ShowDialog().GetValueOrDefault())
-      {
-        ResetZasedani(Zasedani.LoadFromFile(d.FileName), mw);
-      }
-    }
-
-    public void ResetZasedani(Zasedani newZasedani, MainWindow window)
-    {
-      Zasedani = newZasedani;
-
-      window.DataContext = new MainWindowViewModel(Current.Zasedani, Current);
-
+      window.DataContext = new MainWindowViewModel(Current, Core);
+      window.UcBasicInfo.DataContext = new BasicInfoViewModel(Core);
       window.UcGenerator.DataContext = new GeneratorViewModel(window.UcGenerator, Core);
-    }
-
-    public void SaveZasedani()
-    {
-      if (Zasedani == null)
-      {
-        return;
-      }
-
-      SaveFileDialog d = new SaveFileDialog();
-
-      d.OverwritePrompt = true;
-      d.AddExtension = true;
-      d.CheckPathExists = true;
-      d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
-      d.Title = "Zvolte lokaci pro uložení zasedání do souboru";
-
-      if (d.ShowDialog().GetValueOrDefault())
-      {
-        Zasedani.SaveToFile(d.FileName);
-      }
     }
 
     protected override void OnExit(ExitEventArgs e)

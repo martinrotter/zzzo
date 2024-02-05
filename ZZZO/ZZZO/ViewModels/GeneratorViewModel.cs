@@ -117,7 +117,7 @@ namespace ZZZO.ViewModels
     {
       IProgress<int> prog = new Progress<int>(progress => { GenerateProgress = progress; });
 
-      Task<byte[]> tsk = generator.Generate(App.Current.Zasedani, prog);
+      Task<byte[]> tsk = generator.Generate(Core.Zasedani, prog);
 
       try
       {

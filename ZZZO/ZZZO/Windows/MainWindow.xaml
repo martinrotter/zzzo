@@ -7,43 +7,48 @@
         mc:Ignorable="d"
         xmlns:zzzoCcontrols="clr-namespace:ZZZO.Controls"
         Icon="../Resources/AppIcon.png"
-        Title="{x:Static zzzoCommon:Constants+Names.AppLongName}" Height="900" Width="1200"
+        Title="{x:Static zzzoCommon:Constants+Names.AppLongName}"
+        Height="900"
+        Width="1200"
         WindowStartupLocation="CenterScreen"
-
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}">
   <DockPanel>
-    <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="25" DockPanel.Dock="Top">
+    <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="25"
+          DockPanel.Dock="Top">
       <MenuItem Header="_Soubor">
-        <MenuItem Header="_Nový" Click="NewZasedani" />
-        <MenuItem Header="N_ačíst" Click="LoadZasedani" />
-        <MenuItem Header="_Uložit" Click="SaveZasedani" />
-        <MenuItem Header="_Konec" Click="QuitApp" />
+        <MenuItem Header="_Nový"
+                  Command="{Binding NewZasedaniCmd}" />
+        <MenuItem Header="N_ačíst"
+                  Command="{Binding LoadZasedaniCmd}" />
+        <MenuItem Header="_Uložit"
+                  Command="{Binding SaveZasedaniCmd}" />
+        <MenuItem Header="_Konec"
+                  Click="QuitApp" />
       </MenuItem>
       <MenuItem Header="?">
-        <MenuItem Header="_O aplikaci" Click="ShowAboutAppDialog" />
+        <MenuItem Header="_O aplikaci"
+                  Click="ShowAboutAppDialog" />
       </MenuItem>
     </Menu>
-    <TabControl
-      Name="TcZasedani"
-      IsEnabled="{Binding App.ZasedaniLoaded}"
-      Padding="10"
-      HorizontalContentAlignment="Left"
-      Style="{StaticResource MaterialDesignFilledTabControl}">
-      <TabItem
-        Header="Základní informace">
-        <zzzoCcontrols:BasicCityInfo />
+    <TabControl Name="TcZasedani"
+                IsEnabled="{Binding Core.ZasedaniLoaded}"
+                Padding="10"
+                HorizontalContentAlignment="Left"
+                Style="{StaticResource MaterialDesignFilledTabControl}">
+      <TabItem Header="Základní informace">
+        <zzzoCcontrols:BasicInfo x:Name="UcBasicInfo" />
       </TabItem>
-      <TabItem
-        Header="Program">
+      <TabItem Header="Program">
         <zzzoCcontrols:Program />
       </TabItem>
-      <TabItem
-        Header="Generátor">
+      <TabItem Header="Generátor">
         <zzzoCcontrols:Generator x:Name="UcGenerator" />
       </TabItem>
     </TabControl>

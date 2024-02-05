@@ -22,7 +22,7 @@ namespace ZZZO.Controls
 
     private void AddProgramEntry(object sender, RoutedEventArgs e)
     {
-      App.Current.Zasedani.Program.BodyProgramu.Add(new BodProgramu
+      App.Current.Core.Zasedani.Program.BodyProgramu.Add(new BodProgramu
       {
         Nadpis = "Nový bod programu",
         Text = "Text bodu programu"
@@ -33,11 +33,11 @@ namespace ZZZO.Controls
     {
       if (LvProgram.SelectedValue is BodProgramu bod)
       {
-        int idx = App.Current.Zasedani.Program.BodyProgramu.IndexOf(bod);
+        int idx = App.Current.Core.Zasedani.Program.BodyProgramu.IndexOf(bod);
 
-        if (idx < App.Current.Zasedani.Program.BodyProgramu.Count - 1)
+        if (idx < App.Current.Core.Zasedani.Program.BodyProgramu.Count - 1)
         {
-          App.Current.Zasedani.Program.BodyProgramu.Move(idx, idx + 1);
+          App.Current.Core.Zasedani.Program.BodyProgramu.Move(idx, idx + 1);
         }
       }
     }
@@ -46,11 +46,11 @@ namespace ZZZO.Controls
     {
       if (LvProgram.SelectedValue is BodProgramu bod)
       {
-        int idx = App.Current.Zasedani.Program.BodyProgramu.IndexOf(bod);
+        int idx = App.Current.Core.Zasedani.Program.BodyProgramu.IndexOf(bod);
 
         if (idx > 0)
         {
-          App.Current.Zasedani.Program.BodyProgramu.Move(idx, idx - 1);
+          App.Current.Core.Zasedani.Program.BodyProgramu.Move(idx, idx - 1);
         }
       }
     }
@@ -59,7 +59,7 @@ namespace ZZZO.Controls
     {
       if (LvProgram.SelectedValue is BodProgramu bod)
       {
-        App.Current.Zasedani.Program.BodyProgramu.Remove(bod);
+        App.Current.Core.Zasedani.Program.BodyProgramu.Remove(bod);
       }
     }
 

@@ -12,7 +12,8 @@
              TextElement.FontSize="14"
              FontFamily="{materialDesign:MaterialDesignFont}"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="900">
+             d:DesignHeight="600"
+             d:DesignWidth="900">
   <UserControl.Resources>
     <converters:ConditionalMarginConverter x:Key="ConditionalMarginConverter" />
     <Thickness x:Key="PodbodMargin">10,0,0,0</Thickness>
@@ -26,18 +27,22 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
-    <GroupBox Header="Body programu" Grid.Row="0" Grid.Column="0">
+    <GroupBox Header="Body programu"
+              Grid.Row="0"
+              Grid.Column="0">
       <Grid>
         <Grid.RowDefinitions>
           <RowDefinition Height="*" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" IsSynchronizedWithCurrentItem="True"
+        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  IsSynchronizedWithCurrentItem="True"
                   Name="LvProgram"
                   ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
           <ListView.ItemTemplate>
             <DataTemplate>
-              <TextBlock TextWrapping="Wrap" Text="{Binding Nadpis}"
+              <TextBlock TextWrapping="Wrap"
+                         Text="{Binding Nadpis}"
                          Margin="{
                   Binding JePodbod,
                   Converter={StaticResource ConditionalMarginConverter},
@@ -45,19 +50,25 @@
             </DataTemplate>
           </ListView.ItemTemplate>
         </ListView>
-        <WrapPanel Grid.Row="1" DockPanel.Dock="Bottom" Orientation="Horizontal">
-          <Button Click="AddProgramEntry" ToolTip="Přidat bod programu">
+        <WrapPanel Grid.Row="1"
+                   DockPanel.Dock="Bottom"
+                   Orientation="Horizontal">
+          <Button Click="AddProgramEntry"
+                  ToolTip="Přidat bod programu">
             <materialDesign:PackIcon Kind="PlusCircle" />
           </Button>
-          <Button Click="RemoveProgramEntry" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+          <Button Click="RemoveProgramEntry"
+                  IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
                   ToolTip="Smazat vybraný bod programu">
             <materialDesign:PackIcon Kind="MinusCircle" />
           </Button>
-          <Button Click="MoveProgramEntryUp" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+          <Button Click="MoveProgramEntryUp"
+                  IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
                   ToolTip="Posunout bod nahoru">
             <materialDesign:PackIcon Kind="ArrowUpCircle" />
           </Button>
-          <Button Click="MoveProgramEntryDown" IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+          <Button Click="MoveProgramEntryDown"
+                  IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
                   ToolTip="Posunout bod dolů">
             <materialDesign:PackIcon Kind="ArrowDownCircle" />
           </Button>
@@ -66,9 +77,12 @@
 
     </GroupBox>
 
-    <GroupBox Header="Detail bodu programu" Grid.Row="0" Grid.Column="1">
+    <GroupBox Header="Detail bodu programu"
+              Grid.Row="0"
+              Grid.Column="1">
       <local:ProgramEntry DataContext="{Binding ElementName=LvProgram, Path=SelectedValue}"
-                          IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}" Grid.Row="0"
+                          IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+                          Grid.Row="0"
                           Grid.Column="1" />
     </GroupBox>
   </Grid>

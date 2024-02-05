@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml;
 using ZZZO.Common.API;
 using ZZZO.Common.Properties;
@@ -88,11 +87,41 @@ namespace ZZZO.Common.Generators
     {
       int lastResolutionNumber = 0;
       List<string> acceptedResolutions = new List<string>();
-      Zastupitel ridici = zas.Zastupitele.First(zs => zs.JeRidici);
-      Zastupitel starosta = zas.Zastupitele.First(zs => zs.JeStarosta);
-      Zastupitel zapisovatel = zas.Zastupitele.First(zs => zs.JeZapisovatel);
+      Zastupitel ridici = zas.Zastupitele.FirstOrDefault(zs => zs.JeRidici);
+
+      if (ridici == null)
+      {
+        throw new Exception("není vybráná řídící osoba pro toto zasedání");
+      }
+
+      Zastupitel starosta = zas.Zastupitele.FirstOrDefault(zs => zs.JeStarosta);
+
+      if (starosta == null)
+      {
+        throw new Exception("není vybrán starosta obce");
+      }
+
+      Zastupitel zapisovatel = zas.Zastupitele.FirstOrDefault(zs => zs.JeZapisovatel);
+
+      if (zapisovatel == null)
+      {
+        throw new Exception("není vybrán zapisovatel");
+      }
+
       IEnumerable<Zastupitel> overovatele = zas.Zastupitele.Where(zs => zs.JeOverovatel);
-      BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.First(prog => prog.SchvalovaniProgramu);
+
+      if (!overovatele.Any())
+      {
+        throw new Exception("nejsou vybráni ověřovatelé");
+      }
+
+      BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.SchvalovaniProgramu);
+
+      if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
+      {
+        throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
+      }
+
       IEnumerable<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => !prog.SchvalovaniProgramu);
 
       XmlElement body = html.AppendElem("body");
@@ -325,7 +354,7 @@ namespace ZZZO.Common.Generators
       XmlElement div = body.AppendElem("div").AppendClass("resolution").AppendClass(accepted ? "success" : "failure");
 
       div.AppendElem("p").InnerText = $"{replacementTitle ?? "Hlasování o návrhu usnesení"}:";
-      
+
       div.AppendElem("p").InnerText =
         $"<span class=\"resolution-vote resolution-success\">\u2713</span> PRO: {choiceForStr}<br/>" +
         $"<span class=\"resolution-vote resolution-failure\">\u00D7</span> PROTI: {choiceAgainstStr}<br/>" +
