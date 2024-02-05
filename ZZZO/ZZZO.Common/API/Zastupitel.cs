@@ -162,12 +162,5 @@ public class Zastupitel : ObservableObject
     }
   }
 
-  [JsonIgnore]
-  public Zasedani Zasedani
-  {
-    get;
-    set;
-  }
-
   #endregion
 }

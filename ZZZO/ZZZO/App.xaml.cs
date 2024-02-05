@@ -75,11 +75,7 @@ namespace ZZZO
     {
       Zasedani = newZasedani;
 
-      window.DataContext = new
-      {
-        Current.Zasedani,
-        App = Current
-      };
+      window.DataContext = new MainWindowViewModel(Current.Zasedani, Current);
 
       window.UcGenerator.DataContext = new GeneratorViewModel(window.UcGenerator, Core);
     }

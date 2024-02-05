@@ -202,6 +202,9 @@ public class Zasedani : ObservableObject
     }
   }
 
+  /// <summary>
+  /// Výstupní soubor bez přípony.
+  /// </summary>
   public string VystupniSoubor
   {
     get => _vystupniSoubor;
@@ -240,9 +243,6 @@ public class Zasedani : ObservableObject
   public static Zasedani LoadFromFile(string file)
   {
     Zasedani zas = JsonConvert.DeserializeObject<Zasedani>(File.ReadAllText(file, Encoding.UTF8));
-
-    zas.InitializeTree();
-
     return zas;
   }
 
@@ -277,19 +277,6 @@ public class Zasedani : ObservableObject
     }
   }
 
-  public void InitializeTree()
-  {
-    if (Zastupitele == null)
-    {
-      return;
-    }
-
-    foreach (Zastupitel zastupitel in Zastupitele)
-    {
-      zastupitel.Zasedani = this;
-    }
-  }
-
   public void RemoveZastupitel(Zastupitel zast)
   {
     Zastupitele.Remove(zast);
@@ -298,7 +285,7 @@ public class Zasedani : ObservableObject
     {
       foreach (Usneseni usneseni in bodProgramu.Usneseni)
       {
-        // Odebereme zastupitele.
+        // Odebereme zastupitele ze všech usnesení.
         foreach (HlasovaniZastupitele hlasovaniZastupitele in usneseni.VolbyZastupitelu)
         {
           if (ReferenceEquals(hlasovaniZastupitele.Zastupitel, zast))

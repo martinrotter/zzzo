@@ -143,8 +143,6 @@ namespace ZZZO.Windows
       });
 
       App.Current.ResetZasedani(zas, this);
-
-      App.Current.Zasedani.InitializeTree();
     }
 
     private void QuitApp(object sender, RoutedEventArgs e)

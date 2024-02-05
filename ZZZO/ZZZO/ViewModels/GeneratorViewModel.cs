@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using ZZZO.Commands;
-using ZZZO.Common;
 using ZZZO.Common.Generators;
 using Generator = ZZZO.Controls.Generator;
 
@@ -11,11 +11,30 @@ namespace ZZZO.ViewModels
   {
     #region Proměnné
 
+    private bool _canGenerateOutputs;
+
+    private byte[] _generatedData;
+
     private int _generateProgress;
 
     #endregion
 
     #region Vlastnosti
+
+    public bool CanGenerateOutputs
+    {
+      get => _canGenerateOutputs;
+      set
+      {
+        if (value == _canGenerateOutputs)
+        {
+          return;
+        }
+
+        _canGenerateOutputs = value;
+        OnPropertyChanged();
+      }
+    }
 
     public ZzzoCore Core
     {
@@ -24,8 +43,17 @@ namespace ZZZO.ViewModels
 
     public byte[] GeneratedData
     {
-      get;
-      set;
+      get => _generatedData;
+      set
+      {
+        if (Equals(value, _generatedData))
+        {
+          return;
+        }
+
+        _generatedData = value;
+        OnPropertyChanged();
+      }
     }
 
     public RelayCommand GenerateDocumentCmd
@@ -89,10 +117,20 @@ namespace ZZZO.ViewModels
 
       Task<byte[]> tsk = generator.Generate(App.Current.Zasedani, prog);
 
-      await tsk;
-
-      prog.Report(0);
-      Generated(generator, tsk.Result);
+      try
+      {
+        await tsk;
+        Generated(generator, tsk.Result);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show($"Chyba při generování zápisu: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        Generated(generator, null);
+      }
+      finally
+      {
+        prog.Report(0);
+      }
     }
 
     private bool IsNotGeneratingDocument(object arg)

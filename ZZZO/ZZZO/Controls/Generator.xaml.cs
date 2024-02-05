@@ -1,15 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using CefSharp;
 using Microsoft.Win32;
+using ZZZO.Common;
 
 namespace ZZZO.Controls
 {
-  /// <summary>
-  /// Interaction logic for Generator.xaml
-  /// </summary>
   public partial class Generator : UserControl
   {
     #region Konstruktory
@@ -25,7 +24,7 @@ namespace ZZZO.Controls
 
     public void NewDataGenerated(byte[] data)
     {
-      WebBrowser.LoadHtml(Encoding.UTF8.GetString(data), "https://document.zzzo");
+      WebBrowser.LoadHtml(data == null ? "" : Encoding.UTF8.GetString(data), Constants.Uris.Document);
     }
 
     private string ChooseExportFile(string fileSuffix)
@@ -40,12 +39,16 @@ namespace ZZZO.Controls
 
       if (!string.IsNullOrWhiteSpace(App.Current.Zasedani.VystupniSoubor))
       {
-        d.FileName = App.Current.Zasedani.VystupniSoubor;
+        d.FileName = App.Current.Zasedani.VystupniSoubor + $".{fileSuffix}";
       }
 
       if (d.ShowDialog().GetValueOrDefault())
       {
-        App.Current.Zasedani.VystupniSoubor = d.FileName;
+        string chosenDir = Path.GetDirectoryName(d.FileName);
+        string chosenFile = Path.GetFileNameWithoutExtension(d.FileName);
+
+        App.Current.Zasedani.VystupniSoubor = Path.Combine(chosenDir, chosenFile);
+
         return d.FileName;
       }
       else
@@ -61,29 +64,50 @@ namespace ZZZO.Controls
 
       if (!string.IsNullOrWhiteSpace(file))
       {
-        File.WriteAllBytes(file, Encoding.UTF8.GetBytes(html));
+        try
+        {
+          File.WriteAllBytes(file, Encoding.UTF8.GetBytes(html));
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show($"HTML soubor nelze uložit: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
       }
     }
 
-    private void ExportPdf(object sender, RoutedEventArgs e)
+    private async void ExportPdf(object sender, RoutedEventArgs e)
     {
       string file = ChooseExportFile("pdf");
 
       if (!string.IsNullOrWhiteSpace(file))
       {
-        WebBrowser.PrintToPdfAsync(file, new PdfPrintSettings
+        try
         {
-          DisplayHeaderFooter = false,
-          Landscape = false,
-          PrintBackground = false,
-          PreferCssPageSize = true
-        });
+          await WebBrowser.PrintToPdfAsync(file, new PdfPrintSettings
+          {
+            DisplayHeaderFooter = false,
+            Landscape = false,
+            PrintBackground = false,
+            PreferCssPageSize = true
+          });
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show($"PDF soubor nelze uložit: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
       }
     }
 
     private void PrintOnPrinter(object sender, RoutedEventArgs e)
     {
-      WebBrowser.Print();
+      try
+      {
+        WebBrowser.Print();
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show($"Chyba při tisku: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+      }
     }
 
     #endregion

@@ -9,28 +9,28 @@
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    <converters:NotNullConverter x:Key="NotNullConverter" />
   </UserControl.Resources>
 
   <GroupBox Header="HTML + PDF">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top">
         <Button
-          IsEnabled="{Binding ElementName=PbGenerator, Path=Value, Converter={StaticResource InverseBooleanConverter}}"
           Content="Přegenerovat dokument" Command="{Binding GenerateDocumentCmd}" />
         <Button
           Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
           Margin="{StaticResource FormMargin}"
-          IsEnabled="{Binding ElementName=PbGenerator, Path=Value, Converter={StaticResource InverseBooleanConverter}}"
+          IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
           Content="Exportovat do HTML" Click="ExportHtml" />
         <Button
           Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
           Margin="{StaticResource FormMargin}"
-          IsEnabled="{Binding ElementName=PbGenerator, Path=Value, Converter={StaticResource InverseBooleanConverter}}"
+          IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
           Content="Exportovat do PDF" Click="ExportPdf" />
         <Button
           Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
           Margin="{StaticResource FormMargin}"
-          IsEnabled="{Binding ElementName=PbGenerator, Path=Value, Converter={StaticResource InverseBooleanConverter}}"
+          IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
           Content="Tisknout" Click="PrintOnPrinter" />
         <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Name="PbGenerator" Width="40"
                      Height="40"

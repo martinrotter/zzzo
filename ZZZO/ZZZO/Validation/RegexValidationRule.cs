@@ -1,6 +1,9 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
+using System.Windows.Data;
+using ZZZO.Common;
 
 namespace ZZZO.Validation
 {
@@ -20,6 +23,18 @@ namespace ZZZO.Validation
 
     public override ValidationResult Validate(object value, CultureInfo cultureInfo)
     {
+      /*
+      if (value is BindingExpression expr)
+      {
+        value = Utils.GetBoundValue(value);
+
+        if (value != null && value.GetType() != typeof(string))
+        {
+          value = value.ToString();
+        }
+      }
+      */
+
       if (value is string str && Regex.IsMatch(str, RegularExpression))
       {
         return ValidationResult.ValidResult;
