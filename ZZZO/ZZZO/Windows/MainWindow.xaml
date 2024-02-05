@@ -46,7 +46,7 @@
         <zzzoCcontrols:BasicInfo x:Name="UcBasicInfo" />
       </TabItem>
       <TabItem Header="Program">
-        <zzzoCcontrols:Program />
+        <zzzoCcontrols:Program x:Name="UcProgram" />
       </TabItem>
       <TabItem Header="Generátor">
         <zzzoCcontrols:Generator x:Name="UcGenerator" />

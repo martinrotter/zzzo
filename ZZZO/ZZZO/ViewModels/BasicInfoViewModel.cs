@@ -73,7 +73,7 @@ public class BasicInfoViewModel : ViewModelBase
 
     UpdateVillageLogoCmd = new RelayCommand(obj => UpdateVillageLogo(), obj => true);
     AddZastupitelCmd = new RelayCommand(obj => AddZastupitel(), obj => true);
-    RemoveZastupitelCmd = new RelayCommand(RemoveZastupitel, obj => ChosenZastupitel != null);
+    RemoveZastupitelCmd = new RelayCommand(obj => RemoveZastupitel(), obj => ChosenZastupitel != null);
   }
 
   #endregion
@@ -89,7 +89,7 @@ public class BasicInfoViewModel : ViewModelBase
     });
   }
 
-  private void RemoveZastupitel(object arg)
+  private void RemoveZastupitel()
   {
     if (ChosenZastupitel != null)
     {

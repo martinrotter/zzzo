@@ -97,6 +97,7 @@
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\CollapseOnTrueConverter.cs" />
     <Compile Include="Converters\NotNullConverter.cs" />
+    <Compile Include="ViewModels\ProgramViewModel.cs" />
     <Compile Include="ViewModels\BasicInfoViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Validation\RegexValidationRule.cs" />

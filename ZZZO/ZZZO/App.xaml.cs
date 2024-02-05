@@ -46,6 +46,7 @@ namespace ZZZO
     {
       window.DataContext = new MainWindowViewModel(Current, Core);
       window.UcBasicInfo.DataContext = new BasicInfoViewModel(Core);
+      window.UcProgram.DataContext = new ProgramViewModel(Core);
       window.UcGenerator.DataContext = new GeneratorViewModel(window.UcGenerator, Core);
     }
 

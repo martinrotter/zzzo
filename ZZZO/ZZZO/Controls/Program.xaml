@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:ZZZO.Controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:ZZZO.Converters"
+             xmlns:viewmodels="clr-namespace:ZZZO.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:ProgramViewModel}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontWeight="Medium"
@@ -38,7 +40,8 @@
         <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   IsSynchronizedWithCurrentItem="True"
                   Name="LvProgram"
-                  ItemsSource="{Binding Zasedani.Program.BodyProgramu}">
+                  SelectedValue="{Binding ChosenProgramEntry, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding Core.Zasedani.Program.BodyProgramu}">
           <ListView.ItemTemplate>
             <DataTemplate>
               <TextBlock TextWrapping="Wrap"
@@ -53,22 +56,20 @@
         <WrapPanel Grid.Row="1"
                    DockPanel.Dock="Bottom"
                    Orientation="Horizontal">
-          <Button Click="AddProgramEntry"
+          <Button Command="{Binding AddProgramEntryCmd}"
                   ToolTip="Přidat bod programu">
             <materialDesign:PackIcon Kind="PlusCircle" />
           </Button>
-          <Button Click="RemoveProgramEntry"
-                  IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+          <Button Command="{Binding RemoveProgramEntryCmd}"
                   ToolTip="Smazat vybraný bod programu">
             <materialDesign:PackIcon Kind="MinusCircle" />
           </Button>
-          <Button Click="MoveProgramEntryUp"
-                  IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+
+          <Button Command="{Binding MoveProgramEntryUpCmd}"
                   ToolTip="Posunout bod nahoru">
             <materialDesign:PackIcon Kind="ArrowUpCircle" />
           </Button>
-          <Button Click="MoveProgramEntryDown"
-                  IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
+          <Button Command="{Binding MoveProgramEntryDownCmd}"
                   ToolTip="Posunout bod dolů">
             <materialDesign:PackIcon Kind="ArrowDownCircle" />
           </Button>
