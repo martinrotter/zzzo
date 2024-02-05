@@ -12,19 +12,18 @@
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:EnumConverter x:Key="EnumConverter" />
+    <converters:CollapseOnTrueConverter x:Key="CollapseOnTrueConverter" />
   </UserControl.Resources>
   <StackPanel Orientation="Vertical">
+    <CheckBox Name="CbBereNaVedomi"
+              Content="ZO bere na vědomí"
+              IsChecked="{Binding ZoBereNaVedomi, UpdateSourceTrigger=PropertyChanged}" />
     <TextBox materialDesign:HintAssist.Hint="Text usnesení"
              MinLines="4"
              TextWrapping="Wrap"
              AcceptsReturn="True"
-             IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}"
+             IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource CollapseOnTrueConverter}}"
              Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
-
-    <CheckBox Name="CbBereNaVedomi"
-              Content="ZO bere na vědomí"
-              IsChecked="{Binding ZoBereNaVedomi, UpdateSourceTrigger=PropertyChanged}" />
-
     <GroupBox Header="Hlasování">
       <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"

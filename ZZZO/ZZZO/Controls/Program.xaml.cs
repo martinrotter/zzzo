@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using ZZZO.ViewModels;
 
 namespace ZZZO.Controls
 {
@@ -12,6 +13,13 @@ namespace ZZZO.Controls
     public Program()
     {
       InitializeComponent();
+
+      LvProgram.SelectionChanged += LvProgram_SelectionChanged;
+    }
+
+    private void LvProgram_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      //Lv
     }
 
     #endregion

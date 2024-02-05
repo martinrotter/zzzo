@@ -87,6 +87,11 @@ public class BasicInfoViewModel : ViewModelBase
       Jmeno = "Nový",
       Prijmeni = "Zastupitel"
     });
+
+    if (Core.Zasedani.Zastupitele.Count == 1)
+    {
+      ChosenZastupitel = Core.Zasedani.Zastupitele[0];
+    }
   }
 
   private void RemoveZastupitel()

@@ -11,6 +11,7 @@ public class ProgramViewModel : ViewModelBase
   private BodProgramu _chosenProgramEntry;
 
   private ZzzoCore _core;
+  private ProgramEntryViewModel _entryViewModel;
 
   #endregion
 
@@ -44,6 +45,9 @@ public class ProgramViewModel : ViewModelBase
       }
 
       _chosenProgramEntry = value;
+
+      EntryViewModel.ProgramEntry = _chosenProgramEntry;
+
       OnPropertyChanged();
       OnPropertyChanged(nameof(ChosenFirstProgramEntry));
       OnPropertyChanged(nameof(ChosenLastProgramEntry));
@@ -61,6 +65,21 @@ public class ProgramViewModel : ViewModelBase
       }
 
       _core = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public ProgramEntryViewModel EntryViewModel
+  {
+    get => _entryViewModel;
+    set
+    {
+      if (Equals(value, _entryViewModel))
+      {
+        return;
+      }
+
+      _entryViewModel = value;
       OnPropertyChanged();
     }
   }
@@ -87,11 +106,14 @@ public class ProgramViewModel : ViewModelBase
   public ProgramViewModel(ZzzoCore core)
   {
     Core = core;
+    EntryViewModel = new ProgramEntryViewModel(core);
 
     AddProgramEntryCmd = new RelayCommand(obj => AddProgramEntry(), obj => true);
     RemoveProgramEntryCmd = new RelayCommand(obj => RemoveProgramEntry(), obj => ChosenProgramEntry != null);
-    MoveProgramEntryUpCmd = new RelayCommand(obj => MoveProgramEntryUp(), obj => !ChosenFirstProgramEntry);
-    MoveProgramEntryDownCmd = new RelayCommand(obj => MoveProgramEntryDown(), obj => !ChosenLastProgramEntry);
+    MoveProgramEntryUpCmd = new RelayCommand(obj => MoveProgramEntryUp(), obj => ChosenProgramEntry != null &&
+                                                                                 !ChosenFirstProgramEntry);
+    MoveProgramEntryDownCmd = new RelayCommand(obj => MoveProgramEntryDown(), obj => ChosenProgramEntry != null &&
+                                                                                     !ChosenLastProgramEntry);
   }
 
   #endregion
@@ -105,6 +127,11 @@ public class ProgramViewModel : ViewModelBase
       Nadpis = "Nový bod programu",
       Text = "Text bodu programu"
     });
+
+    if (Core.Zasedani.Program.BodyProgramu.Count == 1)
+    {
+      ChosenProgramEntry = Core.Zasedani.Program.BodyProgramu[0];
+    }
   }
 
   private void MoveProgramEntryDown()

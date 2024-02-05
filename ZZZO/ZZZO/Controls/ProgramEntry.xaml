@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:ZZZO.Controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:ZZZO.Converters"
+             xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewModels:ProgramEntryViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="800"
              d:DesignWidth="500">
@@ -21,18 +23,18 @@
                Grid.Column="0"
                Orientation="Vertical">
       <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
-               Text="{Binding Nadpis, UpdateSourceTrigger=PropertyChanged}" />
+               Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
       <TextBox materialDesign:HintAssist.Hint="Doplňkový text bodu programu"
                TextWrapping="Wrap"
                AcceptsReturn="True"
                MinLines="4"
-               Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
+               Text="{Binding ProgramEntry.Text, UpdateSourceTrigger=PropertyChanged}" />
       <CheckBox Content="Tento bod se týká schvalování programu"
-                IsChecked="{Binding SchvalovaniProgramu, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding ProgramEntry.SchvalovaniProgramu, UpdateSourceTrigger=PropertyChanged}" />
       <CheckBox Content="Podbod předchozího bodu programu"
-                IsChecked="{Binding JePodbod, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding ProgramEntry.JePodbod, UpdateSourceTrigger=PropertyChanged}" />
       <CheckBox Content="Doplněný bod programu"
-                IsChecked="{Binding JeDoplneny, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding ProgramEntry.JeDoplneny, UpdateSourceTrigger=PropertyChanged}" />
     </WrapPanel>
 
     <GroupBox Grid.Row="0"
@@ -40,20 +42,20 @@
               Header="Usnesení">
       <StackPanel Orientation="Vertical">
         <WrapPanel Orientation="Horizontal">
-          <Button Click="AddUsneseni"
+          <Button Command="{Binding AddUsneseniCmd}"
                   ToolTip="Přidat nové usnesení">
             <materialDesign:PackIcon Kind="PlusCircle" />
           </Button>
           <Button ToolTip="Smazat vybrané usnesení"
-                  IsEnabled="{Binding ElementName=CmbUsneseni, Path=SelectedValue, Converter={StaticResource NotNullConverter}}"
-                  Click="RemoveUsneseni">
+                  Command="{Binding RemoveUsneseniCmd}">
             <materialDesign:PackIcon Kind="MinusCircle" />
           </Button>
         </WrapPanel>
         <ComboBox IsSynchronizedWithCurrentItem="True"
                   Name="CmbUsneseni"
+                  SelectedValue="{Binding ChosenUsneseni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   IsEnabled="{Binding ElementName=CmbUsneseni, Path=HasItems}"
-                  ItemsSource="{Binding Usneseni}">
+                  ItemsSource="{Binding ProgramEntry.Usneseni}">
           <ComboBox.ItemTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding Text}" />

@@ -166,7 +166,7 @@
                     AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
                     CanUserDeleteRows="False"
                     Name="LvZastupitele"
-                    SelectedValue="{Binding ChosenZastupitel, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValue="{Binding ChosenZastupitel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     ItemsSource="{Binding Core.Zasedani.Zastupitele}">
             <DataGrid.Columns>
               <DataGridTextColumn Header="Jméno"

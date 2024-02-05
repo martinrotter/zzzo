@@ -40,7 +40,7 @@
         <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   IsSynchronizedWithCurrentItem="True"
                   Name="LvProgram"
-                  SelectedValue="{Binding ChosenProgramEntry, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedValue="{Binding ChosenProgramEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding Core.Zasedani.Program.BodyProgramu}">
           <ListView.ItemTemplate>
             <DataTemplate>
@@ -75,16 +75,16 @@
           </Button>
         </WrapPanel>
       </Grid>
-
     </GroupBox>
 
     <GroupBox Header="Detail bodu programu"
               Grid.Row="0"
               Grid.Column="1">
-      <local:ProgramEntry DataContext="{Binding ElementName=LvProgram, Path=SelectedValue}"
+      <local:ProgramEntry x:Name="UcProgramEntry"
                           IsEnabled="{Binding ElementName=LvProgram, Path=SelectedItems.Count}"
                           Grid.Row="0"
-                          Grid.Column="1" />
+                          Grid.Column="1"
+                          DataContext="{Binding EntryViewModel}" />
     </GroupBox>
   </Grid>
 </UserControl>

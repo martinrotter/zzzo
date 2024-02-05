@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using ZZZO.Common.API;
 
 namespace ZZZO.Controls
@@ -23,26 +22,6 @@ namespace ZZZO.Controls
     public ProgramEntry()
     {
       InitializeComponent();
-    }
-
-    #endregion
-
-    #region Metody
-
-    private void AddUsneseni(object sender, RoutedEventArgs e)
-    {
-      App.Current.Core.Zasedani.AddUsneseni(BodProgramu, new Usneseni
-      {
-        Text = "Text usnesení"
-      });
-    }
-
-    private void RemoveUsneseni(object sender, RoutedEventArgs e)
-    {
-      if (CmbUsneseni.SelectedValue is Usneseni usneseni)
-      {
-        BodProgramu.Usneseni.Remove(usneseni);
-      }
     }
 
     #endregion
