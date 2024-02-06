@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-zzzo:
-    name: "zzzo: ${{ matrix.os }}"
+    name: "zzzo: build"
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
@@ -41,10 +41,10 @@ jobs:
           path: ./*.zip
 
   dist-binaries:
-    name: distribute-binaries
+    name: "zzzo: distribute"
     needs:
       - build-zzzo
-    runs-on: windows-2022
+    runs-on: "windows-2022"
     permissions:
       contents: write
 
