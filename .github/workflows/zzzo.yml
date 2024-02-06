@@ -27,8 +27,8 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
 
-      - name: restore-nuget-packages
-        uses: IT-Service/restore-nuget-packages@v1.0.2
+      - name: Setup Nuget
+        uses: Nuget/setup-nuget@v1
              
       - name: Build application
         run: ${{ matrix.script_name }} "${{ matrix.os }}"
