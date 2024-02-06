@@ -32,3 +32,45 @@ jobs:
              
       - name: Build application
         run: ${{ matrix.script_name }} "${{ matrix.os }}"
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          name: zzzo-latest.zip
+          path: ./*.zip
+
+  dist-binaries:
+    name: distribute-binaries
+    needs:
+      - build-zzzo
+    runs-on: windows-2022
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download binaries from previous jobs
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Release development binaries
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: artifacts/*/*
+          name: Nejnovější varianta programu
+          omitBodyDuringUpdate: true
+          prerelease: true
+          removeArtifacts: true
+          tag: devbuild
+
+      - name: Release stable binaries
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: ncipollo/release-action@v1
+        with:
+          artifactErrorsFailBuild: true
+          artifacts: artifacts/*/*
+          draft: true
