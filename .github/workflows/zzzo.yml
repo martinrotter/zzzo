@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-2022]
-        script_name: ".\resources\scripts\build-windows.ps1"
+        script_name: ".\\resources\\scripts\\build-windows.ps1"
     steps:         
       - name: Checkout source code
         uses: actions/checkout@v3
