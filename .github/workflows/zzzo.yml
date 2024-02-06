@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-zzzo:
-    name: "${{ matrix.os }}; no-lite = ${{ matrix.no_lite }}; qt5 = ${{ matrix.use_qt5 }}"
+    name: "zzzo: ${{ matrix.os }}"
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
