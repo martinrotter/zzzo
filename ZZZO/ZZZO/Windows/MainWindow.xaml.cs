@@ -17,11 +17,6 @@ namespace ZZZO.Windows
 
     #region Metody
 
-    protected override void OnClosing(CancelEventArgs e)
-    {
-      base.OnClosing(e);
-    }
-
     private void QuitApp(object sender, RoutedEventArgs e)
     {
       Close();

@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using ZZZO.Commands;
 using ZZZO.Common.API;
+using ZZZO.Windows;
 
 namespace ZZZO.ViewModels;
 
@@ -19,14 +21,12 @@ public class MainWindowViewModel : ViewModelBase
     get;
   }
 
-  #endregion
-
-  public ICommand NewZasedaniCmd
+  public ICommand LoadZasedaniCmd
   {
     get;
   }
 
-  public ICommand LoadZasedaniCmd
+  public ICommand NewZasedaniCmd
   {
     get;
   }
@@ -36,14 +36,19 @@ public class MainWindowViewModel : ViewModelBase
     get;
   }
 
+  #endregion
+
   #region Konstruktory
 
   public MainWindowViewModel()
   {
   }
 
-  public MainWindowViewModel(App app, ZzzoCore core)
+  public MainWindowViewModel(MainWindow window, App app, ZzzoCore core)
   {
+    // View is only used to bind necessary events.
+    window.Closing += OnAppClosing;
+
     App = app;
     Core = core;
 
@@ -58,11 +63,21 @@ public class MainWindowViewModel : ViewModelBase
 
   private void LoadZasedani()
   {
+    if (!SaveIfDirtyAndContinue())
+    {
+      return;
+    }
+
     Core.LoadZasedani();
   }
 
   private void NewZasedani()
   {
+    if (!SaveIfDirtyAndContinue())
+    {
+      return;
+    }
+
     Zasedani zas = new Zasedani();
 
     zas.AddZastupitel(new Zastupitel
@@ -165,12 +180,46 @@ public class MainWindowViewModel : ViewModelBase
       JePodbod = true
     });
 
-    Core.Zasedani = zas;
+    Core.NewZaseDani(zas);
   }
 
-  private void SaveZasedani()
+  private void OnAppClosing(object sender, CancelEventArgs e)
   {
-    Core.SaveZasedani();
+    if (!SaveIfDirtyAndContinue())
+    {
+      e.Cancel = true;
+    }
+  }
+
+  private bool SaveIfDirtyAndContinue()
+  {
+    if (Core.ZasedaniIsDirty)
+    {
+      if (MessageBox.Show(
+            "Máte nějaké neuložené změny, chcete nejdříve uložit vaši současnou práci?",
+            "Neuložené změny",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question,
+            MessageBoxResult.Yes) == MessageBoxResult.Yes)
+      {
+        if (!SaveZasedani())
+        {
+          // User did not save his unsaved work, abort.
+          return false;
+        }
+      }
+      else
+      {
+        // User does not need to save changes.
+      }
+    }
+
+    return true;
+  }
+
+  private bool SaveZasedani()
+  {
+    return Core.SaveZasedani();
   }
 
   #endregion

@@ -18,7 +18,6 @@ public class Zasedani : ObservableObject
   private int _pocetHostu;
   private int _poradi = 1;
   private Program _program = new Program();
-  private bool _spinave;
   private string _vystupniSoubor;
   private ObservableCollection<Zastupitel> _zastupitele = new ObservableCollection<Zastupitel>();
 
@@ -187,22 +186,6 @@ public class Zasedani : ObservableObject
     }
   }
 
-  [JsonIgnore]
-  public bool Spinave
-  {
-    get => _spinave;
-    set
-    {
-      if (value == _spinave)
-      {
-        return;
-      }
-
-      _spinave = value;
-      OnPropertyChanged();
-    }
-  }
-
   /// <summary>
   /// Výstupní soubor bez přípony.
   /// </summary>
@@ -301,6 +284,12 @@ public class Zasedani : ObservableObject
 
   public void SaveToFile(string file)
   {
+    byte[] json = ToJson();
+    File.WriteAllBytes(file, json);
+  }
+
+  public byte[] ToJson()
+  {
     string json = JsonConvert.SerializeObject(this, new JsonSerializerSettings
     {
       DateTimeZoneHandling = DateTimeZoneHandling.Local,
@@ -308,7 +297,7 @@ public class Zasedani : ObservableObject
       Formatting = Formatting.Indented
     });
 
-    File.WriteAllText(file, json, Encoding.UTF8);
+    return Encoding.UTF8.GetBytes(json);
   }
 
   #endregion

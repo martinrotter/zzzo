@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using System.Linq;
+using Microsoft.Win32;
 using ZZZO.Common;
 using ZZZO.Common.API;
 
@@ -25,9 +26,17 @@ namespace ZZZO
         }
 
         _zasedani = value;
+
+        ZasedaniOriginalData = _zasedani.ToJson();
+
         OnPropertyChanged();
         OnPropertyChanged(nameof(ZasedaniLoaded));
       }
+    }
+
+    public bool ZasedaniIsDirty
+    {
+      get => ZasedaniLoaded && ZasedaniOriginalData != null && !Zasedani.ToJson().SequenceEqual(ZasedaniOriginalData);
     }
 
     public bool ZasedaniLoaded
@@ -35,11 +44,20 @@ namespace ZZZO
       get => Zasedani != null;
     }
 
+    /// <summary>
+    /// Is used to determine if there is any change or not.
+    /// </summary>
+    private byte[] ZasedaniOriginalData
+    {
+      get;
+      set;
+    }
+
     #endregion
 
     #region Metody
 
-    public void LoadZasedani()
+    public bool LoadZasedani()
     {
       OpenFileDialog d = new OpenFileDialog();
 
@@ -51,14 +69,24 @@ namespace ZZZO
       if (d.ShowDialog().GetValueOrDefault())
       {
         Zasedani = Zasedani.LoadFromFile(d.FileName);
+        return true;
+      }
+      else
+      {
+        return false;
       }
     }
 
-    public void SaveZasedani()
+    public void NewZaseDani(Zasedani zas)
+    {
+      Zasedani = zas;
+    }
+
+    public bool SaveZasedani()
     {
       if (Zasedani == null)
       {
-        return;
+        return false;
       }
 
       SaveFileDialog d = new SaveFileDialog();
@@ -72,6 +100,12 @@ namespace ZZZO
       if (d.ShowDialog().GetValueOrDefault())
       {
         Zasedani.SaveToFile(d.FileName);
+        ZasedaniOriginalData = Zasedani.ToJson();
+        return true;
+      }
+      else
+      {
+        return false;
       }
     }
 
