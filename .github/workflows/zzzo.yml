@@ -26,6 +26,7 @@ jobs:
 
       - name: restore-nuget-packages
         uses: IT-Service/restore-nuget-packages@v1.0.2
-            
+             
+             
       - name: Build application
         run: ${{ matrix.script_name }} "${{ matrix.os }}"
