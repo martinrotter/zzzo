@@ -40,7 +40,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>ZZZO.App</StartupObject>
