@@ -7,108 +7,25 @@ on:
     tags: ["*"]
 
 jobs:
-  check-build-script:
-    name: check-build-script
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-
-      - name: Check script syntax
-        run: bash -n ./resources/scripts/github-actions/build-linux-mac.sh
-
-      - name: Show shellcheck version
-        run: shellcheck --version
-
-      - name: Run shellcheck
-        run: shellcheck --color=always ./resources/scripts/github-actions/build-linux-mac.sh
-
-  build-rssguard:
-    needs: check-build-script
+  build-zzzo:
     name: "${{ matrix.os }}; no-lite = ${{ matrix.no_lite }}; qt5 = ${{ matrix.use_qt5 }}"
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        os: [windows-2019, ubuntu-20.04, macos-11]
-        no_lite: ["ON", "OFF"]
-        use_qt5: ["ON", "OFF"]
-        include:
-          - os: windows-2019
-            script_name: .\resources\scripts\github-actions\build-windows.ps1
-          - os: ubuntu-20.04
-            script_name: ./resources/scripts/github-actions/build-linux-mac.sh
-          - os: macos-11
-            script_name: ./resources/scripts/github-actions/build-linux-mac.sh
-        exclude:
-          - os: ubuntu-20.04
-            use_qt5: "OFF"
-          - os: macos-11
-            use_qt5: "ON"
+        os: [windows-2022]
+        script_name: .\resources\scripts\build-windows.ps1
     steps:         
       - name: Checkout source code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: true
-         
-      - name: Prepare environment and compile application
-        run: ${{ matrix.script_name }} "${{ matrix.os }}" "${{ matrix.no_lite }}" "${{ matrix.use_qt5 }}"
-        env:
-          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
-          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
-          FEEDLY_CLIENT_ID: ${{ secrets.FEEDLY_CLIENT_ID }}
-          FEEDLY_CLIENT_SECRET: ${{ secrets.FEEDLY_CLIENT_SECRET }}
 
-      - name: Upload binaries
-        uses: actions/upload-artifact@v3
-        with:
-          if-no-files-found: error
-          name: RSS_Guard-${{ runner.os }}${{ matrix.no_lite == 'ON' && '-' || '-nowebengine-' }}Qt${{ matrix.use_qt5 == 'ON' && '5' || '6' }}
-          path: |
-            ./rssguard-build/rssguard-*win*.exe
-            ./rssguard-build/rssguard-*win*.7z
-            ./rssguard-build/rssguard-*mac64.dmg
-            ./rssguard-build/rssguard-*linux64.AppImage
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
 
-  dist-binaries:
-    name: distribute-binaries
-    needs:
-      - build-rssguard
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-
-    steps:
-      - name: Download binaries from previous jobs
-        uses: actions/download-artifact@v3
-        with:
-          path: artifacts
-
-      - name: Release development binaries
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifactErrorsFailBuild: true
-          artifacts: artifacts/*/*
-          name: Development builds
-          omitBodyDuringUpdate: true
-          prerelease: true
-          removeArtifacts: true
-          tag: devbuild
-
-      - name: Update "devbuild" tag
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: richardsimko/update-tag@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: devbuild
-
-      - name: Release stable binaries
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: ncipollo/release-action@v1
-        with:
-          artifactErrorsFailBuild: true
-          artifacts: artifacts/*/*
-          draft: true
+      - name: restore-nuget-packages
+        uses: IT-Service/restore-nuget-packages@v1.0.2
+            
+      - name: Build application
+        run: ${{ matrix.script_name }} "${{ matrix.os }}"
