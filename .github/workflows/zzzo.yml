@@ -8,12 +8,9 @@ on:
 
 jobs:
   build-zzzo:
-    name: "zzzo: ${{ matrix.os }}"
-    runs-on: "${{ matrix.os }}"
-    strategy:
-      matrix:
-        os: [windows-2022]
-        script_name: ".\\resources\\scripts\\build-windows.ps1"
+    name: "zzzo"
+    runs-on: "windows-2022"
+    script_name: ".\\resources\\scripts\\build-windows.ps1"
     steps:         
       - name: Checkout source code
         uses: actions/checkout@v3
