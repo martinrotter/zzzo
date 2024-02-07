@@ -93,7 +93,6 @@ public class Zasedani : ObservableObject
         return null;
       }
 
-      byte[] data;
       PngBitmapEncoder encoder = new PngBitmapEncoder();
       encoder.Frames.Add(BitmapFrame.Create(LogoObce));
 

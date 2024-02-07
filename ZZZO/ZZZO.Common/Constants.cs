@@ -32,7 +32,7 @@ namespace ZZZO.Common
         AppAuthor = vi.CompanyName;
 
         AppBuildDate = DateTime.Parse(Resources.build_date);
-        AppBuildRevision = Resources.build_commit;
+        AppBuildRevision = Resources.build_commit.Replace("\n", string.Empty);
       }
 
       #endregion
