@@ -86,7 +86,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Resources\build-commit.txt" />
+    <None Include="Resources\build-date.txt" />
     <Content Include="Resources\style.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>powershell -Comman "Get-Date -Format "o"" &gt; "$(ProjectDir)\Resources\build-date.txt"
+git describe  &gt; "$(ProjectDir)\Resources\build-commit.txt"</PreBuildEvent>
+  </PropertyGroup>
 </Project>

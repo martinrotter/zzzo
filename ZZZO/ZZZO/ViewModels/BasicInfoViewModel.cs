@@ -63,6 +63,11 @@ public class BasicInfoViewModel : ViewModelBase
     get;
   }
 
+  public ICommand RemoveVillageLogoCmd
+  {
+    get;
+  }
+
   #endregion
 
   #region Konstruktory
@@ -72,8 +77,14 @@ public class BasicInfoViewModel : ViewModelBase
     Core = core;
 
     UpdateVillageLogoCmd = new RelayCommand(obj => UpdateVillageLogo(), obj => true);
+    RemoveVillageLogoCmd = new RelayCommand(obj => RemoveVillageLogo(), obj => Core?.Zasedani?.LogoObce != null);
     AddZastupitelCmd = new RelayCommand(obj => AddZastupitel(), obj => true);
     RemoveZastupitelCmd = new RelayCommand(obj => RemoveZastupitel(), obj => ChosenZastupitel != null);
+  }
+
+  private void RemoveVillageLogo()
+  {
+    Core.Zasedani.LogoObce = null;
   }
 
   #endregion

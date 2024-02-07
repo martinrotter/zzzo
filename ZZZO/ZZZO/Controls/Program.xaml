@@ -54,7 +54,6 @@
           </ListView.ItemTemplate>
         </ListView>
         <WrapPanel Grid.Row="1"
-                   DockPanel.Dock="Bottom"
                    Orientation="Horizontal">
           <Button Command="{Binding AddProgramEntryCmd}"
                   ToolTip="Přidat bod programu">

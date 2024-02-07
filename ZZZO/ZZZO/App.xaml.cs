@@ -32,11 +32,13 @@ namespace ZZZO
     {
       Current = this;
 
-      CultureInfo.CurrentCulture = new CultureInfo("cs-CZ");
-      CultureInfo.CurrentUICulture = new CultureInfo("cs-CZ");
-      CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("cs-CZ");
-      Thread.CurrentThread.CurrentCulture = new CultureInfo("cs-CZ");
-      Thread.CurrentThread.CurrentUICulture = new CultureInfo("cs-CZ");
+      var ci = new CultureInfo("cs-CZ");
+
+      CultureInfo.CurrentCulture = ci;
+      CultureInfo.CurrentUICulture = ci;
+      CultureInfo.DefaultThreadCurrentCulture = ci;
+      Thread.CurrentThread.CurrentCulture = ci;
+      Thread.CurrentThread.CurrentUICulture = ci;
     }
 
     #endregion
@@ -48,7 +50,7 @@ namespace ZZZO
       window.DataContext = new MainWindowViewModel(window, Current, Core);
       window.UcBasicInfo.DataContext = new BasicInfoViewModel(Core);
       window.UcProgram.DataContext = new ProgramViewModel(Core);
-      window.UcGenerator.DataContext = new GeneratorViewModel(window.UcGenerator, Core);
+      window.UcGenerator.DataContext = new GeneratorViewModel(Core);
     }
 
     protected override void OnExit(ExitEventArgs e)

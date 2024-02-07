@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using ZZZO.Common.Properties;
 
 namespace ZZZO.Common
 {
@@ -15,6 +17,8 @@ namespace ZZZO.Common
       public const string Freepik = "www.freepik.com";
       public static string AppAuthor;
       public static string AppVersion;
+      public static DateTime AppBuildDate;
+      public static string AppBuildRevision;
 
       #endregion
 
@@ -26,6 +30,9 @@ namespace ZZZO.Common
 
         AppVersion = vi.ProductVersion;
         AppAuthor = vi.CompanyName;
+
+        AppBuildDate = DateTime.Parse(Resources.build_date);
+        AppBuildRevision = Resources.build_commit;
       }
 
       #endregion

@@ -6,6 +6,7 @@
              xmlns:converters="clr-namespace:ZZZO.Converters"
              xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
              xmlns:viewmodels="clr-namespace:ZZZO.ViewModels"
+             xmlns:assists="clr-namespace:ZZZO.Assists"
              d:DataContext="{d:DesignInstance Type=viewmodels:GeneratorViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450"
@@ -22,19 +23,18 @@
                 Command="{Binding GenerateDocumentCmd}" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
                 Margin="{StaticResource FormMargin}"
-                IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
-                Content="Exportovat do HTML"
-                Click="ExportHtml" />
+                Command="{Binding ExportHtmlCmd}"
+                Content="Exportovat do HTML" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
                 Margin="{StaticResource FormMargin}"
-                IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
                 Content="Exportovat do PDF"
-                Click="ExportPdf" />
+                Command="{Binding ExportPdfCmd}"
+                CommandParameter="{Binding ElementName=WebBrowser}" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
                 Margin="{StaticResource FormMargin}"
-                IsEnabled="{Binding GeneratedData, Converter={StaticResource NotNullConverter}}"
                 Content="Tisknout"
-                Click="PrintOnPrinter" />
+                Command="{Binding PrintCmd}"
+                CommandParameter="{Binding ElementName=WebBrowser}" />
         <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                      Name="PbGenerator"
                      Width="40"
@@ -43,7 +43,9 @@
                      Maximum="100"
                      Value="{Binding GenerateProgress}" />
       </WrapPanel>
-      <wpf:ChromiumWebBrowser Name="WebBrowser" />
+      <wpf:ChromiumWebBrowser
+        assists:ChromiumWebBrowserAssist.Html="{Binding GeneratedHtml, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+        Name="WebBrowser" />
     </DockPanel>
   </GroupBox>
 </UserControl>

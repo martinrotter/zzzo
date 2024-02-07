@@ -51,7 +51,19 @@
                Source="{Binding Core.Zasedani.LogoObce, UpdateSourceTrigger=PropertyChanged}" />
       </Border>
       <Button VerticalAlignment="Center"
-              Command="{Binding UpdateVillageLogoCmd}">Nastavit znak obce</Button>
+              Command="{Binding UpdateVillageLogoCmd}">
+        <WrapPanel>
+          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Badge" />
+          <TextBlock Margin="5,0,0,0">Vybrat znak obce</TextBlock>
+        </WrapPanel>
+      </Button>
+      <Button VerticalAlignment="Center"
+              Command="{Binding RemoveVillageLogoCmd}">
+        <WrapPanel>
+          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Delete" />
+          <TextBlock Margin="5,0,0,0">Smazat znak obce</TextBlock>
+        </WrapPanel>
+      </Button>
     </WrapPanel>
 
     <WrapPanel Margin="0">

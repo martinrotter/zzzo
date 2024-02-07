@@ -6,8 +6,8 @@
         mc:Ignorable="d"
         Icon="../Resources/AppIcon.png"
         Title="O aplikaci"
-        Height="290"
-        Width="300"
+        Height="400"
+        Width="400"
         WindowStartupLocation="CenterOwner"
         Name="Window"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -20,30 +20,32 @@
   <Window.DataContext>
     <viewModels:AboutWindowViewModel />
   </Window.DataContext>
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-    <TextBox materialDesign:HintAssist.Hint="Verze programu"
-             IsReadOnly="True"
-             Text="{Binding VerzeProgramu, Mode=OneTime}" />
-    <TextBox Grid.Row="1"
-             materialDesign:HintAssist.Hint="Autor"
-             IsReadOnly="True"
-             Text="{Binding Autor, Mode=OneTime}" />
-    <TextBox Grid.Row="2"
-             materialDesign:HintAssist.Hint="Poděkování"
-             IsReadOnly="True"
-             Text="{Binding Podekovani, Mode=OneTime}" />
-    <Button HorizontalAlignment="Right"
-            Grid.Row="3"
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+      <TextBox materialDesign:HintAssist.Hint="Verze programu"
+               IsReadOnly="True"
+               Text="{Binding VerzeProgramu, Mode=OneTime}" />
+      <TextBox materialDesign:HintAssist.Hint="Revize programu"
+               IsReadOnly="True"
+               Text="{Binding RevizeProgramu, Mode=OneTime}" />
+      <TextBox materialDesign:HintAssist.Hint="Datum sestavení"
+               IsReadOnly="True"
+               Text="{Binding Path=DatumSestaveni, StringFormat='{}{0:dd/MM/yyyy}', Mode=OneTime}" />
+      <TextBox
+        materialDesign:HintAssist.Hint="Autor"
+        IsReadOnly="True"
+        Text="{Binding Autor, Mode=OneTime}" />
+      <TextBox
+        materialDesign:HintAssist.Hint="Poděkování"
+        IsReadOnly="True"
+        Text="{Binding Podekovani, Mode=OneTime}" />
+    </StackPanel>
+    <Button DockPanel.Dock="Bottom"
             VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
             Command="{Binding CloseWindowCommand}"
             CommandParameter="{Binding ElementName=Window}">
       _Zavřít
     </Button>
-  </Grid>
+  </DockPanel>
 </Window>

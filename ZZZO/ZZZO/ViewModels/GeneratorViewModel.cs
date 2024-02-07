@@ -1,10 +1,14 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using CefSharp;
+using CefSharp.Wpf;
+using Microsoft.Win32;
 using ZZZO.Commands;
 using ZZZO.Common.Generators;
-using Generator = ZZZO.Controls.Generator;
 
 namespace ZZZO.ViewModels
 {
@@ -42,6 +46,16 @@ namespace ZZZO.ViewModels
       get;
     }
 
+    public ICommand ExportHtmlCmd
+    {
+      get;
+    }
+
+    public ICommand ExportPdfCmd
+    {
+      get;
+    }
+
     public byte[] GeneratedData
     {
       get => _generatedData;
@@ -54,10 +68,17 @@ namespace ZZZO.ViewModels
 
         _generatedData = value;
         OnPropertyChanged();
+        OnPropertyChanged(nameof(GeneratedHtml));
+        CommandManager.InvalidateRequerySuggested();
       }
     }
 
-    public RelayCommand GenerateDocumentCmd
+    public string GeneratedHtml
+    {
+      get => GeneratedData == null ? null : Encoding.UTF8.GetString(GeneratedData);
+    }
+
+    public ICommand GenerateDocumentCmd
     {
       get;
     }
@@ -83,37 +104,110 @@ namespace ZZZO.ViewModels
       get;
     } = new GeneratorHtml();
 
+    public ICommand PrintCmd
+    {
+      get;
+    }
+
     #endregion
 
     #region Konstruktory
 
-    public GeneratorViewModel(Generator view, ZzzoCore core)
+    public GeneratorViewModel(ZzzoCore core)
     {
-      // View is only used to bind necessary events.
-      NewDataGenerated += view.NewDataGenerated;
-
       Core = core;
-      GenerateDocumentCmd = new RelayCommand(GenerateDocument, obj => GenerateProgress <= 0);
+      GenerateDocumentCmd = new RelayCommandEmpty(GenerateDocument, () => GenerateProgress <= 0);
+      ExportHtmlCmd = new RelayCommandEmpty(ExportHtml, () => GenerateProgress <= 0 && GeneratedHtml != null);
+      ExportPdfCmd = new RelayCommand<ChromiumWebBrowser>(ExportPdf, browser => GenerateProgress <= 0 && GeneratedHtml != null);
+      PrintCmd = new RelayCommand<ChromiumWebBrowser>(PrintOnPrinter, browser => GenerateProgress <= 0 && GeneratedHtml != null);
     }
 
     #endregion
 
     #region Metody
 
-    public event Action<byte[]> NewDataGenerated;
-
-    private void Generated(Common.Generators.Generator generator, byte[] generatedData)
+    private string ChooseExportFile(string fileSuffix)
     {
-      GeneratedData = generatedData;
-      NewDataGenerated?.Invoke(GeneratedData);
+      SaveFileDialog d = new SaveFileDialog();
+
+      d.OverwritePrompt = true;
+      d.AddExtension = true;
+      d.CheckPathExists = true;
+      d.Filter = $@"{fileSuffix.ToUpper()} soubory (*.{fileSuffix})|*.{fileSuffix}";
+      d.Title = $"Zvolte lokaci pro uložení zápisu zasedání do {fileSuffix.ToUpper()} souboru";
+
+      if (!string.IsNullOrWhiteSpace(Core.Zasedani.VystupniSoubor))
+      {
+        d.FileName = App.Current.Core.Zasedani.VystupniSoubor + $".{fileSuffix}";
+      }
+
+      if (d.ShowDialog().GetValueOrDefault())
+      {
+        string chosenDir = Path.GetDirectoryName(d.FileName);
+        string chosenFile = Path.GetFileNameWithoutExtension(d.FileName);
+
+        Core.Zasedani.VystupniSoubor = Path.Combine(chosenDir, chosenFile);
+
+        return d.FileName;
+      }
+      else
+      {
+        return null;
+      }
     }
 
-    private void GenerateDocument(object obj)
+    private void ExportHtml()
+    {
+      string html = GeneratedHtml;
+      string file = ChooseExportFile("html");
+
+      if (!string.IsNullOrWhiteSpace(file))
+      {
+        try
+        {
+          File.WriteAllBytes(file, Encoding.UTF8.GetBytes(html));
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show($"HTML soubor nelze uložit: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+      }
+    }
+
+    private async void ExportPdf(ChromiumWebBrowser browser)
+    {
+      string file = ChooseExportFile("pdf");
+
+      if (!string.IsNullOrWhiteSpace(file))
+      {
+        try
+        {
+          await browser.PrintToPdfAsync(file, new PdfPrintSettings
+          {
+            DisplayHeaderFooter = false,
+            Landscape = false,
+            PrintBackground = false,
+            PreferCssPageSize = true
+          });
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show($"PDF soubor nelze uložit: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+      }
+    }
+
+    private void Generated(Generator generator, byte[] generatedData)
+    {
+      GeneratedData = generatedData;
+    }
+
+    private void GenerateDocument()
     {
       GenerateWithGenerator(GeneratorHtml);
     }
 
-    private async void GenerateWithGenerator(Common.Generators.Generator generator)
+    private async void GenerateWithGenerator(Generator generator)
     {
       IProgress<int> prog = new Progress<int>(progress => { GenerateProgress = progress; });
 
@@ -132,6 +226,18 @@ namespace ZZZO.ViewModels
       finally
       {
         prog.Report(0);
+      }
+    }
+
+    private void PrintOnPrinter(ChromiumWebBrowser browser)
+    {
+      try
+      {
+        browser.Print();
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show($"Chyba při tisku: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }
 
