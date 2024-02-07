@@ -26,7 +26,7 @@ ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplika
 1. Spusťte aplikaci.
 2. V sekci `Základní informace` vyplňte všechny informace o obci a adrese konání zasedání. Vyplňte seznam zastupitelů a u každého nastavte vlastností (zda je přítomen, kdo je zapisovatel, atd.). Vlastnosti zastupitele v seznamu lze upravit klepnutím do daného pole.
 3. V sekci `Program` vytvořte program. V levé částí tlačítkem `+` přidávejte jednotlivé body programu, v pravé části u každého programu nastavíte jeho detaily.
-4. U každého bodu programu můžete vytvořit jednotlivá usnesení. Seznam přítomných zastupitelů v sekci `Usnesení` nelze měnit, je aktualizován automaticky. Pouze u každého zastupitele vyberte jeho volbu v hlasování o daném usnesení.¨
+4. U každého bodu programu můžete vytvořit jednotlivá usnesení. Seznam přítomných zastupitelů v sekci `Usnesení` nelze měnit, je aktualizován automaticky. Pouze u každého zastupitele vyberte jeho volbu v hlasování o daném usnesení.
 5. Až budete hotoví, přejděte do sekce `Generátor`. V této sekci tlačítkem `Přegenerovat dokument` nejdříve vygenerujete výsledný dokument, který se zobrazí v zabudovaném náhledu. Pokud jste s výsledkem spokojení, tak můžete výsledek exportovat do některého z nabízených formátů nebo jej rovnou vytisknout.
 
 ### Hlášení chyb
