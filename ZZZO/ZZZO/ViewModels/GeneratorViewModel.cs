@@ -126,40 +126,10 @@ namespace ZZZO.ViewModels
 
     #region Metody
 
-    private string ChooseExportFile(string fileSuffix)
-    {
-      SaveFileDialog d = new SaveFileDialog();
-
-      d.OverwritePrompt = true;
-      d.AddExtension = true;
-      d.CheckPathExists = true;
-      d.Filter = $@"{fileSuffix.ToUpper()} soubory (*.{fileSuffix})|*.{fileSuffix}";
-      d.Title = $"Zvolte lokaci pro uložení zápisu zasedání do {fileSuffix.ToUpper()} souboru";
-
-      if (!string.IsNullOrWhiteSpace(Core.Zasedani.VystupniSoubor))
-      {
-        d.FileName = App.Current.Core.Zasedani.VystupniSoubor + $".{fileSuffix}";
-      }
-
-      if (d.ShowDialog().GetValueOrDefault())
-      {
-        string chosenDir = Path.GetDirectoryName(d.FileName);
-        string chosenFile = Path.GetFileNameWithoutExtension(d.FileName);
-
-        Core.Zasedani.VystupniSoubor = Path.Combine(chosenDir, chosenFile);
-
-        return d.FileName;
-      }
-      else
-      {
-        return null;
-      }
-    }
-
     private void ExportHtml()
     {
       string html = GeneratedHtml;
-      string file = ChooseExportFile("html");
+      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "html");
 
       if (!string.IsNullOrWhiteSpace(file))
       {
@@ -176,7 +146,7 @@ namespace ZZZO.ViewModels
 
     private async void ExportPdf(ChromiumWebBrowser browser)
     {
-      string file = ChooseExportFile("pdf");
+      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "pdf");
 
       if (!string.IsNullOrWhiteSpace(file))
       {

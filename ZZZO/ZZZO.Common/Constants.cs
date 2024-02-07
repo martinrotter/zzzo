@@ -15,6 +15,7 @@ namespace ZZZO.Common
       public const string AppLongName = "Zápisník zasedání zastupitelstev obcí";
       public const string AppShortName = "ZZZO";
       public const string Freepik = "www.freepik.com";
+      public const string ZzzoFileSuffix = "zzzo";
       public static string AppAuthor;
       public static string AppVersion;
       public static DateTime AppBuildDate;

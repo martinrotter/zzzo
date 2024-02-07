@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using ZZZO.Commands;
@@ -68,7 +69,14 @@ public class MainWindowViewModel : ViewModelBase
       return;
     }
 
-    Core.LoadZasedani();
+    try
+    {
+      Core.LoadZasedani();
+    }
+    catch (Exception ex)
+    {
+      MessageBox.Show($"Chyba při načítání zápisu: {ex.Message}.", "Nelze načíst zápis", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
   }
 
   private void NewZasedani()
@@ -219,7 +227,15 @@ public class MainWindowViewModel : ViewModelBase
 
   private bool SaveZasedani()
   {
-    return Core.SaveZasedani();
+    try
+    {
+      return Core.SaveZasedani();
+    }
+    catch (Exception ex)
+    {
+      MessageBox.Show($"Chyba při ukládání zápisu: {ex.Message}.", "Nelze uložit zápis", MessageBoxButton.OK, MessageBoxImage.Error);
+      return false;
+    }
   }
 
   #endregion
