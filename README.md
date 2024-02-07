@@ -11,7 +11,7 @@ ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplika
 1. Stáhněte si některou [verzi](https://github.com/martinrotter/zzzo/releases) aplikace.
 2. Rozbalte aplikaci ze staženého zip archivu do libovolné složky.
 3. Spusťte aplikaci poklepáním na soubor `ZZZO.exe`.
-    1. Pokud aplikace neběží či hlásí chybu, je třeba nainstalovat sdílené běhové knihovny MSVC 2022 .
+    1. Pokud aplikace neběží či hlásí chybu, je třeba nainstalovat sdílené běhové knihovny MSVC 2022.
     2. Knihovny stáhněte [zde](https://github.com/martinrotter/generator-zasedani-zo/raw/master/3rd-party/VC_redist.x86.exe) nebo [zde](https://aka.ms/vs/17/release/vc_redist.x86.exe) a nainstalujte.
 4. Hotovo!
 
