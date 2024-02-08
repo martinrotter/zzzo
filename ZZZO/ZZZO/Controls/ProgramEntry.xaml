@@ -29,6 +29,7 @@
                AcceptsReturn="True"
                MinLines="4"
                Text="{Binding ProgramEntry.Text, UpdateSourceTrigger=PropertyChanged}" />
+      <local:TinyMceEditor HtmlContent="{Binding ProgramEntry.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="340" />
       <CheckBox Content="Tento bod se týká schvalování programu"
                 IsChecked="{Binding ProgramEntry.SchvalovaniProgramu, UpdateSourceTrigger=PropertyChanged}" />
       <CheckBox Content="Podbod předchozího bodu programu"

@@ -11,12 +11,22 @@
     const editorId = "tinymce-editor";
     const editorIdSelector = "#" + editorId;
 
+    function myCustomOnChangeHandler(inst) {
+      alert("The HTML is now:" + inst.getBody().innerHTML);
+    }
+
     tinymce.init({
       selector: editorIdSelector,
       language: "cs",
+      onchange_callback : "myCustomOnChangeHandler",
       auto_focus: true,
       width: "98%",
-      height: "98vh"
+      height: "98vh",
+      setup:function(ed) {
+        ed.on('keyup', function(e) {
+          CefSharp.PostMessage(ed.getContent());
+        });
+      }
     });
 
     function getEditorContent() {
