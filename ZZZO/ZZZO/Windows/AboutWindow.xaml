@@ -12,7 +12,7 @@
         Name="Window"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
-        xmlns:SystemGlobalization="clr-namespace:System.Globalization;assembly=mscorlib"
+        xmlns:systemGlobalization="clr-namespace:System.Globalization;assembly=mscorlib"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
@@ -32,7 +32,7 @@
       <TextBox materialDesign:HintAssist.Hint="Datum sestavení"
                IsReadOnly="True"
                Text="{Binding Path=DatumSestaveni, StringFormat=F, Mode=OneTime,
-        ConverterCulture={x:Static SystemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" />
+        ConverterCulture={x:Static systemGlobalization:CultureInfo.DefaultThreadCurrentCulture}}" />
       <TextBox
         materialDesign:HintAssist.Hint="Autor"
         IsReadOnly="True"
