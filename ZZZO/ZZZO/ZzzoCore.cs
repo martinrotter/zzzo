@@ -112,7 +112,7 @@ namespace ZZZO
 
     public bool LoadZasedani()
     {
-      string filePath = ChooseLoadFile(Constants.Names.ZzzoFileSuffix);
+      string filePath = ChooseLoadFile(Constants.PathsAndFiles.ZzzoFileSuffix);
 
       if (File.Exists(filePath))
       {

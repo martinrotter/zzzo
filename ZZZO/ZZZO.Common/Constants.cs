@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using ZZZO.Common.Properties;
 
 namespace ZZZO.Common
@@ -15,7 +16,6 @@ namespace ZZZO.Common
       public const string AppLongName = "Zápisník zasedání zastupitelstev obcí";
       public const string AppShortName = "ZZZO";
       public const string Freepik = "www.freepik.com";
-      public const string ZzzoFileSuffix = "zzzo";
       public static string AppAuthor;
       public static string AppVersion;
       public static DateTime AppBuildDate;
@@ -46,6 +46,23 @@ namespace ZZZO.Common
       public const string Document = "https://document.zzzo";
 
       #endregion
+    }
+
+    public static class PathsAndFiles
+    {
+      public const string ZzzoFileSuffix = "zzzo";
+      public static string AppBaseFolder;
+      public static string AppDataFolder;
+      public static string AppStylesFolder;
+      public static string AppTinyMceFolder;
+
+      static PathsAndFiles()
+      {
+        AppBaseFolder = Utils.GetExecutingAssemblyFolder();
+        AppDataFolder = Path.Combine(AppBaseFolder, "Data");
+        AppStylesFolder = Path.Combine(AppDataFolder, "Styles");
+        AppTinyMceFolder = Path.Combine(AppDataFolder, "TinyMceEditor");
+      }
     }
 
     #endregion

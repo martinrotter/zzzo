@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Windows.Data;
 
@@ -39,6 +40,11 @@ namespace ZZZO.Common
     public static FileVersionInfo GetExecutingAssemblyVersionInfo()
     {
       return FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+    }
+
+    public static string GetExecutingAssemblyFolder()
+    {
+      return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
     }
 
     #endregion

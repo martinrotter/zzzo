@@ -94,6 +94,7 @@
     </ApplicationDefinition>
     <Compile Include="Assists\ChromiumWebBrowserAssist.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Controls\TinyMceEditor.cs" />
     <Compile Include="Converters\ConditionalMarginConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\CollapseOnTrueConverter.cs" />
@@ -219,4 +220,13 @@
     <Error Condition="!Exists('..\packages\CefSharp.Common.120.2.70\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.120.2.70\build\CefSharp.Common.targets'))" />
   </Target>
   <Import Project="..\packages\CefSharp.Common.120.2.70\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.120.2.70\build\CefSharp.Common.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)..\..\3rd-party\TinyMCE" "$(TargetDir)Data\TinyMceEditor\" /Y /F /E
+xcopy "$(ProjectDir)..\..\resources\editor\*.*" "$(TargetDir)Data\TinyMceEditor\" /Y /F /E
+xcopy "$(ProjectDir)..\..\resources\styles\*.css" "$(TargetDir)Data\Styles\" /Y /F /E</PostBuildEvent>
+  </PropertyGroup>
 </Project>

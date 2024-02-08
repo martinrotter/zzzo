@@ -61,7 +61,8 @@ namespace ZZZO.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to f1f908137532d813b01fe12c038bf3e34f2f78e5
+        ///.
         /// </summary>
         internal static string build_commit {
             get {
@@ -70,49 +71,12 @@ namespace ZZZO.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 2024-02-08T12:19:36.4937613+01:00
+        ///.
         /// </summary>
         internal static string build_date {
             get {
                 return ResourceManager.GetString("build_date", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to @import url(&apos;https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;display=swap&apos;);
-        ///
-        ///body {
-        ///  font-family: &apos;Libre Baskerville&apos;, &apos;Times New Roman&apos;, serif;
-        ///  font-size: 80%;
-        ///}
-        ///
-        ///ol {
-        ///  list-style: none;
-        ///  padding-left: 1.5em;
-        ///}
-        ///
-        ///img {
-        ///  break-inside: avoid-page;
-        ///}
-        ///
-        ///.logo {
-        ///  width: 14%;
-        ///  display: block;
-        ///  margin-left: auto;
-        ///  margin-right: auto;
-        ///}
-        ///
-        ///.signature-wrapper {
-        ///  display: grid;
-        ///  grid-template-columns: repeat(3, 1fr);
-        ///  gap: 10px;
-        ///}
-        ///
-        ///.signat [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string style_css {
-            get {
-                return ResourceManager.GetString("style.css", resourceCulture);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -53,6 +54,11 @@ namespace ZZZO.Common.Generators
     #endregion
 
     #region Metody
+
+    private string GetStyle()
+    {
+      return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, "classic.css"));
+    }
 
     protected override byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress)
     {
@@ -262,7 +268,7 @@ namespace ZZZO.Common.Generators
     {
       XmlElement head = html.AppendElem("head");
 
-      head.AppendElem("style").InnerText = Resources.style_css;
+      head.AppendElem("style").InnerText = GetStyle();
       head.AppendElem("meta").SetAttr("charset", "UTF-8");
       head.AppendElem("meta").SetAttr("name", "viewport").SetAttr("content", "width=device-width, initial-scale=1.0");
 
