@@ -37,7 +37,6 @@ namespace ZZZO.Controls
     public TinyMceEditor()
     {
       Address = Path.Combine(Constants.PathsAndFiles.AppTinyMceFolder, "editor.html");
-
       JavascriptMessageReceived += OnJavascriptMessageReceived;
     }
 
@@ -49,7 +48,7 @@ namespace ZZZO.Controls
     {
       var editor = d as TinyMceEditor;
 
-      if (editor.ChangingHtmlContent)
+      if (editor == null ||editor.ChangingHtmlContent)
       {
         return;
       }
@@ -59,13 +58,11 @@ namespace ZZZO.Controls
       editor.SetHtmlContent(newHtml);
     }
 
-    public async void SetHtmlContent(string html)
+    public void SetHtmlContent(string html)
     {
-      //Check if the browser can execute JavaScript and the ScriptTextBox is filled
       if (CanExecuteJavascriptInMainFrame)
       {
-        //Evaluate javascript and remember the evaluation result
-        JavascriptResponse response = await this.EvaluateScriptAsync("setEditorContent", html);
+        this.EvaluateScriptAsync("setEditorContent", html);
       }
     }
 

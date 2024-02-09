@@ -5,39 +5,91 @@
   <meta charset="utf-8">
   <title>HTML editor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+
   <script src="tinymce/tinymce.min.js"></script>
 
   <script>
     const editorId = "tinymce-editor";
     const editorIdSelector = "#" + editorId;
 
-    function myCustomOnChangeHandler(inst) {
-      alert("The HTML is now:" + inst.getBody().innerHTML);
-    }
-
     tinymce.init({
       selector: editorIdSelector,
       language: "cs",
-      onchange_callback : "myCustomOnChangeHandler",
+      browser_spellcheck: true,
+      allow_html_in_named_anchor: true,
       auto_focus: true,
-      width: "98%",
-      height: "98vh",
-      setup:function(ed) {
+      resize: false,
+      plugins: 'code charmap image link searchreplace table visualchars lists',
+      menubar: "edit view insert format table tools help",
+      toolbar: ['alignleft aligncenter alignright | underline bold italic | link subscript superscript', 'styles | bullist numlist'],
+      width: "99%",
+      height: "99vh",
+      setup: function(ed) {
+        /*
         ed.on('keyup', function(e) {
-          CefSharp.PostMessage(ed.getContent());
+          console.log("keyup");
         });
+        */
+        ed.on('input', function(e) {
+          notifyEditorContent(ed);
+        });
+        ed.on('change', function(e) {
+          notifyEditorContent(ed);
+        });
+        /*
+        ed.on('focusout', function(e) {
+          notifyEditorContent(ed);
+        });
+        */
       }
     });
+
+    function notifyEditorContent(ed) {
+      CefSharp.PostMessage(ed.getContent());
+    }
 
     function getEditorContent() {
       return tinymce.get(editorId).getContent();
     }
 
     function setEditorContent(content) {
-      tinymce.get(editorId).setContent(content);
+      tinymce.get(editorId).setContent(content == null ? "" : content);
     }
   </script>
+
   <style>
+    .tox-promotion {
+      visibility: collapse;
+      width: 0px !important;
+    }
+
+    .tox-editor-header {
+      padding: 0px !important;
+    }
+
+    .tox-tinymce {
+      border: 0px !important;
+    }
+
+    .tox-mbtn, .tox-toolbar-overlord {
+      margin: 0px !important;
+      padding: 0px !important;
+    }
+
+    .tox-tbtn {
+      margin: 1px !important;
+    }
+
+    .tox-toolbar__group {
+      padding-right: 0px !important;
+    }
   </style>
 </head>
 

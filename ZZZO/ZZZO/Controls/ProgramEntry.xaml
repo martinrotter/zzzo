@@ -16,27 +16,26 @@
   </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="5*" />
+      <ColumnDefinition Width="4*" />
     </Grid.ColumnDefinitions>
-    <WrapPanel Grid.Row="0"
-               Grid.Column="0"
-               Orientation="Vertical">
+    <StackPanel Grid.Row="0"
+                Grid.Column="0"
+                Orientation="Vertical">
       <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
                Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
-      <TextBox materialDesign:HintAssist.Hint="Doplňkový text bodu programu"
-               TextWrapping="Wrap"
-               AcceptsReturn="True"
-               MinLines="4"
-               Text="{Binding ProgramEntry.Text, UpdateSourceTrigger=PropertyChanged}" />
-      <local:TinyMceEditor HtmlContent="{Binding ProgramEntry.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="340" />
+      <GroupBox Header="Text bodu programu">
+        <local:TinyMceEditor Margin="-14 -14 0 0"
+                             HtmlContent="{Binding ProgramEntry.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Height="400" />
+      </GroupBox>
       <CheckBox Content="Tento bod se týká schvalování programu"
                 IsChecked="{Binding ProgramEntry.SchvalovaniProgramu, UpdateSourceTrigger=PropertyChanged}" />
       <CheckBox Content="Podbod předchozího bodu programu"
                 IsChecked="{Binding ProgramEntry.JePodbod, UpdateSourceTrigger=PropertyChanged}" />
       <CheckBox Content="Doplněný bod programu"
                 IsChecked="{Binding ProgramEntry.JeDoplneny, UpdateSourceTrigger=PropertyChanged}" />
-    </WrapPanel>
+    </StackPanel>
 
     <GroupBox Grid.Row="0"
               Grid.Column="1"

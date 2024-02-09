@@ -2,6 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:controls="clr-namespace:ZZZO.Controls"
+             xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
              StartupUri="/Windows/MainWindow.xaml">
   <Application.Resources>
     <ResourceDictionary>
@@ -9,9 +11,12 @@
         <materialDesign:BundledTheme BaseTheme="Inherit"
                                      PrimaryColor="DeepPurple"
                                      SecondaryColor="Lime" />
-        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+        <ResourceDictionary
+          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+        <ResourceDictionary
+          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+        <ResourceDictionary
+          Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
 
         <ResourceDictionary>
           <Thickness x:Key="FormMargin">9,9,9,9</Thickness>
@@ -38,6 +43,10 @@
                  TargetType="{x:Type materialDesign:TimePicker}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style TargetType="{x:Type controls:TinyMceEditor}">
+            <Setter Property="Margin" Value="0" />
           </Style>
 
           <Style BasedOn="{StaticResource MaterialDesignCardGroupBox}"

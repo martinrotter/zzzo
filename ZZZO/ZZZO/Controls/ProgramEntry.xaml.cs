@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using ZZZO.Common.API;
 
 namespace ZZZO.Controls
@@ -25,5 +26,6 @@ namespace ZZZO.Controls
     }
 
     #endregion
+
   }
 }

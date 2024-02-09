@@ -216,7 +216,7 @@ namespace ZZZO.Common.Generators
 
         if (!string.IsNullOrWhiteSpace(bodProgramu.Text))
         {
-          body.AppendElem("p").InnerText = ConvertPlainTextToHtml(bodProgramu.Text);
+          body.AppendElem("div").InnerXml = bodProgramu.Text;
         }
 
         foreach (Usneseni usneseni in bodProgramu.Usneseni)
