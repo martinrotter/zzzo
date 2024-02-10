@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ZZZO.Common.API;
-using ZZZO.Common.Properties;
 
 namespace ZZZO.Common.Generators
 {
@@ -54,11 +53,6 @@ namespace ZZZO.Common.Generators
     #endregion
 
     #region Metody
-
-    private string GetStyle()
-    {
-      return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, "classic.css"));
-    }
 
     protected override byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress)
     {
@@ -376,6 +370,11 @@ namespace ZZZO.Common.Generators
       }
 
       return accepted ? generatedResolutionTitle : null;
+    }
+
+    private string GetStyle()
+    {
+      return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, "classic.css"));
     }
 
     private string Sklonovat(string jednaPolozka, string dvePolozky, string vicePolozek, int pocet)

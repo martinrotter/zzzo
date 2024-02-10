@@ -30,6 +30,12 @@ namespace ZZZO.Controls
       set => SetValue(HtmlContentProperty, value);
     }
 
+    private bool ChangingHtmlContent
+    {
+      get;
+      set;
+    }
+
     #endregion
 
     #region Konstruktory
@@ -46,15 +52,15 @@ namespace ZZZO.Controls
 
     private static void OnHtmlContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-      var editor = d as TinyMceEditor;
+      TinyMceEditor editor = d as TinyMceEditor;
 
-      if (editor == null ||editor.ChangingHtmlContent)
+      if (editor == null || editor.ChangingHtmlContent)
       {
         return;
       }
 
-      var newHtml = e.NewValue as string; 
-      
+      string newHtml = e.NewValue as string;
+
       editor.SetHtmlContent(newHtml);
     }
 
@@ -74,12 +80,6 @@ namespace ZZZO.Controls
         HtmlContent = e.Message as string;
         ChangingHtmlContent = false;
       });
-    }
-
-    private bool ChangingHtmlContent
-    {
-      get;
-      set;
     }
 
     #endregion

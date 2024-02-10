@@ -37,14 +37,14 @@ namespace ZZZO.Common
       }
     }
 
-    public static FileVersionInfo GetExecutingAssemblyVersionInfo()
-    {
-      return FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-    }
-
     public static string GetExecutingAssemblyFolder()
     {
       return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+    }
+
+    public static FileVersionInfo GetExecutingAssemblyVersionInfo()
+    {
+      return FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
     }
 
     #endregion

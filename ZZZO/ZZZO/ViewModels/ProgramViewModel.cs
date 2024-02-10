@@ -110,8 +110,10 @@ public class ProgramViewModel : ViewModelBase
 
     AddProgramEntryCmd = new RelayCommand(obj => AddProgramEntry(), obj => true);
     RemoveProgramEntryCmd = new RelayCommand(obj => RemoveProgramEntry(), obj => ChosenProgramEntry != null);
+
     MoveProgramEntryUpCmd = new RelayCommand(obj => MoveProgramEntryUp(), obj => ChosenProgramEntry != null &&
                                                                                  !ChosenFirstProgramEntry);
+
     MoveProgramEntryDownCmd = new RelayCommand(obj => MoveProgramEntryDown(), obj => ChosenProgramEntry != null &&
                                                                                      !ChosenLastProgramEntry);
   }

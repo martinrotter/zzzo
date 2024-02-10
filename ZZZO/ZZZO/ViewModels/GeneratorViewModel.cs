@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using CefSharp;
 using CefSharp.Wpf;
-using Microsoft.Win32;
 using ZZZO.Commands;
 using ZZZO.Common.Generators;
 

@@ -3,7 +3,6 @@ using System.Threading;
 using System.Windows;
 using CefSharp;
 using CefSharp.Wpf;
-using ZZZO.Controls;
 using ZZZO.ViewModels;
 using ZZZO.Windows;
 
@@ -32,7 +31,7 @@ namespace ZZZO
     {
       Current = this;
 
-      var ci = new CultureInfo("cs-CZ");
+      CultureInfo ci = new CultureInfo("cs-CZ");
 
       CultureInfo.CurrentCulture = ci;
       CultureInfo.CurrentUICulture = ci;

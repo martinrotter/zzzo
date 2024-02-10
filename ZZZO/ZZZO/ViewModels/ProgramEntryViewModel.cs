@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using ZZZO.Commands;
 using ZZZO.Common.API;
 

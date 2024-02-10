@@ -17,9 +17,9 @@ namespace ZZZO.Common
       public const string AppShortName = "ZZZO";
       public const string Freepik = "www.freepik.com";
       public static string AppAuthor;
-      public static string AppVersion;
       public static DateTime AppBuildDate;
       public static string AppBuildRevision;
+      public static string AppVersion;
 
       #endregion
 
@@ -39,22 +39,19 @@ namespace ZZZO.Common
       #endregion
     }
 
-    public static class Uris
+    public static class PathsAndFiles
     {
       #region Statické prvky
 
-      public const string Document = "https://document.zzzo";
-
-      #endregion
-    }
-
-    public static class PathsAndFiles
-    {
       public const string ZzzoFileSuffix = "zzzo";
       public static string AppBaseFolder;
       public static string AppDataFolder;
       public static string AppStylesFolder;
       public static string AppTinyMceFolder;
+
+      #endregion
+
+      #region Konstruktory
 
       static PathsAndFiles()
       {
@@ -63,6 +60,17 @@ namespace ZZZO.Common
         AppStylesFolder = Path.Combine(AppDataFolder, "Styles");
         AppTinyMceFolder = Path.Combine(AppDataFolder, "TinyMceEditor");
       }
+
+      #endregion
+    }
+
+    public static class Uris
+    {
+      #region Statické prvky
+
+      public const string Document = "https://document.zzzo";
+
+      #endregion
     }
 
     #endregion

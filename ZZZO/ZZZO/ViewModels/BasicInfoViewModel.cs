@@ -53,17 +53,17 @@ public class BasicInfoViewModel : ViewModelBase
     }
   }
 
+  public ICommand RemoveVillageLogoCmd
+  {
+    get;
+  }
+
   public ICommand RemoveZastupitelCmd
   {
     get;
   }
 
   public ICommand UpdateVillageLogoCmd
-  {
-    get;
-  }
-
-  public ICommand RemoveVillageLogoCmd
   {
     get;
   }
@@ -82,11 +82,6 @@ public class BasicInfoViewModel : ViewModelBase
     RemoveZastupitelCmd = new RelayCommand(obj => RemoveZastupitel(), obj => ChosenZastupitel != null);
   }
 
-  private void RemoveVillageLogo()
-  {
-    Core.Zasedani.LogoObce = null;
-  }
-
   #endregion
 
   #region Metody
@@ -103,6 +98,11 @@ public class BasicInfoViewModel : ViewModelBase
     {
       ChosenZastupitel = Core.Zasedani.Zastupitele[0];
     }
+  }
+
+  private void RemoveVillageLogo()
+  {
+    Core.Zasedani.LogoObce = null;
   }
 
   private void RemoveZastupitel()

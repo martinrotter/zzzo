@@ -58,6 +58,25 @@ namespace ZZZO
 
     #region Metody
 
+    public static string ChooseLoadFile(string fileSuffix, string title = null)
+    {
+      OpenFileDialog d = new OpenFileDialog();
+
+      d.AddExtension = true;
+      d.CheckPathExists = true;
+      d.Filter = $@"{fileSuffix.ToUpper()} soubory (*.{fileSuffix})|*.{fileSuffix}";
+      d.Title = title ?? $"Zvolte lokaci pro načtení zápisu zasedání ze {fileSuffix.ToUpper()} souboru";
+
+      if (d.ShowDialog().GetValueOrDefault())
+      {
+        return d.FileName;
+      }
+      else
+      {
+        return null;
+      }
+    }
+
     public static string ChooseSaveFile(Zasedani zasedani, string fileSuffix, string title = null)
     {
       SaveFileDialog d = new SaveFileDialog();
@@ -83,25 +102,6 @@ namespace ZZZO
           zasedani.VystupniSoubor = Path.Combine(chosenDir, chosenFile);
         }
 
-        return d.FileName;
-      }
-      else
-      {
-        return null;
-      }
-    }
-
-    public static string ChooseLoadFile(string fileSuffix, string title = null)
-    {
-      OpenFileDialog d = new OpenFileDialog();
-
-      d.AddExtension = true;
-      d.CheckPathExists = true;
-      d.Filter = $@"{fileSuffix.ToUpper()} soubory (*.{fileSuffix})|*.{fileSuffix}";
-      d.Title = title ?? $"Zvolte lokaci pro načtení zápisu zasedání ze {fileSuffix.ToUpper()} souboru";
-
-      if (d.ShowDialog().GetValueOrDefault())
-      {
         return d.FileName;
       }
       else
