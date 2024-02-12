@@ -9,6 +9,7 @@
         Icon="../Resources/AppIcon.png"
         Title="{x:Static zzzoCommon:Constants+Names.AppLongName}"
         Height="900"
+        x:Name="Window"
         Width="1200"
         WindowStartupLocation="CenterScreen"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -30,7 +31,8 @@
         <MenuItem Header="_Uložit"
                   Command="{Binding SaveZasedaniCmd}" />
         <MenuItem Header="_Konec"
-                  Click="QuitApp" />
+                  Command="{Binding CloseWindowCmd}"
+                  CommandParameter="{Binding ElementName=Window}" />
       </MenuItem>
       <MenuItem Header="?">
         <MenuItem Header="_O aplikaci"

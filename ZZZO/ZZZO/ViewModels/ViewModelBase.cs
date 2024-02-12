@@ -9,7 +9,7 @@ namespace ZZZO.ViewModels
   {
     #region Vlastnosti
 
-    public ICommand CloseWindowCommand
+    public ICommand CloseWindowCmd
     {
       get;
     }
@@ -20,7 +20,7 @@ namespace ZZZO.ViewModels
 
     public ViewModelBase()
     {
-      CloseWindowCommand = new RelayCommand(o => (o as Window).Close(), o => true);
+      CloseWindowCmd = new RelayCommand(o => (o as Window)?.Close(), o => true);
     }
 
     #endregion

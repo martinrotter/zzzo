@@ -45,7 +45,7 @@
     <Button DockPanel.Dock="Bottom"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Right"
-            Command="{Binding CloseWindowCommand}"
+            Command="{Binding CloseWindowCmd}"
             CommandParameter="{Binding ElementName=Window}">
       _Zavřít
     </Button>
