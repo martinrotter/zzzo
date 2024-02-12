@@ -9,6 +9,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
              xmlns:converters="clr-namespace:ZZZO.Converters"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              d:DataContext="{d:DesignInstance Type=viewModels:ChooseCityLogoViewModel}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
@@ -17,6 +18,7 @@
              FontFamily="{materialDesign:MaterialDesignFont}">
   <UserControl.Resources>
     <converters:NotNullConverter x:Key="NotNullConverter" />
+    <converters:CollapseOnTrueConverter x:Key="CollapseOnTrueConverter" />
   </UserControl.Resources>
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
@@ -44,7 +46,7 @@
         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
         Použít
       </Button>
-      <Button 
+      <Button
         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
         _Zavřít
       </Button>

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Windows.Media.Imaging;
 using HtmlAgilityPack;
 using Microsoft.Win32;
 using ZZZO.Common;
@@ -118,6 +116,53 @@ namespace ZZZO
       }
     }
 
+    public Task<CityLogo[]> DownloadCityLogos(string cityName)
+    {
+      return Task.Run<CityLogo[]>(() =>
+      {
+        HttpClient cl = new HttpClient();
+
+        string mainHtml = cl
+          .GetStringAsync($"https://rekos.psp.cz/vyhledani-symbolu?typ=0&obec={cityName}&poverena_obec=&popis=&kraj=0&okres=0&od=&do=&hledat=")
+          .Result;
+
+        List<CityLogo> logos = new List<CityLogo>();
+        HtmlDocument doc = new HtmlDocument();
+        doc.LoadHtml(mainHtml);
+
+        string className = "zebra";
+        HtmlNodeCollection rows = doc.DocumentNode.SelectNodes($"//table[@class='{className}']/tbody/tr");
+        List<Task<CityLogo>> tsks = new List<Task<CityLogo>>();
+
+        foreach (HtmlNode row in rows)
+        {
+          string city = row.SelectSingleNode("td/a").InnerText;
+          string outerCity = row.SelectSingleNode("td[2]").InnerText;
+          string logoMinPath = row.SelectSingleNode("td[3]/img").GetAttributeValue("src", string.Empty);
+          string logoBigPath = logoMinPath.Replace("30x30", "800x500");
+
+          tsks.Add(cl
+            .GetByteArrayAsync("https://rekos.psp.cz" + logoBigPath)
+            .ContinueWith(tsk =>
+            {
+              CityLogo cla = new CityLogo
+              {
+                CityName = city,
+                ExtendedCityClusterName = outerCity,
+                LogoObceData = tsk.Result
+              };
+
+              return cla;
+            }));
+        }
+
+        var tsk = Task.WhenAll(tsks);
+        tsk.Wait();
+
+        return tsk.Result;
+      });
+    }
+
     public bool LoadZasedani()
     {
       string filePath = ChooseLoadFile(Constants.PathsAndFiles.ZzzoFileSuffix);
@@ -166,42 +211,5 @@ namespace ZZZO
     }
 
     #endregion
-
-    public Task<List<CityLogo>> DownloadCityLogos(string cityName)
-    {
-      HttpClient cl = new HttpClient();
-
-      return Task.Run(() => {
-        string mainHtml = cl
-          .GetStringAsync($"https://rekos.psp.cz/vyhledani-symbolu?typ=0&obec={cityName}&poverena_obec=&popis=&kraj=0&okres=0&od=&do=&hledat=")
-          .Result;
-
-        List<CityLogo> logos = new List<CityLogo>();
-        HtmlDocument doc = new HtmlDocument();
-        doc.LoadHtml(mainHtml);
-
-        string className = "zebra";
-        HtmlNodeCollection rows = doc.DocumentNode.SelectNodes($"//table[@class='{className}']/tbody/tr");
-
-        foreach (var VARIABLE in rows)
-        {
-          string city = VARIABLE.SelectSingleNode("td/a").InnerText;
-          string outerCity = VARIABLE.SelectSingleNode("td[2]").InnerText;
-          string logoPath = VARIABLE.SelectSingleNode("td[3]/img").GetAttributeValue("src", string.Empty);
-
-          logos.Add(new CityLogo
-          {
-            CityName = city,
-            ExtendedCityClusterName = outerCity,
-            LogoObce = new BitmapImage(new Uri("https://rekos.psp.cz" + logoPath))
-          });
-        }
-
-        return logos;
-      });
-
-
-      //return Task.WhenAll()
-    }
   }
 }

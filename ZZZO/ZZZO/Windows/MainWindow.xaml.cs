@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using MaterialDesignThemes.Wpf;
+﻿using System.Windows;
+using System.Windows.Input;
 
 namespace ZZZO.Windows
 {
@@ -16,5 +15,16 @@ namespace ZZZO.Windows
 
     #endregion
 
+    #region Metody
+
+    private void OnDialogHostKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Escape)
+      {
+        DialogHost.IsOpen = false;
+      }
+    }
+
+    #endregion
   }
 }

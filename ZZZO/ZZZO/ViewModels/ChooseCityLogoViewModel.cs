@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using ZZZO.Commands;
 using ZZZO.Common;
 
 namespace ZZZO.ViewModels;
@@ -120,24 +120,49 @@ public class CityLogo : ObservableObject
 
 public class ChooseCityLogoViewModel : ViewModelBase
 {
-  public ZzzoCore Core
-  {
-    get;
-  }
+  #region Proměnné
+
+  private string _error;
+
+  private ObservableCollection<CityLogo> _loga;
+  private CityLogo _logo;
+  private bool _logosDownloaded;
+  private bool _logosDownloading;
+
+  #endregion
+
+  #region Vlastnosti
 
   public string CityName
   {
     get;
   }
 
-  #region Proměnné
+  public ZzzoCore Core
+  {
+    get;
+  }
 
-  private ObservableCollection<CityLogo> _loga;
-  private CityLogo _logo;
+  public string Error
+  {
+    get => _error;
+    set
+    {
+      if (value == _error)
+      {
+        return;
+      }
 
-  #endregion
+      _error = value;
+      OnPropertyChanged();
+      OnPropertyChanged(nameof(HasError));
+    }
+  }
 
-  #region Vlastnosti
+  public bool HasError
+  {
+    get => !string.IsNullOrEmpty(Error);
+  }
 
   public ObservableCollection<CityLogo> Loga
   {
@@ -154,45 +179,6 @@ public class ChooseCityLogoViewModel : ViewModelBase
     }
   }
 
-  public ChooseCityLogoViewModel(ZzzoCore core, string cityName)
-  {
-    Core = core;
-    CityName = cityName;
-
-    Core.DownloadCityLogos(cityName)
-      .ContinueWith(tsk =>
-      {
-        App.Current.Dispatcher.BeginInvoke(() =>
-        {
-          Loga = new ObservableCollection<CityLogo>(tsk.Result);
-
-          if (tsk.Exception != null)
-          {
-            // TODO: zobrazit chybu
-          }
-        });
-      });
-
-    /*
-    Loga = new ObservableCollection<CityLogo>
-    {
-      new CityLogo
-      {
-        CityName = "Svésedlice",
-        ExtendedCityClusterName = "Příslavice",
-        LogoObce = new BitmapImage(new Uri("https://rekos.psp.cz/data/images/39913/200x200/bohuslavice0003.jpg"))
-      },
-      new CityLogo
-      {
-        CityName = "CojaVim",
-        ExtendedCityClusterName = "Příslavice",
-        LogoObce = new BitmapImage(new Uri("https://rekos.psp.cz/data/images/34392/200x200/bohuslavice_prostejov.jpg"))
-      }
-    };
-
-    Logo = Loga[0];*/
-  }
-
   public CityLogo Logo
   {
     get => _logo;
@@ -206,6 +192,73 @@ public class ChooseCityLogoViewModel : ViewModelBase
       _logo = value;
       OnPropertyChanged();
     }
+  }
+
+  public bool LogosDownloaded
+  {
+    get => _logosDownloaded;
+    set
+    {
+      if (value == _logosDownloaded)
+      {
+        return;
+      }
+
+      _logosDownloaded = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public bool LogosDownloading
+  {
+    get => _logosDownloading;
+    set
+    {
+      if (value == _logosDownloading)
+      {
+        return;
+      }
+
+      _logosDownloading = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public ICommand StahnoutLogosCmd
+  {
+    get;
+  }
+
+  #endregion
+
+  #region Konstruktory
+
+  public ChooseCityLogoViewModel(ZzzoCore core, string cityName)
+  {
+    Core = core;
+    CityName = cityName;
+    StahnoutLogosCmd = new RelayCommand(o => StahnoutLogos(), o => true);
+
+    Task.Delay(300).ContinueWith(tsk => { StahnoutLogosCmd.Execute(null); }, TaskScheduler.FromCurrentSynchronizationContext());
+  }
+
+  #endregion
+
+  #region Metody
+
+  private void StahnoutLogos()
+  {
+    LogosDownloading = true;
+
+    Core.DownloadCityLogos(CityName)
+      .ContinueWith(tsk =>
+      {
+        Loga = new ObservableCollection<CityLogo>(tsk.Result);
+        Logo = Loga.FirstOrDefault();
+        LogosDownloading = false;
+        LogosDownloaded = Loga != null;
+        Error = tsk.Exception?.Message;
+      }, TaskScheduler.FromCurrentSynchronizationContext());
   }
 
   #endregion
