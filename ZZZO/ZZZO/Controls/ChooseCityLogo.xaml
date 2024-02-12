@@ -8,16 +8,26 @@
              Width="300"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
+             xmlns:converters="clr-namespace:ZZZO.Converters"
              d:DataContext="{d:DesignInstance Type=viewModels:ChooseCityLogoViewModel}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
              FontFamily="{materialDesign:MaterialDesignFont}">
+  <UserControl.Resources>
+    <converters:NotNullConverter x:Key="NotNullConverter" />
+  </UserControl.Resources>
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
       <ComboBox SelectedValue="{Binding Logo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                ItemsSource="{Binding Loga}" x:Name="CmbLoga" />
+                ItemsSource="{Binding Loga}" x:Name="CmbLoga">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding FullName}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
       <Image
         Width="200"
         Height="200"
@@ -30,6 +40,7 @@
                HorizontalAlignment="Right">
       <Button
         CommandParameter="{Binding Logo}"
+        IsEnabled="{Binding Logo, Converter={StaticResource NotNullConverter}}"
         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
         Použít
       </Button>

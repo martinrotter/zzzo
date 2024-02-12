@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using ZZZO.Commands;
@@ -97,8 +98,10 @@ public class BasicInfoViewModel : ViewModelBase
       DataContext = new ChooseCityLogoViewModel()
     }, (object o, DialogClosingEventArgs a) =>
     {
-      //a.
-      //a.
+      if (a.Parameter is CityLogo cl)
+      {
+        Core.Zasedani.LogoObce = cl.LogoObce;
+      }
     });
   }
 
