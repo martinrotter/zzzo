@@ -54,14 +54,21 @@
               Command="{Binding UpdateVillageLogoCmd}">
         <WrapPanel>
           <materialDesign:PackIcon VerticalAlignment="Center" Kind="Badge" />
-          <TextBlock Margin="5,0,0,0">Vybrat znak obce</TextBlock>
+          <TextBlock Margin="5,0,0,0">Vybrat znak</TextBlock>
+        </WrapPanel>
+      </Button> 
+      <Button VerticalAlignment="Center"
+              Command="{Binding ShowCityLogosCmd}">
+        <WrapPanel>
+          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Download" />
+          <TextBlock Margin="5,0,0,0">Stáhnout znak</TextBlock>
         </WrapPanel>
       </Button>
       <Button VerticalAlignment="Center"
               Command="{Binding RemoveVillageLogoCmd}">
         <WrapPanel>
           <materialDesign:PackIcon VerticalAlignment="Center" Kind="Delete" />
-          <TextBlock Margin="5,0,0,0">Smazat znak obce</TextBlock>
+          <TextBlock Margin="5,0,0,0">Smazat znak</TextBlock>
         </WrapPanel>
       </Button>
     </WrapPanel>

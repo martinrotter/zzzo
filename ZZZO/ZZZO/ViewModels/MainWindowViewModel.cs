@@ -1,9 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using MaterialDesignThemes.Wpf;
 using ZZZO.Commands;
 using ZZZO.Common.API;
+using ZZZO.Controls;
 using ZZZO.Windows;
 
 namespace ZZZO.ViewModels;
@@ -56,6 +59,17 @@ public class MainWindowViewModel : ViewModelBase
     NewZasedaniCmd = new RelayCommand(obj => NewZasedani(), obj => true);
     LoadZasedaniCmd = new RelayCommand(obj => LoadZasedani(), obj => true);
     SaveZasedaniCmd = new RelayCommand(obj => SaveZasedani(), obj => true);
+    AboutAppCmd =  new RelayCommand(obj => ShowAboutDialog(), obj => true);
+  }
+
+  private void ShowAboutDialog()
+  {
+    DialogHost.Show(new AboutApp());
+  }
+
+  public ICommand AboutAppCmd
+  {
+    get;
   }
 
   #endregion

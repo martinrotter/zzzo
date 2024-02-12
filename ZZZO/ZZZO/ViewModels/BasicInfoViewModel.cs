@@ -1,8 +1,10 @@
 ﻿using System.IO;
 using System.Windows.Input;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using ZZZO.Commands;
 using ZZZO.Common.API;
+using ZZZO.Controls;
 
 namespace ZZZO.ViewModels;
 
@@ -19,6 +21,11 @@ public class BasicInfoViewModel : ViewModelBase
   #region Vlastnosti
 
   public ICommand AddZastupitelCmd
+  {
+    get;
+  }
+
+  public ICommand ShowCityLogosCmd
   {
     get;
   }
@@ -77,9 +84,22 @@ public class BasicInfoViewModel : ViewModelBase
     Core = core;
 
     UpdateVillageLogoCmd = new RelayCommand(obj => UpdateVillageLogo(), obj => true);
+    ShowCityLogosCmd = new RelayCommand(obj => ShowCityLogos(), obj => true);
     RemoveVillageLogoCmd = new RelayCommand(obj => RemoveVillageLogo(), obj => Core?.Zasedani?.LogoObce != null);
     AddZastupitelCmd = new RelayCommand(obj => AddZastupitel(), obj => true);
     RemoveZastupitelCmd = new RelayCommand(obj => RemoveZastupitel(), obj => ChosenZastupitel != null);
+  }
+
+  private void ShowCityLogos()
+  {
+    DialogHost.Show(new ChooseCityLogo()
+    {
+      DataContext = new ChooseCityLogoViewModel()
+    }, (object o, DialogClosingEventArgs a) =>
+    {
+      //a.
+      //a.
+    });
   }
 
   #endregion

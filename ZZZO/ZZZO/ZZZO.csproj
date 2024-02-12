@@ -94,11 +94,15 @@
     </ApplicationDefinition>
     <Compile Include="Assists\ChromiumWebBrowserAssist.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Controls\ChooseCityLogo.xaml.cs">
+      <DependentUpon>ChooseCityLogo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TinyMceEditor.cs" />
     <Compile Include="Converters\ConditionalMarginConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\CollapseOnTrueConverter.cs" />
     <Compile Include="Converters\NotNullConverter.cs" />
+    <Compile Include="ViewModels\ChooseCityLogoViewModel.cs" />
     <Compile Include="ViewModels\ProgramEntryViewModel.cs" />
     <Compile Include="ViewModels\ProgramViewModel.cs" />
     <Compile Include="ViewModels\BasicInfoViewModel.cs" />
@@ -106,6 +110,10 @@
     <Compile Include="Validation\RegexValidationRule.cs" />
     <Compile Include="ViewModels\GeneratorViewModel.cs" />
     <Compile Include="ZzzoCore.cs" />
+    <Page Include="Controls\ChooseCityLogo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\BasicInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -126,7 +134,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\AboutWindow.xaml">
+    <Page Include="Controls\AboutApp.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -156,8 +164,8 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Extensions\Xaml.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Windows\AboutWindow.xaml.cs">
-      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    <Compile Include="Controls\AboutApp.xaml.cs">
+      <DependentUpon>AboutApp.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutWindowViewModel.cs" />
     <Compile Include="Windows\MainWindow.xaml.cs">
