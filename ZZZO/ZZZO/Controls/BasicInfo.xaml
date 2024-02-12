@@ -58,6 +58,7 @@
         </WrapPanel>
       </Button> 
       <Button VerticalAlignment="Center"
+              CommandParameter="{Binding Core.Zasedani.NazevObce}"
               Command="{Binding ShowCityLogosCmd}">
         <WrapPanel>
           <materialDesign:PackIcon VerticalAlignment="Center" Kind="Download" />

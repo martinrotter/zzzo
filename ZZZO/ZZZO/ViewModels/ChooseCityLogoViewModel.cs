@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using ZZZO.Common;
 
 namespace ZZZO.ViewModels;
@@ -118,6 +120,16 @@ public class CityLogo : ObservableObject
 
 public class ChooseCityLogoViewModel : ViewModelBase
 {
+  public ZzzoCore Core
+  {
+    get;
+  }
+
+  public string CityName
+  {
+    get;
+  }
+
   #region Proměnné
 
   private ObservableCollection<CityLogo> _loga;
@@ -142,8 +154,26 @@ public class ChooseCityLogoViewModel : ViewModelBase
     }
   }
 
-  public ChooseCityLogoViewModel()
+  public ChooseCityLogoViewModel(ZzzoCore core, string cityName)
   {
+    Core = core;
+    CityName = cityName;
+
+    Core.DownloadCityLogos(cityName)
+      .ContinueWith(tsk =>
+      {
+        App.Current.Dispatcher.BeginInvoke(() =>
+        {
+          Loga = new ObservableCollection<CityLogo>(tsk.Result);
+
+          if (tsk.Exception != null)
+          {
+            // TODO: zobrazit chybu
+          }
+        });
+      });
+
+    /*
     Loga = new ObservableCollection<CityLogo>
     {
       new CityLogo
@@ -159,6 +189,8 @@ public class ChooseCityLogoViewModel : ViewModelBase
         LogoObce = new BitmapImage(new Uri("https://rekos.psp.cz/data/images/34392/200x200/bohuslavice_prostejov.jpg"))
       }
     };
+
+    Logo = Loga[0];*/
   }
 
   public CityLogo Logo

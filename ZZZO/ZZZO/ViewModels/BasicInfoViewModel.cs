@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MaterialDesignThemes.Wpf;
@@ -85,22 +86,22 @@ public class BasicInfoViewModel : ViewModelBase
     Core = core;
 
     UpdateVillageLogoCmd = new RelayCommand(obj => UpdateVillageLogo(), obj => true);
-    ShowCityLogosCmd = new RelayCommand(obj => ShowCityLogos(), obj => true);
+    ShowCityLogosCmd = new RelayCommand<string>(str => ShowCityLogos(str), obj => true);
     RemoveVillageLogoCmd = new RelayCommand(obj => RemoveVillageLogo(), obj => Core?.Zasedani?.LogoObce != null);
     AddZastupitelCmd = new RelayCommand(obj => AddZastupitel(), obj => true);
     RemoveZastupitelCmd = new RelayCommand(obj => RemoveZastupitel(), obj => ChosenZastupitel != null);
   }
 
-  private void ShowCityLogos()
+  private void ShowCityLogos(string cityName)
   {
     DialogHost.Show(new ChooseCityLogo()
     {
-      DataContext = new ChooseCityLogoViewModel()
+      DataContext = new ChooseCityLogoViewModel(Core, cityName)
     }, (object o, DialogClosingEventArgs a) =>
     {
       if (a.Parameter is CityLogo cl)
       {
-        Core.Zasedani.LogoObce = cl.LogoObce;
+       Core.Zasedani.LogoObce = cl.LogoObce;
       }
     });
   }
