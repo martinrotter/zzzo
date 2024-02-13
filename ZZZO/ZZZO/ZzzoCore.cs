@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -132,6 +133,8 @@ namespace ZZZO
     {
       return Task.Run<IEnumerable<CityLogo>>(() =>
       {
+       // throw new Exception("chyba");
+
         HttpClient cl = new HttpClient();
         string baseUrl = $"{Constants.Uris.RekosBase}/vyhledani-symbolu?obec={cityName}&sort=municipality.name&page=";
         int pageNumber = 1;
