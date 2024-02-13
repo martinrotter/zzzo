@@ -44,11 +44,17 @@
         CommandParameter="{Binding Logo}"
         IsEnabled="{Binding Logo, Converter={StaticResource NotNullConverter}}"
         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
-        Použít
+        <WrapPanel>
+          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Check" />
+          <TextBlock Margin="5,0,0,0">Použít</TextBlock>
+        </WrapPanel>
       </Button>
       <Button
         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
-        _Zavřít
+        <WrapPanel>
+          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Close" />
+          <TextBlock Margin="5,0,0,0">Zrušit</TextBlock>
+        </WrapPanel>
       </Button>
     </WrapPanel>
   </DockPanel>

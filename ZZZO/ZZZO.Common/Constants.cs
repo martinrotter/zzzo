@@ -69,6 +69,7 @@ namespace ZZZO.Common
       #region Statické prvky
 
       public const string Document = "https://document.zzzo";
+      public const string RekosBase = "https://rekos.psp.cz";
 
       #endregion
     }

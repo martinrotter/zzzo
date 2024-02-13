@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 using HtmlAgilityPack;
 using Microsoft.Win32;
 using ZZZO.Common;
@@ -116,50 +118,72 @@ namespace ZZZO
       }
     }
 
-    public Task<CityLogo[]> DownloadCityLogos(string cityName)
+    public Task<CityLogo> DownloadFullCityLogo(CityLogo cityLogo)
     {
-      return Task.Run<CityLogo[]>(() =>
+      return Task.Run(() =>
+      {
+        using HttpClient cl = new HttpClient();
+        cityLogo.LogoObceData = cl.GetByteArrayAsync(cityLogo.LogoObceUrl).Result;
+        return cityLogo;
+      });
+    }
+
+    public Task<IEnumerable<CityLogo>> DownloadCityLogos(string cityName)
+    {
+      return Task.Run<IEnumerable<CityLogo>>(() =>
       {
         HttpClient cl = new HttpClient();
-
+        string baseUrl = $"{Constants.Uris.RekosBase}/vyhledani-symbolu?obec={cityName}&sort=municipality.name&page=";
+        int pageNumber = 1;
         string mainHtml = cl
-          .GetStringAsync($"https://rekos.psp.cz/vyhledani-symbolu?typ=0&obec={cityName}&poverena_obec=&popis=&kraj=0&okres=0&od=&do=&hledat=")
+          .GetStringAsync(baseUrl + pageNumber++.ToString())
           .Result;
 
         List<CityLogo> logos = new List<CityLogo>();
         HtmlDocument doc = new HtmlDocument();
         doc.LoadHtml(mainHtml);
 
-        string className = "zebra";
-        HtmlNodeCollection rows = doc.DocumentNode.SelectNodes($"//table[@class='{className}']/tbody/tr");
-        List<Task<CityLogo>> tsks = new List<Task<CityLogo>>();
+        logos.AddRange(ExtractLogosFromPage(doc));
 
-        foreach (HtmlNode row in rows)
+        var pages = doc.DocumentNode.SelectNodes($"//span[@class='pages']/a");
+
+        if (pages != null)
         {
-          string city = row.SelectSingleNode("td/a").InnerText;
-          string outerCity = row.SelectSingleNode("td[2]").InnerText;
-          string logoMinPath = row.SelectSingleNode("td[3]/img").GetAttributeValue("src", string.Empty);
-          string logoBigPath = logoMinPath.Replace("30x30", "800x500");
+          List<Task<List<CityLogo>>> subTasks = new List<Task<List<CityLogo>>>();
 
-          tsks.Add(cl
-            .GetByteArrayAsync("https://rekos.psp.cz" + logoBigPath)
-            .ContinueWith(tsk =>
+          foreach (HtmlNode page in pages)
+          {
+            if (!int.TryParse(page.InnerHtml, out int pageNum) ||
+                pageNum == 1 ||
+                page.Attributes.Contains("class"))
             {
-              CityLogo cla = new CityLogo
-              {
-                CityName = city,
-                ExtendedCityClusterName = outerCity,
-                LogoObceData = tsk.Result
-              };
+              continue;
+            }
 
-              return cla;
+            if (pageNum != pageNumber)
+            {
+              break;
+            }
+
+            int actualPageNumber = pageNumber++;
+
+            subTasks.Add(Task.Run(() =>
+            {
+              string pageUrl = baseUrl + actualPageNumber.ToString();
+              string pageHtml = cl.GetStringAsync(pageUrl).Result;
+              HtmlDocument pageDoc = new HtmlDocument();
+              pageDoc.LoadHtml(pageHtml);
+              return ExtractLogosFromPage(pageDoc);
             }));
+          }
+
+          foreach (List<CityLogo> pagedLogos in Task.WhenAll(subTasks).Result)
+          {
+            logos.AddRange(pagedLogos);
+          }
         }
 
-        var tsk = Task.WhenAll(tsks);
-        tsk.Wait();
-
-        return tsk.Result;
+        return logos;
       });
     }
 
@@ -176,6 +200,38 @@ namespace ZZZO
       {
         return false;
       }
+    }
+
+    private List<CityLogo> ExtractLogosFromPage(HtmlDocument doc)
+    {
+      HtmlNodeCollection rows = doc.DocumentNode.SelectNodes($"//table[@class='zebra']/tbody/tr");
+      List<CityLogo> tsks = new List<CityLogo>(rows.Count);
+
+      foreach (HtmlNode row in rows)
+      {
+        string city = row.SelectSingleNode("td/a")?.InnerText;
+        string outerCity = row.SelectSingleNode("td[2]")?.InnerText;
+        var logoMinElem = row.SelectSingleNode("td[3]/img");
+
+        if (city == null || outerCity == null || logoMinElem == null)
+        {
+          continue;
+        }
+
+        string logoMinPath = logoMinElem.GetAttributeValue("src", string.Empty);
+        string logoBigPath = logoMinPath.Replace("30x30", "800x500");
+
+        CityLogo cla = new CityLogo
+        {
+          CityName = city,
+          ExtendedCityClusterName = outerCity,
+          LogoObceUrl = Constants.Uris.RekosBase + logoBigPath
+        };
+
+        tsks.Add(cla);
+      }
+
+      return tsks;
     }
 
     public void NewZaseDani(Zasedani zas)

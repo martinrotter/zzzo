@@ -17,6 +17,7 @@ public class CityLogo : ObservableObject
   private string _extendedCityClusterName;
 
   private BitmapImage _logoObce;
+  private string _logoObceUrl;
 
   #endregion
 
@@ -115,6 +116,21 @@ public class CityLogo : ObservableObject
     }
   }
 
+  public string LogoObceUrl
+  {
+    get => _logoObceUrl;
+    set
+    {
+      if (value == _logoObceUrl)
+      {
+        return;
+      }
+
+      _logoObceUrl = value;
+      OnPropertyChanged();
+    }
+  }
+
   #endregion
 }
 
@@ -190,6 +206,12 @@ public class ChooseCityLogoViewModel : ViewModelBase
       }
 
       _logo = value;
+
+      if (_logo != null && !string.IsNullOrEmpty(_logo.LogoObceUrl) && _logo.LogoObce == null)
+      {
+        Core.DownloadFullCityLogo(_logo).Wait();
+      }
+
       OnPropertyChanged();
     }
   }
@@ -239,7 +261,7 @@ public class ChooseCityLogoViewModel : ViewModelBase
     CityName = cityName;
     StahnoutLogosCmd = new RelayCommand(o => StahnoutLogos(), o => true);
 
-    Task.Delay(300).ContinueWith(tsk => { StahnoutLogosCmd.Execute(null); }, TaskScheduler.FromCurrentSynchronizationContext());
+    Task.Delay(100).ContinueWith(tsk => { StahnoutLogosCmd.Execute(null); }, TaskScheduler.FromCurrentSynchronizationContext());
   }
 
   #endregion
