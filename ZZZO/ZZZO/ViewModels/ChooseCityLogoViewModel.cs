@@ -279,7 +279,21 @@ public class ChooseCityLogoViewModel : ViewModelBase
         Logo = Loga.FirstOrDefault();
         LogosDownloading = false;
         LogosDownloaded = Loga != null;
-        Error = tsk.Exception?.Message;
+        
+        var popisChyby = tsk.Exception?.InnerException?.Message;
+
+        if (popisChyby != null)
+        {
+          Error = $"Chyba: {popisChyby}.";
+        }
+        else if (Loga.Count == 0)
+        {
+          Error = "Znak obce nebyl nalezen.";
+        }
+        else
+        {
+          Error = null;
+        }
       }, TaskScheduler.FromCurrentSynchronizationContext());
   }
 

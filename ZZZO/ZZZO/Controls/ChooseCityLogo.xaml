@@ -6,10 +6,11 @@
              mc:Ignorable="d"
              Height="350"
              Width="300"
+             Name="Control"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
              xmlns:converters="clr-namespace:ZZZO.Converters"
-             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              d:DataContext="{d:DesignInstance Type=viewModels:ChooseCityLogoViewModel}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
@@ -22,8 +23,29 @@
   </UserControl.Resources>
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
-      <ComboBox SelectedValue="{Binding Logo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                ItemsSource="{Binding Loga}" x:Name="CmbLoga">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.Visibility>
+          <Binding Path="HasError" Converter="{StaticResource CollapseOnTrueConverter}">
+            <Binding.ConverterParameter>
+              <system:Boolean>True</system:Boolean>
+            </Binding.ConverterParameter>
+          </Binding>
+        </Grid.Visibility>
+        <materialDesign:PackIcon VerticalAlignment="Center" Margin="{StaticResource FormMargin}" Foreground="Red" Kind="AlertCircle" />
+        <TextBlock Grid.Column="1" Margin="{StaticResource FormMargin}"
+                   TextWrapping="Wrap"
+                   Foreground="Red"
+                   Text="{Binding Error}" />
+      </Grid>
+
+      <ComboBox
+        Visibility="{Binding HasError, Converter={StaticResource CollapseOnTrueConverter}}"
+        SelectedValue="{Binding Logo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        ItemsSource="{Binding Loga, IsAsync=True}" x:Name="CmbLoga">
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <TextBlock Text="{Binding FullName}" />
@@ -33,6 +55,7 @@
       <Image
         Width="200"
         Height="200"
+        Visibility="{Binding ElementName=Control, Path=DataContext.HasError, Converter={StaticResource CollapseOnTrueConverter}}"
         DataContext="{Binding ElementName=CmbLoga, Path=SelectedValue}"
         d:DataContext="{d:DesignInstance Type=viewModels:CityLogo}"
         Source="{Binding LogoObce}" />

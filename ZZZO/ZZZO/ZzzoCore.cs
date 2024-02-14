@@ -133,7 +133,10 @@ namespace ZZZO
     {
       return Task.Run<IEnumerable<CityLogo>>(() =>
       {
-       // throw new Exception("chyba");
+        if (string.IsNullOrWhiteSpace(cityName))
+        {
+          throw new Exception("je třeba zadat název obce");
+        }
 
         HttpClient cl = new HttpClient();
         string baseUrl = $"{Constants.Uris.RekosBase}/vyhledani-symbolu?obec={cityName}&sort=municipality.name&page=";
@@ -208,6 +211,12 @@ namespace ZZZO
     private List<CityLogo> ExtractLogosFromPage(HtmlDocument doc)
     {
       HtmlNodeCollection rows = doc.DocumentNode.SelectNodes($"//table[@class='zebra']/tbody/tr");
+
+      if (rows == null)
+      {
+        return new List<CityLogo>();
+      }
+
       List<CityLogo> tsks = new List<CityLogo>(rows.Count);
 
       foreach (HtmlNode row in rows)
