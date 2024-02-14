@@ -3,3 +3,5 @@ obj
 bin
 .vs
 *.DotSettings.user
+build-commit.txt
+build-date.txt

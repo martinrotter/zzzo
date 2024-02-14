@@ -275,7 +275,7 @@ public class ChooseCityLogoViewModel : ViewModelBase
     Core.DownloadCityLogos(CityName)
       .ContinueWith(tsk =>
       {
-        Loga = new ObservableCollection<CityLogo>(tsk.Result);
+        Loga = !tsk.IsFaulted ? new ObservableCollection<CityLogo>(tsk.Result) : new ObservableCollection<CityLogo>();
         Logo = Loga.FirstOrDefault();
         LogosDownloading = false;
         LogosDownloaded = Loga != null;
