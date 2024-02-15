@@ -12,6 +12,7 @@ ol {
 }
 
 img {
+  -webkit-break-inside: avoid-page;
   break-inside: avoid-page;
 }
 

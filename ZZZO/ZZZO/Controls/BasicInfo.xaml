@@ -183,7 +183,6 @@
                     CanUserSortColumns="False"
                     CanUserResizeColumns="False"
                     CanUserResizeRows="False"
-                    AlternatingRowBackground="{DynamicResource PrimaryHueLightBrush}"
                     CanUserDeleteRows="False"
                     Name="LvZastupitele"
                     SelectedValue="{Binding ChosenZastupitel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

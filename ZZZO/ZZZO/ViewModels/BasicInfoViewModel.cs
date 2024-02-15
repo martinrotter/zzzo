@@ -1,7 +1,5 @@
 ﻿using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using ZZZO.Commands;
@@ -14,9 +12,9 @@ public class BasicInfoViewModel : ViewModelBase
 {
   #region Proměnné
 
-  private Zastupitel _chosenZastupitel;
-
   private ZzzoCore _core;
+
+  private Zastupitel _chosenZastupitel;
 
   #endregion
 
@@ -25,26 +23,6 @@ public class BasicInfoViewModel : ViewModelBase
   public ICommand AddZastupitelCmd
   {
     get;
-  }
-
-  public ICommand ShowCityLogosCmd
-  {
-    get;
-  }
-
-  public Zastupitel ChosenZastupitel
-  {
-    get => _chosenZastupitel;
-    set
-    {
-      if (Equals(value, _chosenZastupitel))
-      {
-        return;
-      }
-
-      _chosenZastupitel = value;
-      OnPropertyChanged();
-    }
   }
 
   public ZzzoCore Core
@@ -62,12 +40,32 @@ public class BasicInfoViewModel : ViewModelBase
     }
   }
 
+  public Zastupitel ChosenZastupitel
+  {
+    get => _chosenZastupitel;
+    set
+    {
+      if (Equals(value, _chosenZastupitel))
+      {
+        return;
+      }
+
+      _chosenZastupitel = value;
+      OnPropertyChanged();
+    }
+  }
+
   public ICommand RemoveVillageLogoCmd
   {
     get;
   }
 
   public ICommand RemoveZastupitelCmd
+  {
+    get;
+  }
+
+  public ICommand ShowCityLogosCmd
   {
     get;
   }
@@ -90,20 +88,6 @@ public class BasicInfoViewModel : ViewModelBase
     RemoveVillageLogoCmd = new RelayCommand(obj => RemoveVillageLogo(), obj => Core?.Zasedani?.LogoObce != null);
     AddZastupitelCmd = new RelayCommand(obj => AddZastupitel(), obj => true);
     RemoveZastupitelCmd = new RelayCommand(obj => RemoveZastupitel(), obj => ChosenZastupitel != null);
-  }
-
-  private void ShowCityLogos(string cityName)
-  {
-    DialogHost.Show(new ChooseCityLogo()
-    {
-      DataContext = new ChooseCityLogoViewModel(Core, cityName)
-    }, (object o, DialogClosingEventArgs a) =>
-    {
-      if (a.Parameter is CityLogo cl)
-      {
-       Core.Zasedani.LogoObce = cl.LogoObce;
-      }
-    });
   }
 
   #endregion
@@ -135,6 +119,20 @@ public class BasicInfoViewModel : ViewModelBase
     {
       Core.Zasedani.RemoveZastupitel(ChosenZastupitel);
     }
+  }
+
+  private void ShowCityLogos(string cityName)
+  {
+    DialogHost.Show(new ChooseCityLogo
+    {
+      DataContext = new ChooseCityLogoViewModel(Core, cityName)
+    }, (o, a) =>
+    {
+      if (a.Parameter is CityLogo cl)
+      {
+        Core.Zasedani.LogoObce = cl.LogoObce;
+      }
+    });
   }
 
   private void UpdateVillageLogo()

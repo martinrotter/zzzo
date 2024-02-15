@@ -20,6 +20,7 @@ namespace ZZZO.ViewModels
     private byte[] _generatedData;
 
     private int _generateProgress;
+    private string _selectedHtmlStyle;
 
     #endregion
 
@@ -36,6 +37,21 @@ namespace ZZZO.ViewModels
         }
 
         _canGenerateOutputs = value;
+        OnPropertyChanged();
+      }
+    }
+
+    public string SelectedHtmlStyle
+    {
+      get => _selectedHtmlStyle;
+      set
+      {
+        if (value == _selectedHtmlStyle)
+        {
+          return;
+        }
+
+        _selectedHtmlStyle = value;
         OnPropertyChanged();
       }
     }
@@ -114,6 +130,7 @@ namespace ZZZO.ViewModels
 
     public GeneratorViewModel(ZzzoCore core)
     {
+      SelectedHtmlStyle = GeneratorHtml.Styles.First();
       Core = core;
       GenerateDocumentCmd = new RelayCommandEmpty(GenerateDocument, () => GenerateProgress <= 0);
       ExportHtmlCmd = new RelayCommandEmpty(ExportHtml, () => GenerateProgress <= 0 && GeneratedHtml != null);
@@ -173,14 +190,14 @@ namespace ZZZO.ViewModels
 
     private void GenerateDocument()
     {
-      GenerateWithGenerator(GeneratorHtml);
+      GenerateWithGenerator(GeneratorHtml, SelectedHtmlStyle);
     }
 
-    private async void GenerateWithGenerator(Generator generator)
+    private async void GenerateWithGenerator(Generator generator, object param = null)
     {
       IProgress<int> prog = new Progress<int>(progress => { GenerateProgress = progress; });
 
-      Task<byte[]> tsk = generator.Generate(Core.Zasedani, prog);
+      Task<byte[]> tsk = generator.Generate(Core.Zasedani, prog, param);
 
       try
       {

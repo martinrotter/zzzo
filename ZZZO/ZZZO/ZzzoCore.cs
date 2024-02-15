@@ -98,7 +98,8 @@ namespace ZZZO
 
       if (zasedani != null && !string.IsNullOrWhiteSpace(zasedani.VystupniSoubor))
       {
-        d.FileName = zasedani.VystupniSoubor + $".{fileSuffix}";
+        d.InitialDirectory = Path.GetDirectoryName(zasedani.VystupniSoubor);
+        d.FileName = Path.GetFileName(zasedani.VystupniSoubor) + $".{fileSuffix}";
       }
 
       if (d.ShowDialog().GetValueOrDefault())
@@ -257,17 +258,11 @@ namespace ZZZO
         return false;
       }
 
-      SaveFileDialog d = new SaveFileDialog();
+      string soubor = ChooseSaveFile(Zasedani, Constants.PathsAndFiles.ZzzoFileSuffix);
 
-      d.OverwritePrompt = true;
-      d.AddExtension = true;
-      d.CheckPathExists = true;
-      d.Filter = "ZZZO soubory (*.zzzo)|*.zzzo";
-      d.Title = "Zvolte lokaci pro uložení zasedání do souboru";
-
-      if (d.ShowDialog().GetValueOrDefault())
+      if (!string.IsNullOrEmpty(soubor))
       {
-        Zasedani.SaveToFile(d.FileName);
+        Zasedani.SaveToFile(soubor);
         ZasedaniOriginalData = Zasedani.ToJson();
         return true;
       }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using ZZZO.Commands;
@@ -14,6 +12,11 @@ namespace ZZZO.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
   #region Vlastnosti
+
+  public ICommand AboutAppCmd
+  {
+    get;
+  }
 
   public App App
   {
@@ -59,17 +62,7 @@ public class MainWindowViewModel : ViewModelBase
     NewZasedaniCmd = new RelayCommand(obj => NewZasedani(), obj => true);
     LoadZasedaniCmd = new RelayCommand(obj => LoadZasedani(), obj => true);
     SaveZasedaniCmd = new RelayCommand(obj => SaveZasedani(), obj => true);
-    AboutAppCmd =  new RelayCommand(obj => ShowAboutDialog(), obj => true);
-  }
-
-  private void ShowAboutDialog()
-  {
-    DialogHost.Show(new AboutApp());
-  }
-
-  public ICommand AboutAppCmd
-  {
-    get;
+    AboutAppCmd = new RelayCommand(obj => ShowAboutDialog(), obj => true);
   }
 
   #endregion
@@ -100,107 +93,7 @@ public class MainWindowViewModel : ViewModelBase
       return;
     }
 
-    Zasedani zas = new Zasedani();
-
-    zas.AddZastupitel(new Zastupitel
-    {
-      Prijmeni = "csacsa",
-      Jmeno = "csacas",
-      JeOverovatel = false,
-      JeStarosta = true,
-      JeZapisovatel = true,
-      JePritomen = true
-    });
-
-    zas.AddZastupitel(new Zastupitel
-    {
-      Prijmeni = "csacsa",
-      Jmeno = "csacas",
-      JeOverovatel = true,
-      JeStarosta = false,
-      JeRidici = true,
-      JePritomen = true
-    });
-
-    zas.AddZastupitel(new Zastupitel
-    {
-      Prijmeni = "csacsa",
-      Jmeno = "csacas",
-      JeOverovatel = true,
-      JeStarosta = false,
-      JePritomen = true
-    });
-
-    zas.AddZastupitel(new Zastupitel
-    {
-      Prijmeni = "csacsa",
-      Jmeno = "csacas",
-      JeOverovatel = true,
-      JeStarosta = false,
-      JePritomen = true
-    });
-
-    zas.AddZastupitel(new Zastupitel
-    {
-      Prijmeni = "csacsa",
-      Jmeno = "csacas",
-      JeOverovatel = true,
-      JeStarosta = false,
-      JePritomen = true
-    });
-
-    zas.AddZastupitel(new Zastupitel
-    {
-      Prijmeni = "csacsa",
-      Jmeno = "csacas",
-      JeOverovatel = false,
-      JeStarosta = false,
-      JePritomen = false
-    });
-
-    zas.AdresaKonani = new Adresa
-    {
-      CisloPopisneOrientacni = "12",
-      Obec = "Krakatit",
-      Psc = "779 00",
-      Ulice = "Ulicce",
-      PopisMista = "zasedací místnost"
-    };
-
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      SchvalovaniProgramu = true,
-      Nadpis = "Schvalování programu"
-    });
-
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "První"
-    });
-
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Druhy",
-      JePodbod = true
-    });
-
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Treti",
-      JePodbod = true
-    });
-
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Ctvrty"
-    });
-
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Paty",
-      JeDoplneny = true,
-      JePodbod = true
-    });
+    Zasedani zas = Zasedani.GenerateSample();
 
     Core.NewZaseDani(zas);
   }
@@ -250,6 +143,11 @@ public class MainWindowViewModel : ViewModelBase
       MessageBox.Show($"Chyba při ukládání zápisu: {ex.Message}.", "Nelze uložit zápis", MessageBoxButton.OK, MessageBoxImage.Error);
       return false;
     }
+  }
+
+  private void ShowAboutDialog()
+  {
+    DialogHost.Show(new AboutApp());
   }
 
   #endregion

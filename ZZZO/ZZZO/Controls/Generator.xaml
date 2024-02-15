@@ -7,6 +7,7 @@
              xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
              xmlns:viewmodels="clr-namespace:ZZZO.ViewModels"
              xmlns:assists="clr-namespace:ZZZO.Assists"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              d:DataContext="{d:DesignInstance Type=viewmodels:GeneratorViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450"
@@ -19,6 +20,11 @@
   <GroupBox Header="HTML + PDF">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top">
+        <ComboBox materialDesign:TextFieldAssist.PrefixText="Styl -> "
+                  Style="{StaticResource MaterialDesignComboBox}"
+                  ItemsSource="{Binding GeneratorHtml.Styles}"
+                  Margin="{StaticResource FormMargin}"
+                  SelectedValue="{Binding SelectedHtmlStyle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Button Content="Přegenerovat dokument"
                 Command="{Binding GenerateDocumentCmd}" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"

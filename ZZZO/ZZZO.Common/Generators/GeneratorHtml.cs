@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -45,6 +42,11 @@ namespace ZZZO.Common.Generators
       get => "html";
     }
 
+    public List<string> Styles
+    {
+      get;
+    }
+
     public override string Title
     {
       get => "HTML";
@@ -52,9 +54,19 @@ namespace ZZZO.Common.Generators
 
     #endregion
 
+    #region Konstruktory
+
+    public GeneratorHtml()
+    {
+      Styles = Directory.GetFiles(Constants.PathsAndFiles.AppStylesFolder, "*", SearchOption.TopDirectoryOnly)
+        .Select(Path.GetFileName).ToList();
+    }
+
+    #endregion
+
     #region Metody
 
-    protected override byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress)
+    protected override byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress, object param)
     {
       progress.Report(1);
 
@@ -62,7 +74,7 @@ namespace ZZZO.Common.Generators
       XmlElement htmlElem = html.CreateElement("html");
 
       html.AppendChild(htmlElem);
-      GenerateHeader(htmlElem, zas, progress);
+      GenerateHeader(htmlElem, zas, progress, param as string);
       GenerateBody(htmlElem, zas, progress);
 
       progress.Report(100);
@@ -258,11 +270,11 @@ namespace ZZZO.Common.Generators
       }
     }
 
-    private void GenerateHeader(XmlElement html, Zasedani zas, IProgress<int> progress)
+    private void GenerateHeader(XmlElement html, Zasedani zas, IProgress<int> progress, string styleName)
     {
       XmlElement head = html.AppendElem("head");
 
-      head.AppendElem("style").InnerText = GetStyle();
+      head.AppendElem("style").InnerText = GetStyle(styleName ?? Styles.First());
       head.AppendElem("meta").SetAttr("charset", "UTF-8");
       head.AppendElem("meta").SetAttr("name", "viewport").SetAttr("content", "width=device-width, initial-scale=1.0");
 
@@ -372,9 +384,9 @@ namespace ZZZO.Common.Generators
       return accepted ? generatedResolutionTitle : null;
     }
 
-    private string GetStyle()
+    private string GetStyle(string styleName)
     {
-      return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, "classic.css"));
+      return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, styleName));
     }
 
     private string Sklonovat(string jednaPolozka, string dvePolozky, string vicePolozek, int pocet)

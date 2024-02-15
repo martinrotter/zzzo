@@ -190,7 +190,13 @@ public class Zasedani : ObservableObject
   /// </summary>
   public string VystupniSoubor
   {
-    get => _vystupniSoubor;
+    get
+    {
+      return _vystupniSoubor ??= Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+        $"zápis-{DatumKonani:yyyy-MM}-zo");
+    }
+
     set
     {
       if (value == _vystupniSoubor)
@@ -300,4 +306,124 @@ public class Zasedani : ObservableObject
   }
 
   #endregion
+
+  public static Zasedani GenerateSample()
+  {
+    Zasedani zas = new Zasedani();
+
+    zas.AddZastupitel(new Zastupitel
+    {
+      Prijmeni = "Novák",
+      Jmeno = "Petr",
+      JeOverovatel = false,
+      JeStarosta = true,
+      JeZapisovatel = false,
+      JePritomen = true,
+      JeRidici = true
+    });
+
+    zas.AddZastupitel(new Zastupitel
+    {
+      Prijmeni = "Černý",
+      Jmeno = "Pavel",
+      JeOverovatel = true,
+      JePritomen = true
+    });
+
+    zas.AddZastupitel(new Zastupitel
+    {
+      Prijmeni = "Bílý",
+      Jmeno = "Zdeněk",
+      JeOverovatel = true,
+      JePritomen = true
+    });
+
+    zas.AddZastupitel(new Zastupitel
+    {
+      Prijmeni = "Fialový",
+      Jmeno = "Alex",
+      JePritomen = true
+    });
+
+    zas.AddZastupitel(new Zastupitel
+    {
+      Prijmeni = "Zelený",
+      Jmeno = "Miloš",
+      JePritomen = true,
+      JeZapisovatel = true
+    });
+
+    zas.AddZastupitel(new Zastupitel
+    {
+      Prijmeni = "Růžový",
+      Jmeno = "Petr",
+      JePritomen = false
+    });
+
+    zas.NazevObce = "Praha";
+    zas.DatumCas = DateTime.Now;
+
+    zas.AdresaKonani = new Adresa
+    {
+      CisloPopisneOrientacni = "12",
+      Obec = "Krakatit",
+      Psc = "779 00",
+      Ulice = "Čtenářská",
+      PopisMista = "zasedací místnost"
+    };
+
+    var schvaleniProgramu = new BodProgramu
+    {
+      SchvalovaniProgramu = true,
+      Nadpis = "Schvalování programu"
+    };
+
+    zas.Program.BodyProgramu.Add(schvaleniProgramu);
+
+    zas.AddUsneseni(schvaleniProgramu, new Usneseni
+    {
+      Text = "Hlasování o programu"
+    });
+    
+    zas.Program.BodyProgramu.Add(new BodProgramu
+    {
+      Nadpis = "První",
+      Text = "Detailní popis bodu programu."
+    });
+
+    zas.Program.BodyProgramu.Add(new BodProgramu
+    {
+      Nadpis = "Druhý",
+      JePodbod = true
+    });
+
+    zas.Program.BodyProgramu.Add(new BodProgramu
+    {
+      Nadpis = "Třetí",
+      JePodbod = true
+    });
+
+    zas.Program.BodyProgramu.Add(new BodProgramu
+    {
+      Nadpis = "Čtvrtý",
+      JeDoplneny = true
+    });
+
+    zas.Program.BodyProgramu.Add(new BodProgramu
+    {
+      Nadpis = "Různé"
+    });
+
+    zas.Program.BodyProgramu.Add(new BodProgramu
+    {
+      Nadpis = "Diskuse"
+    });
+
+    zas.Program.BodyProgramu.Add(new BodProgramu
+    {
+      Nadpis = "Závěr"
+    });
+
+    return zas;
+  }
 }

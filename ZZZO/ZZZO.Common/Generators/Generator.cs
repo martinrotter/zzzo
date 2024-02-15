@@ -43,7 +43,7 @@ namespace ZZZO.Common.Generators
 
     #region Metody
 
-    public Task<byte[]> Generate(Zasedani zasedani, IProgress<int> progress)
+    public Task<byte[]> Generate(Zasedani zasedani, IProgress<int> progress, object param = null)
     {
       if (IsGenerating)
       {
@@ -54,14 +54,14 @@ namespace ZZZO.Common.Generators
         IsGenerating = true;
       }
 
-      Task<byte[]> tsk = Task.Run(() => GenerateDoWork(zasedani, progress));
+      Task<byte[]> tsk = Task.Run(() => GenerateDoWork(zasedani, progress, param));
 
       tsk.ContinueWith(task => IsGenerating = false);
 
       return tsk;
     }
 
-    protected abstract byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress);
+    protected abstract byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress, object param);
 
     #endregion
   }
