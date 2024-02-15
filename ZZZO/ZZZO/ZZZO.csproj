@@ -13,6 +13,7 @@
     <StartupObject>ZZZO.App</StartupObject>
     <AssemblyVersion>0.0.1.0</AssemblyVersion>
     <FileVersion>0.0.1.0</FileVersion>
+    <_SuppressWpfTrimError>true</_SuppressWpfTrimError>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +25,22 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
     <PackageReference Include="MaterialDesignColors" Version="2.1.4" />
     <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\resources\editor\**">
+      <Link>Data\TinyMceEditor\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <TargetPath>Data\TinyMceEditor\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\resources\styles\*">
+      <Link>Data\Styles\%(Filename)%(Extension)</Link>
+      <TargetPath>Data\Styles\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -44,9 +61,5 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(ProjectDir)..\..\3rd-party\TinyMCE&quot; &quot;$(OutDir)Data\TinyMceEditor\&quot; /Y /F /E&#xD;&#xA;xcopy &quot;$(ProjectDir)..\..\resources\editor\*.*&quot; &quot;$(OutDir)Data\TinyMceEditor\&quot; /Y /F /E&#xD;&#xA;xcopy &quot;$(ProjectDir)..\..\resources\styles\*.css&quot; &quot;$(OutDir)Data\Styles\&quot; /Y /F /E" />
-  </Target>
 
 </Project>
