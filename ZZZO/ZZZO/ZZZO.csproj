@@ -28,6 +28,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\3rd-party\TinyMCE\**">
+      <Link>Data\TinyMceEditor\tinymce\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <TargetPath>Data\TinyMceEditor\tinymce\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\..\resources\editor\**">
       <Link>Data\TinyMceEditor\%(RecursiveDir)\%(Filename)%(Extension)</Link>
       <TargetPath>Data\TinyMceEditor\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
