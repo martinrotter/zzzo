@@ -148,7 +148,6 @@ namespace ZZZO
         List<CityLogo> logos = new List<CityLogo>();
         HtmlDocument doc = new HtmlDocument();
         doc.LoadHtml(mainHtml);
-
         logos.AddRange(ExtractLogosFromPage(doc));
 
         var pages = doc.DocumentNode.SelectNodes($"//span[@class='pages']/a");

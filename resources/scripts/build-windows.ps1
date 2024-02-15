@@ -1,5 +1,4 @@
-nuget restore "ZZZO\ZZZO.sln"
-msbuild "ZZZO\ZZZO.sln" /t:Build /p:Configuration=Release
-7z a -tzip -mx9 "zzzo-latest.zip" ".\ZZZO\ZZZO\bin\Release\*"
+dotnet publish "ZZZO\ZZZO\ZZZO.csproj" -p:PublishProfile=FolderProfile
+7z a -tzip -mx9 "zzzo-latest.zip" ".\ZZZO\ZZZO\bin\Release\net6.0-windows\publish\win-x86\*"
 
 ls

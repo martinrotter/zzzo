@@ -208,7 +208,8 @@
                                       Width="Auto"
                                       Binding="{Binding JeOverovatel, UpdateSourceTrigger=PropertyChanged}" />
               <DataGridCheckBoxColumn Header="Starosta"
-                                      Width="Auto" Binding="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
+                                      Width="Auto"
+                                      Binding="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
             </DataGrid.Columns>
           </DataGrid>
 

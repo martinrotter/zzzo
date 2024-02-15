@@ -2,6 +2,6 @@ packages
 obj
 bin
 .vs
-*.DotSettings.user
+*.user
 build-commit.txt
 build-date.txt

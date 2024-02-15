@@ -18,6 +18,8 @@
         <ResourceDictionary
           Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
 
+        
+
         <ResourceDictionary>
           <Thickness x:Key="FormMargin">9,9,9,9</Thickness>
 

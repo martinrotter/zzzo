@@ -61,22 +61,22 @@ namespace ZZZO.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to f1f908137532d813b01fe12c038bf3e34f2f78e5
+        ///   Looks up a localized string similar to 64d18ad279b78968e61bb5473ebec84ea72ad828
         ///.
         /// </summary>
         internal static string build_commit {
             get {
-                return ResourceManager.GetString("build_commit", resourceCulture);
+                return ResourceManager.GetString("build-commit", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 2024-02-08T12:19:36.4937613+01:00
+        ///   Looks up a localized string similar to 2024-02-14T10:02:41.2104295+01:00
         ///.
         /// </summary>
         internal static string build_date {
             get {
-                return ResourceManager.GetString("build_date", resourceCulture);
+                return ResourceManager.GetString("build-date", resourceCulture);
             }
         }
     }
