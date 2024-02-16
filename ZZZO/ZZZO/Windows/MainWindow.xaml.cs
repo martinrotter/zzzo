@@ -1,5 +1,9 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
+using Microsoft.Xaml.Behaviors.Core;
+using ZZZO.Common;
 
 namespace ZZZO.Windows
 {
@@ -11,6 +15,27 @@ namespace ZZZO.Windows
     {
       InitializeComponent();
       App.Current.SetDataContexts(this);
+
+      Utils.HookKeyShortctut(
+        this,
+        DataContext,
+        new KeyGesture(Key.N, ModifierKeys.Control, "Ctrl+N"),
+        MenuNewZasedani);
+      Utils.HookKeyShortctut(
+        this,
+        DataContext,
+        new KeyGesture(Key.L, ModifierKeys.Control, "Ctrl+L"),
+        MenuLoadZasedani);
+      Utils.HookKeyShortctut(
+        this,
+        DataContext,
+        new KeyGesture(Key.S, ModifierKeys.Control, "Ctrl+S"),
+        MenuSaveZasedani);
+      Utils.HookKeyShortctut(
+        this,
+        DataContext,
+        new KeyGesture(Key.Q, ModifierKeys.Control, "Ctrl+Q"),
+        MenuQuitApp);
     }
 
     #endregion

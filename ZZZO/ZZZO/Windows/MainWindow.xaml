@@ -19,20 +19,37 @@
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}">
+
   <materialDesign:DialogHost x:Name="DialogHost" KeyDown="OnDialogHostKeyDown">
     <DockPanel>
       <Menu materialDesign:MenuAssist.TopLevelMenuItemHeight="25"
             DockPanel.Dock="Top">
         <MenuItem Header="_Soubor">
-          <MenuItem Header="_Nový"
-                    Command="{Binding NewZasedaniCmd}" />
-          <MenuItem Header="N_ačíst"
-                    Command="{Binding LoadZasedaniCmd}" />
-          <MenuItem Header="_Uložit"
-                    Command="{Binding SaveZasedaniCmd}" />
-          <MenuItem Header="_Konec"
+          <MenuItem x:Name="MenuNewZasedani" Header="_Nový"
+                    Command="{Binding NewZasedaniCmd}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon VerticalAlignment="Center" Kind="FileDocumentAdd" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem x:Name="MenuLoadZasedani" Header="N_ačíst"
+                    Command="{Binding LoadZasedaniCmd}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon VerticalAlignment="Center" Kind="OpenInApp" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem x:Name="MenuSaveZasedani" Header="_Uložit"
+                    Command="{Binding SaveZasedaniCmd}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon VerticalAlignment="Center" Kind="ContentSave" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem x:Name="MenuQuitApp" Header="_Konec"
                     Command="{Binding CloseWindowCmd}"
-                    CommandParameter="{Binding ElementName=Window}" />
+                    CommandParameter="{Binding ElementName=Window}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon VerticalAlignment="Center" Kind="Close" />
+            </MenuItem.Icon>
+          </MenuItem>
         </MenuItem>
         <MenuItem Header="?">
           <MenuItem Header="_O aplikaci" Command="{Binding AboutAppCmd}" />
