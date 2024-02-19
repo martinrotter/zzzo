@@ -45,21 +45,12 @@ namespace ZZZO.Common.Generators
     public List<string> Styles
     {
       get;
-    }
+    } = Directory.GetFiles(Constants.PathsAndFiles.AppStylesFolder, "*", SearchOption.TopDirectoryOnly)
+      .Select(Path.GetFileName).ToList();
 
     public override string Title
     {
       get => "HTML";
-    }
-
-    #endregion
-
-    #region Konstruktory
-
-    public GeneratorHtml()
-    {
-      Styles = Directory.GetFiles(Constants.PathsAndFiles.AppStylesFolder, "*", SearchOption.TopDirectoryOnly)
-        .Select(Path.GetFileName).ToList();
     }
 
     #endregion
@@ -286,7 +277,7 @@ namespace ZZZO.Common.Generators
 
     private void GenerateProgramEntries(XmlElement body, IEnumerable<BodProgramu> bodyProgramu)
     {
-      XmlElement div = body.AppendElem("div");
+      XmlElement div = body.AppendElem("div").AppendClass("program");
       XmlElement mainOl = div.AppendElem("ol");
       XmlElement nestedOl = null;
 
@@ -325,19 +316,20 @@ namespace ZZZO.Common.Generators
       XmlElement body, Zasedani zas, BodProgramu programEntry, Usneseni resolution, int lastOrder, string replacementTitle = null)
     {
       string generatedResolutionTitle = null;
+      XmlElement root = body.AppendElem("div").AppendClass("resolution-container");
 
       if (!programEntry.SchvalovaniProgramu)
       {
         if (resolution.ZoBereNaVedomi)
         {
-          body.AppendElem("p").InnerText = $"ZO {zas.NazevObce} bere na vědomí.";
+          root.AppendElem("p").AppendClass("resolution-text").InnerText = $"ZO {zas.NazevObce} bere na vědomí.";
         }
         else
         {
           generatedResolutionTitle = resolution.GenerateTitle(lastOrder + 1, zas);
 
-          body.AppendElem("p").InnerText = "Návrh usnesení:";
-          body.AppendElem("p").InnerText = generatedResolutionTitle;
+          root.AppendElem("p").AppendClass("resolution-text-heading").InnerText = "Návrh usnesení:";
+          root.AppendElem("p").AppendClass("resolution-text").InnerText = generatedResolutionTitle;
         }
       }
 
@@ -363,22 +355,22 @@ namespace ZZZO.Common.Generators
       string choiceDontKnowStr = choiceDontKnow.Count() + (choiceDontKnow.Any() ? $" ({string.Join(", ", choiceDontKnow.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})" : string.Empty);
       bool accepted = choiceFor.Count() > zas.Zastupitele.Count / 2;
 
-      XmlElement div = body.AppendElem("div").AppendClass("resolution").AppendClass(accepted ? "success" : "failure");
+      XmlElement div = root.AppendElem("div").AppendClass("resolution-vote-box").AppendClass(accepted ? "success" : "failure");
 
-      div.AppendElem("p").InnerText = $"{replacementTitle ?? "Hlasování o návrhu usnesení"}:";
+      div.AppendElem("p").AppendClass("resolution-vote-heading").InnerText = $"{replacementTitle ?? "Hlasování o návrhu usnesení"}:";
 
       div.AppendElem("p").InnerText =
-        $"<span class=\"resolution-vote resolution-success\">\u2713</span> PRO: {choiceForStr}<br/>" +
-        $"<span class=\"resolution-vote resolution-failure\">\u00D7</span> PROTI: {choiceAgainstStr}<br/>" +
-        $"<span class=\"resolution-vote resolution-dontknow\">?</span> ZDRŽUJE SE: {choiceDontKnowStr}";
+        $"<span class=\"resolution-vote resolution-success-icon\">\u2713</span> PRO: {choiceForStr}<br/>" +
+        $"<span class=\"resolution-vote resolution-failure-icon\">\u00D7</span> PROTI: {choiceAgainstStr}<br/>" +
+        $"<span class=\"resolution-vote resolution-dontknow-icon\">?</span> ZDRŽUJE SE: {choiceDontKnowStr}";
 
       if (accepted)
       {
-        div.AppendElem("p").InnerText = "<span class=\"resolution-success\">\u2713</span> Návrh byl přijat.";
+        div.AppendElem("p").AppendClass("resolution-success").InnerText = "<span class=\"resolution-success-icon\">\u2713</span> Návrh byl přijat.";
       }
       else
       {
-        div.AppendElem("p").InnerText = "<span class=\"resolution-failure\">\u00D7</span> Návrh nebyl přijat.";
+        div.AppendElem("p").AppendClass("resolution-failure").InnerText = "<span class=\"resolution-failure-icon\">\u00D7</span> Návrh nebyl přijat.";
       }
 
       return accepted ? generatedResolutionTitle : null;

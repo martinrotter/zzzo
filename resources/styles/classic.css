@@ -1,9 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
 
+/* Targets all the pages */
+@page {
+  size: a4 portrait;
+  margin: 1cm;
+}
+
 body {
   font-family: "EB Garamond", serif;
   font-optical-sizing: auto;
   font-size: 80%;
+}
+
+hr {
+  border: 1px solid black;
 }
 
 ol {
@@ -39,10 +49,6 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-hr {
-  border: 1px solid black;
-}
-
 .signature > hr {
   width: 85%;
   border: 1px solid darkslateblue;
@@ -54,19 +60,19 @@ hr {
 	height: 1em;
 }
 
-.resolution-success {
+.resolution-success-icon {
   color: limegreen;
 }
 
-.resolution-failure {
+.resolution-failure-icon {
   color: red;
 }
 
-.resolution-dontknow {
+.resolution-dontknow-icon {
   color: orange;
 }
 
-.resolution {
+.resolution-vote-box {
   break-inside: avoid-page;
   border-radius: 10px;
   border-style: solid;
@@ -87,10 +93,4 @@ hr {
 
 .text-center {
   text-align: center;
-}
-
-/* Targets all the pages */
-@page {
-  size: a4 portrait;
-  margin: 1cm;
 }

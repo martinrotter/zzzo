@@ -5,7 +5,7 @@ Utilita umožňuje načítání/ukládání rozpracovaných zápisů a následn�
 
 ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplikace - vaše data tak nejsou uložena v žádném cloudu a máte je tak vždy pod kontrolou.
 
-### Nejnovější verzi aplikace lze stáhnout [zde](https://github.com/martinrotter/zzzo/releases/download/devbuild/zzzo-latest.zip).
+### Nejnovější verzi aplikace lze stáhnout [zde](https://github.com/martinrotter/zzzo/releases) vždycky v sekci `Assets`. Testovací verzi aplikace potom najdete přímo [zde](https://github.com/martinrotter/zzzo/releases/download/devbuild/zzzo-latest.zip).
 
 ### Instalace
 1. Stáhněte si některou [verzi](https://github.com/martinrotter/zzzo/releases) aplikace.
@@ -17,8 +17,10 @@ ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplika
 
 ### Seznam funkcí
 * rozpracované zápisy lze ukládat a načítat a kdykoliv tak pokračovat v práci,
+* program umí dle zadaného názvu obce najít online logo dané obce,
 * lze pohodlně editovat seznam zastupitelů, body programu a další související věci,
 * vygenerované zápisy odpovídají § 95 odst. 1 zákona č. 128/2000 Sb. o obcích,
+* aplikace podporuje standardní CSS styly pro úpravu formátu výstupního dokumentu, je tedy docela jednoduché implementovat zcela vlastní styl, který poté stačí uložit do podsložky `Styles`,
 * aplikace nevyžaduje instalaci a podporuje 32/64 bitovou variantu OS Windows (8+),
 * aplikace má zcela otevřený [zdrojový kód](ZZZO), který kompletně podléhá licenci [GNU GPLv3](LICENSE).
 
@@ -29,5 +31,7 @@ ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplika
 4. U každého bodu programu můžete vytvořit jednotlivá usnesení. Seznam přítomných zastupitelů v sekci `Usnesení` nelze měnit, je aktualizován automaticky. Pouze u každého zastupitele vyberte jeho volbu v hlasování o daném usnesení.
 5. Až budete hotoví, přejděte do sekce `Generátor`. V této sekci tlačítkem `Přegenerovat dokument` nejdříve vygenerujete výsledný dokument, který se zobrazí v zabudovaném náhledu. Pokud jste s výsledkem spokojení, tak můžete výsledek exportovat do některého z nabízených formátů nebo jej rovnou vytisknout.
 
+Samozřejmě, program umožňuje ukládat rozpracovaná zasedání do datových souborů (koncovka `.zzzo`), což se dá použít k deduplikaci práce. Například seznam zastupitelů tak nemusíte vytvářet vždy, stačí načíst předchozí zasedání, upravit a uložit pod novým názvem souboru.
+
 ### Hlášení chyb
-Pokud v programu objevíte chybu nebo máte nápad na její zlepšení, můžete to nahlásit [zde](https://github.com/martinrotter/generator-zasedani-zo/issues/new).
+Pokud v programu objevíte chybu nebo máte nápad na jeho zlepšení, můžete to nahlásit [zde](https://github.com/martinrotter/generator-zasedani-zo/issues/new).

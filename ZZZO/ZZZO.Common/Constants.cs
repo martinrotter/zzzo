@@ -29,7 +29,7 @@ namespace ZZZO.Common
       {
         FileVersionInfo vi = Utils.GetExecutingAssemblyVersionInfo();
 
-        AppVersion = vi.ProductVersion;
+        AppVersion = vi.FileVersion;
         AppAuthor = vi.CompanyName;
 
         AppBuildDate = DateTime.Parse(Resources.build_date);

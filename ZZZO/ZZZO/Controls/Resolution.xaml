@@ -13,6 +13,11 @@
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:EnumConverter x:Key="EnumConverter" />
     <converters:CollapseOnTrueConverter x:Key="CollapseOnTrueConverter" />
+
+    <Style x:Key="StyleGridTextCenterVertical" TargetType="{x:Type TextBlock}"
+           BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
   </UserControl.Resources>
   <StackPanel Orientation="Vertical">
     <CheckBox Name="CbBereNaVedomi"
@@ -43,19 +48,18 @@
                  TargetType="{x:Type DataGridRow}">
             <Setter Property="IsEnabled"
                     Value="{Binding Zastupitel.JePritomen}" />
-
             <Style.Triggers>
               <DataTrigger Binding="{Binding Zastupitel.JePritomen}"
                            Value="False">
                 <Setter Property="Background"
-                        Value="Orange" />
+                        Value="{DynamicResource SecondaryHueLightBrush}" />
               </DataTrigger>
             </Style.Triggers>
           </Style>
         </DataGrid.RowStyle>
 
         <DataGrid.Columns>
-          <DataGridTextColumn IsReadOnly="True"
+          <DataGridTextColumn ElementStyle="{StaticResource StyleGridTextCenterVertical}" IsReadOnly="True"
                               Width="Auto"
                               Header="Zastupitel"
                               Binding="{Binding JmenoPrijmeniZastupitele}" />
@@ -63,7 +67,7 @@
                                   Width="Auto">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <ComboBox Padding="2"
+                <ComboBox Padding="2 1 1 2"
                           Margin="0"
                           IsEnabled="{Binding Path=Zastupitel.JePritomen}"
                           ItemsSource="{Binding Volby}"
@@ -77,7 +81,8 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTextColumn IsReadOnly="True"
+          <DataGridTextColumn ElementStyle="{StaticResource StyleGridTextCenterVertical}"
+                              IsReadOnly="True"
                               Width="Auto"
                               Header="Poznámka"
                               Binding="{Binding Poznamka}" />
