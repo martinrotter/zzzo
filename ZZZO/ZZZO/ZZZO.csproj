@@ -15,6 +15,7 @@
     <ProductVersion>$(AssemblyVersion)</ProductVersion>
     <InformationalVersion>$(AssemblyVersion)$(SourceRevisionId)</InformationalVersion>
     <Copyright>Martin Rotter</Copyright>
+    <Company>Martin Rotter</Company>
     <_SuppressWpfTrimError>true</_SuppressWpfTrimError>
   </PropertyGroup>
 

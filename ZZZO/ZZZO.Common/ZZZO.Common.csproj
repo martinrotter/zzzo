@@ -11,6 +11,7 @@
     <ProductVersion>$(AssemblyVersion)</ProductVersion>
     <InformationalVersion>$(AssemblyVersion)$(SourceRevisionId)</InformationalVersion>
     <Copyright>Martin Rotter</Copyright>
+    <Company>Martin Rotter</Company>
   </PropertyGroup>
 
   <ItemGroup>
