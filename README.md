@@ -5,7 +5,7 @@ Utilita umožňuje načítání/ukládání rozpracovaných zápisů a následn�
 
 ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplikace - vaše data tak nejsou uložena v žádném cloudu a máte je tak vždy pod kontrolou.
 
-### Nejnovější verzi aplikace lze stáhnout [zde](https://github.com/martinrotter/zzzo/releases) vždycky v sekci `Assets`. Testovací verzi aplikace potom najdete přímo [zde](https://github.com/martinrotter/zzzo/releases/download/devbuild/zzzo-latest.zip).
+### Nejnovější verzi aplikace lze stáhnout [zde](https://github.com/martinrotter/zzzo/releases) vždycky v sekci `Assets`. Testovací verzi aplikace potom najdete přímo [zde](https://github.com/martinrotter/zzzo/releases/download/devbuild/zzzo.zip).
 
 ### Instalace
 1. Stáhněte si některou [verzi](https://github.com/martinrotter/zzzo/releases) aplikace.

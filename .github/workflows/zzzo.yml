@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
-          name: zzzo-latest.zip
+          name: zzzo.zip
           path: ./*.zip
 
   dist-binaries:
