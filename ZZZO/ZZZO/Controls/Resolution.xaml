@@ -51,7 +51,7 @@
             <Style.Triggers>
               <DataTrigger Binding="{Binding Zastupitel.JePritomen}"
                            Value="False">
-                <Setter Property="Background"
+                <Setter Property="Foreground"
                         Value="{DynamicResource SecondaryHueLightBrush}" />
               </DataTrigger>
             </Style.Triggers>

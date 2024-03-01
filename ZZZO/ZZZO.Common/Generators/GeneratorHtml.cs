@@ -237,7 +237,7 @@ namespace ZZZO.Common.Generators
         body.AppendElem("p").InnerText = acceptedResolution;
       }
 
-      body.AppendElem("hr");
+      body.AppendElem("hr").AppendClass("resolution-list-line");
       body.AppendElem("p").InnerText = $"Celkový počet přijatých usnesení je {acceptedResolutions.Count}.";
 
       progress.Report(80);
@@ -247,15 +247,15 @@ namespace ZZZO.Common.Generators
       ///
       XmlElement sigWrapper = body.AppendElem("div").AppendClass("signature-wrapper");
 
-      sigWrapper.AppendElem("div").AppendClass("signature").AppendElem("p").InnerText =
-        "<hr/><br/>" +
+      sigWrapper.AppendElem("div").AppendClass("signature").InnerText =
+        "<hr/>" +
         $"{starosta.Jmeno} {starosta.Prijmeni}<br/>" +
         "starosta obce";
 
       foreach (Zastupitel overovatel in overovatele)
       {
-        sigWrapper.AppendElem("div").AppendClass("signature").AppendElem("p").InnerText =
-          "<hr/><br/>" +
+        sigWrapper.AppendElem("div").AppendClass("signature").InnerText =
+          "<hr/>" +
           $"{overovatel.Jmeno} {overovatel.Prijmeni}<br/>" +
           "ověřovatel zápisu";
       }

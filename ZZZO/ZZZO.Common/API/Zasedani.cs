@@ -20,6 +20,7 @@ public class Zasedani : ObservableObject
   private Program _program = new Program();
   private string _vystupniSoubor;
   private ObservableCollection<Zastupitel> _zastupitele = new ObservableCollection<Zastupitel>();
+  private string _htmlStyle;
 
   #endregion
 
@@ -211,6 +212,21 @@ public class Zasedani : ObservableObject
     }
   }
 
+  public string HtmlStyle
+  {
+    get => _htmlStyle;
+    set
+    {
+      if (value == _htmlStyle)
+      {
+        return;
+      }
+
+      _htmlStyle = value;
+      OnPropertyChanged();
+    }
+  }
+
   [JsonProperty("Zastupitele", ItemIsReference = true, Order = -2)]
   public ObservableCollection<Zastupitel> Zastupitele
   {
@@ -371,7 +387,7 @@ public class Zasedani : ObservableObject
       Obec = "Krakatit",
       Psc = "779 00",
       Ulice = "Čtenářská",
-      PopisMista = "zasedací místnost"
+      PopisMista = "zasedací místnosti"
     };
 
     var schvaleniProgramu = new BodProgramu

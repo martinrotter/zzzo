@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CefSharp;
 using CefSharp.Wpf;
 using ZZZO.Commands;
+using ZZZO.Common.API;
 using ZZZO.Common.Generators;
 
 namespace ZZZO.ViewModels
@@ -37,21 +36,6 @@ namespace ZZZO.ViewModels
         }
 
         _canGenerateOutputs = value;
-        OnPropertyChanged();
-      }
-    }
-
-    public string SelectedHtmlStyle
-    {
-      get => _selectedHtmlStyle;
-      set
-      {
-        if (value == _selectedHtmlStyle)
-        {
-          return;
-        }
-
-        _selectedHtmlStyle = value;
         OnPropertyChanged();
       }
     }
@@ -124,14 +108,52 @@ namespace ZZZO.ViewModels
       get;
     }
 
+    public string SelectedHtmlStyle
+    {
+      get
+      {
+        if (!string.IsNullOrEmpty(Core?.Zasedani?.HtmlStyle))
+        {
+          _selectedHtmlStyle = Core.Zasedani.HtmlStyle;
+        }
+        else if (string.IsNullOrEmpty(_selectedHtmlStyle))
+        {
+          _selectedHtmlStyle = GeneratorHtml.Styles.First();
+        }
+
+        return _selectedHtmlStyle;
+      }
+
+      set
+      {
+        if (value == _selectedHtmlStyle)
+        {
+          return;
+        }
+
+        Core.Zasedani.HtmlStyle = value;
+        _selectedHtmlStyle = value;
+
+        OnPropertyChanged();
+      }
+    }
+
     #endregion
 
     #region Konstruktory
 
     public GeneratorViewModel(ZzzoCore core)
     {
-      SelectedHtmlStyle = GeneratorHtml.Styles.First();
       Core = core;
+
+      Core.PropertyChanged += (sender, args) =>
+      {
+        if (args.PropertyName == nameof(ZzzoCore.Zasedani))
+        {
+          OnPropertyChanged(nameof(SelectedHtmlStyle));
+        }
+      };
+      
       GenerateDocumentCmd = new RelayCommandEmpty(GenerateDocument, () => GenerateProgress <= 0);
       ExportHtmlCmd = new RelayCommandEmpty(ExportHtml, () => GenerateProgress <= 0 && GeneratedHtml != null);
       ExportPdfCmd = new RelayCommand<ChromiumWebBrowser>(ExportPdf, browser => GenerateProgress <= 0 && GeneratedHtml != null);
@@ -170,10 +192,17 @@ namespace ZZZO.ViewModels
         {
           await browser.PrintToPdfAsync(file, new PdfPrintSettings
           {
-            DisplayHeaderFooter = false,
+            DisplayHeaderFooter = true,
             Landscape = false,
-            PrintBackground = false,
-            PreferCssPageSize = true
+            PrintBackground = true,
+            PreferCssPageSize = true,
+            HeaderTemplate = "<div class='text center'></div>",
+            FooterTemplate = 
+              "<div class='text center'>" +
+              "<span class='pageNumber'></span>" +
+              " - " +
+              "<span class='totalPages'></span>" +
+              "</div>"
           });
         }
         catch (Exception ex)
