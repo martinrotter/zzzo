@@ -27,14 +27,13 @@
     </TextBox>
 
     <WrapPanel Grid.Row="1">
-      <DatePicker Focusable="False"
-                  materialDesign:HintAssist.Hint="Datum konání"
+      <DatePicker materialDesign:HintAssist.Hint="Datum konání"
                   ToolTip="Datum konání"
                   Name="DpDenKonani"
                   SelectedDate="{Binding Core.Zasedani.DatumKonani, UpdateSourceTrigger=PropertyChanged}" />
-      <materialDesign:TimePicker Focusable="False"
-                                 materialDesign:HintAssist.Hint="Čas konání"
+      <materialDesign:TimePicker materialDesign:HintAssist.Hint="Čas konání"
                                  ToolTip="Čas konání"
+                                 Name="DpCasKonani"
                                  Is24Hours="True"
                                  WithSeconds="False"
                                  SelectedTime="{Binding Core.Zasedani.CasKonani, UpdateSourceTrigger=PropertyChanged}" />

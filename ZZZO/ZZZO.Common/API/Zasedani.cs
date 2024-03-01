@@ -12,7 +12,7 @@ public class Zasedani : ObservableObject
   #region Proměnné
 
   private Adresa _adresaKonani = new Adresa();
-  private DateTime _datumCas = DateTime.Now;
+  private DateTime _datumCasKonani = DateTime.Now;
   private BitmapImage _logoObce;
   private string _nazevObce;
   private int _pocetHostu;
@@ -40,31 +40,33 @@ public class Zasedani : ObservableObject
     }
   }
 
+  [JsonIgnore]
   public DateTime CasKonani
   {
-    get => DatumCas;
-    set => DatumCas = new DateTime(DatumCas.Year, DatumCas.Month, DatumCas.Day, value.Hour, value.Minute, value.Second);
+    get => DatumCasKonani;
+    set => DatumCasKonani = new DateTime(DatumCasKonani.Year, DatumCasKonani.Month, DatumCasKonani.Day, value.Hour, value.Minute, value.Second);
   }
 
-  public DateTime DatumCas
+  public DateTime DatumCasKonani
   {
-    get => _datumCas;
+    get => _datumCasKonani;
     set
     {
-      if (value.Equals(_datumCas))
+      if (value.Equals(_datumCasKonani))
       {
         return;
       }
 
-      _datumCas = value;
+      _datumCasKonani = value;
       OnPropertyChanged();
     }
   }
 
+  [JsonIgnore]
   public DateTime DatumKonani
   {
-    get => DatumCas;
-    set => DatumCas = new DateTime(value.Year, value.Month, value.Day, DatumCas.Hour, DatumCas.Minute, DatumCas.Second);
+    get => DatumCasKonani;
+    set => DatumCasKonani = new DateTime(value.Year, value.Month, value.Day, DatumCasKonani.Hour, DatumCasKonani.Minute, DatumCasKonani.Second);
   }
 
   [JsonIgnore]
@@ -361,7 +363,7 @@ public class Zasedani : ObservableObject
     });
 
     zas.NazevObce = "Praha";
-    zas.DatumCas = DateTime.Now;
+    zas.DatumCasKonani = DateTime.Now;
 
     zas.AdresaKonani = new Adresa
     {

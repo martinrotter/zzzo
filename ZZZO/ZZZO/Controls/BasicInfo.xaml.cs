@@ -16,7 +16,7 @@ namespace ZZZO.Controls
     {
       InitializeComponent();
 
-      DpDenKonani.Language = XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
+      DpCasKonani.Language = DpDenKonani.Language = XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
     }
 
     #endregion

@@ -135,7 +135,7 @@ namespace ZZZO.Common.Generators
       }
 
       body.AppendElem("h1").AppendClass("text-center").InnerText = $"Zápis z {zas.Poradi}. zasedání zastupitelstva obce " +
-                                                                   $"{zas.NazevObce} konaného dne {zas.DatumCas:d. M. yyyy}";
+                                                                   $"{zas.NazevObce} konaného dne {zas.DatumCasKonani:d. M. yyyy}";
 
       ///
       /// Zahájení.
@@ -144,7 +144,7 @@ namespace ZZZO.Common.Generators
 
       body.AppendElem("p").InnerText =
         $"Zasedání zastupitelstva obce (dále jen ZO) {zas.NazevObce} bylo zahájeno dne " +
-        $"{zas.DatumCas:d. M. yyyy v H:mm} SEČ na adrese {zas.AdresaKonani} v {zas.AdresaKonani.PopisMista}.";
+        $"{zas.DatumCasKonani:d. M. yyyy v H:mm} SEČ na adrese {zas.AdresaKonani} v {zas.AdresaKonani.PopisMista}.";
 
       body.AppendElem("p").InnerText =
         $"Zúčastnění zastupitelé: {string.Join(
@@ -270,7 +270,7 @@ namespace ZZZO.Common.Generators
       head.AppendElem("meta").SetAttr("name", "viewport").SetAttr("content", "width=device-width, initial-scale=1.0");
 
       head.AppendElem("title").InnerText = $"Zápis z {zas.Poradi}. zasedání zastupitelstva obce " +
-                                           $"{zas.NazevObce} konaného dne {zas.DatumCas:d. M. yyyy}";
+                                           $"{zas.NazevObce} konaného dne {zas.DatumCasKonani:d. M. yyyy}";
 
       progress.Report(10);
     }

@@ -74,7 +74,7 @@ public class Usneseni : ObservableObject
 
   public string GenerateTitle(int order, Zasedani zas)
   {
-    return $"Č. {order}-{zas.DatumCas.Month}/{zas.DatumCas.Year} - {Text}";
+    return $"Č. {order}-{zas.DatumCasKonani.Month}/{zas.DatumCasKonani.Year} - {Text}";
   }
 
   #endregion
