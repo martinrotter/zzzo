@@ -145,7 +145,7 @@ namespace ZZZO.ViewModels
     private void ExportHtml()
     {
       string html = GeneratedHtml;
-      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "html");
+      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "html", true);
 
       if (!string.IsNullOrWhiteSpace(file))
       {
@@ -162,7 +162,7 @@ namespace ZZZO.ViewModels
 
     private async void ExportPdf(ChromiumWebBrowser browser)
     {
-      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "pdf");
+      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "pdf", true);
 
       if (!string.IsNullOrWhiteSpace(file))
       {

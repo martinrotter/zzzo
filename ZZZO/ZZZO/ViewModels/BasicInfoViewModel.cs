@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using ZZZO.Commands;
+using ZZZO.Common;
 using ZZZO.Common.API;
 using ZZZO.Controls;
 
@@ -75,6 +79,11 @@ public class BasicInfoViewModel : ViewModelBase
     get;
   }
 
+  public ObservableCollection<Zastupitel> Zastupitele
+  {
+    get => Core?.Zasedani?.Zastupitele;
+  }
+
   #endregion
 
   #region Konstruktory
@@ -82,6 +91,35 @@ public class BasicInfoViewModel : ViewModelBase
   public BasicInfoViewModel(ZzzoCore core)
   {
     Core = core;
+
+    Core.PropertyChanged += (sender, args) =>
+    {
+      if (args.PropertyName == nameof(Zasedani))
+      {
+        OnPropertyChanged(nameof(Zastupitele));
+
+        if (Zastupitele != null)
+        {
+          Zastupitele.CollectionChanged += (o, eventArgs) =>
+          {
+            if (eventArgs.Action != NotifyCollectionChangedAction.Add || eventArgs.NewItems ==null)
+            {
+              return;
+            }
+
+            foreach (Zastupitel newZastupitel in eventArgs.NewItems)
+            {
+              newZastupitel.PropertyChanged += ReagovatNaZmenyExkluzivnichPropertyZastupitele;
+            }
+          };
+
+          foreach (Zastupitel zastupitel in Zastupitele)
+          {
+            zastupitel.PropertyChanged += ReagovatNaZmenyExkluzivnichPropertyZastupitele;
+          }
+        }
+      }
+    };
 
     UpdateVillageLogoCmd = new RelayCommand(obj => UpdateVillageLogo(), obj => true);
     ShowCityLogosCmd = new RelayCommand<string>(str => ShowCityLogos(str), obj => true);
@@ -105,6 +143,21 @@ public class BasicInfoViewModel : ViewModelBase
     if (Core.Zasedani.Zastupitele.Count == 1)
     {
       ChosenZastupitel = Core.Zasedani.Zastupitele[0];
+    }
+  }
+
+  private void ReagovatNaZmenyExkluzivnichPropertyZastupitele(object sender, PropertyChangedEventArgs e)
+  {
+    List<string> exkluzivniProperies = new List<string>
+    {
+      nameof(Zastupitel.JeStarosta),
+      nameof(Zastupitel.JeRidici),
+      nameof(Zastupitel.JeZapisovatel)
+    };
+
+    if (exkluzivniProperies.Contains(e.PropertyName) && sender.GetPropertyValue<bool>(e.PropertyName))
+    {
+      Utils.UpdateExclusiveProperty(sender, Zastupitele, e.PropertyName);
     }
   }
 

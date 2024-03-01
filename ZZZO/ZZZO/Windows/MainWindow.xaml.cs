@@ -34,6 +34,11 @@ namespace ZZZO.Windows
       Utils.HookKeyShortctut(
         this,
         DataContext,
+        new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift, "Ctrl+Shift+S"),
+        MenuSaveZasedaniAs);
+      Utils.HookKeyShortctut(
+        this,
+        DataContext,
         new KeyGesture(Key.Q, ModifierKeys.Control, "Ctrl+Q"),
         MenuQuitApp);
     }

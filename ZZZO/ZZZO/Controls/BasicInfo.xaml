@@ -185,7 +185,7 @@
                     CanUserDeleteRows="False"
                     Name="LvZastupitele"
                     SelectedValue="{Binding ChosenZastupitel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    ItemsSource="{Binding Core.Zasedani.Zastupitele}">
+                    ItemsSource="{Binding Zastupitele}">
             <DataGrid.Columns>
               <DataGridTextColumn Header="Jméno"
                                   Width="Auto"

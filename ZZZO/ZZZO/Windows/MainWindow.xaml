@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         xmlns:zzzoCcontrols="clr-namespace:ZZZO.Controls"
         x:Name="Window"
-        Title="{x:Static zzzoCommon:Constants+Names.AppLongName}"
+        Title="{Binding WindowTitle}"
         Height="900"
         Width="1200"
         WindowStartupLocation="CenterScreen"
@@ -39,6 +39,12 @@
           </MenuItem>
           <MenuItem x:Name="MenuSaveZasedani" Header="_Uložit"
                     Command="{Binding SaveZasedaniCmd}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon VerticalAlignment="Center" Kind="ContentSave" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem x:Name="MenuSaveZasedaniAs" Header="_Uložit jako..."
+                    Command="{Binding SaveZasedaniAsCmd}">
             <MenuItem.Icon>
               <materialDesign:PackIcon VerticalAlignment="Center" Kind="ContentSave" />
             </MenuItem.Icon>

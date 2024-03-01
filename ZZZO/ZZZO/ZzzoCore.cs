@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
 using HtmlAgilityPack;
 using Microsoft.Win32;
 using ZZZO.Common;
@@ -86,8 +79,20 @@ namespace ZZZO
       }
     }
 
-    public static string ChooseSaveFile(Zasedani zasedani, string fileSuffix, string title = null)
+    public static string ChooseSaveFile(
+      Zasedani zasedani,
+      string fileSuffix,
+      bool forceChooseFile,
+      string title = null)
     {
+      string initialFullPath = (zasedani?.VystupniSoubor ?? string.Empty) + $".{fileSuffix}";
+
+      if (!forceChooseFile && File.Exists(initialFullPath))
+      {
+        // We do not have to ask user.
+        return initialFullPath;
+      }
+
       SaveFileDialog d = new SaveFileDialog();
 
       d.OverwritePrompt = true;
@@ -98,8 +103,11 @@ namespace ZZZO
 
       if (zasedani != null && !string.IsNullOrWhiteSpace(zasedani.VystupniSoubor))
       {
-        d.InitialDirectory = Path.GetDirectoryName(zasedani.VystupniSoubor);
-        d.FileName = Path.GetFileName(zasedani.VystupniSoubor) + $".{fileSuffix}";
+        string initialDirectory = Path.GetDirectoryName(zasedani.VystupniSoubor);
+        string initialFileName = Path.GetFileName(zasedani.VystupniSoubor) + $".{fileSuffix}";
+
+        d.InitialDirectory = initialDirectory ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        d.FileName = initialFileName;
       }
 
       if (d.ShowDialog().GetValueOrDefault())
@@ -120,16 +128,6 @@ namespace ZZZO
       }
     }
 
-    public Task<CityLogo> DownloadFullCityLogo(CityLogo cityLogo)
-    {
-      return Task.Run(() =>
-      {
-        using HttpClient cl = new HttpClient();
-        cityLogo.LogoObceData = cl.GetByteArrayAsync(cityLogo.LogoObceUrl).Result;
-        return cityLogo;
-      });
-    }
-
     public Task<IEnumerable<CityLogo>> DownloadCityLogos(string cityName)
     {
       return Task.Run<IEnumerable<CityLogo>>(() =>
@@ -142,8 +140,9 @@ namespace ZZZO
         HttpClient cl = new HttpClient();
         string baseUrl = $"{Constants.Uris.RekosBase}/vyhledani-symbolu?obec={cityName}&sort=municipality.name&page=";
         int pageNumber = 1;
+
         string mainHtml = cl
-          .GetStringAsync(baseUrl + pageNumber++.ToString())
+          .GetStringAsync(baseUrl + pageNumber++)
           .Result;
 
         List<CityLogo> logos = new List<CityLogo>();
@@ -151,7 +150,7 @@ namespace ZZZO
         doc.LoadHtml(mainHtml);
         logos.AddRange(ExtractLogosFromPage(doc));
 
-        var pages = doc.DocumentNode.SelectNodes($"//span[@class='pages']/a");
+        HtmlNodeCollection pages = doc.DocumentNode.SelectNodes("//span[@class='pages']/a");
 
         if (pages != null)
         {
@@ -175,7 +174,7 @@ namespace ZZZO
 
             subTasks.Add(Task.Run(() =>
             {
-              string pageUrl = baseUrl + actualPageNumber.ToString();
+              string pageUrl = baseUrl + actualPageNumber;
               string pageHtml = cl.GetStringAsync(pageUrl).Result;
               HtmlDocument pageDoc = new HtmlDocument();
               pageDoc.LoadHtml(pageHtml);
@@ -190,6 +189,16 @@ namespace ZZZO
         }
 
         return logos;
+      });
+    }
+
+    public Task<CityLogo> DownloadFullCityLogo(CityLogo cityLogo)
+    {
+      return Task.Run(() =>
+      {
+        using HttpClient cl = new HttpClient();
+        cityLogo.LogoObceData = cl.GetByteArrayAsync(cityLogo.LogoObceUrl).Result;
+        return cityLogo;
       });
     }
 
@@ -208,9 +217,35 @@ namespace ZZZO
       }
     }
 
+    public void NewZaseDani(Zasedani zas)
+    {
+      Zasedani = zas;
+    }
+
+    public bool SaveZasedani(bool forceChooseFile)
+    {
+      if (Zasedani == null)
+      {
+        return false;
+      }
+
+      string soubor = ChooseSaveFile(Zasedani, Constants.PathsAndFiles.ZzzoFileSuffix, forceChooseFile);
+
+      if (!string.IsNullOrEmpty(soubor))
+      {
+        Zasedani.SaveToFile(soubor);
+        ZasedaniOriginalData = Zasedani.ToJson();
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
     private List<CityLogo> ExtractLogosFromPage(HtmlDocument doc)
     {
-      HtmlNodeCollection rows = doc.DocumentNode.SelectNodes($"//table[@class='zebra']/tbody/tr");
+      HtmlNodeCollection rows = doc.DocumentNode.SelectNodes("//table[@class='zebra']/tbody/tr");
 
       if (rows == null)
       {
@@ -223,7 +258,7 @@ namespace ZZZO
       {
         string city = row.SelectSingleNode("td/a")?.InnerText;
         string outerCity = row.SelectSingleNode("td[2]")?.InnerText;
-        var logoMinElem = row.SelectSingleNode("td[3]/img");
+        HtmlNode logoMinElem = row.SelectSingleNode("td[3]/img");
 
         if (city == null || outerCity == null || logoMinElem == null)
         {
@@ -244,32 +279,6 @@ namespace ZZZO
       }
 
       return tsks;
-    }
-
-    public void NewZaseDani(Zasedani zas)
-    {
-      Zasedani = zas;
-    }
-
-    public bool SaveZasedani()
-    {
-      if (Zasedani == null)
-      {
-        return false;
-      }
-
-      string soubor = ChooseSaveFile(Zasedani, Constants.PathsAndFiles.ZzzoFileSuffix);
-
-      if (!string.IsNullOrEmpty(soubor))
-      {
-        Zasedani.SaveToFile(soubor);
-        ZasedaniOriginalData = Zasedani.ToJson();
-        return true;
-      }
-      else
-      {
-        return false;
-      }
     }
 
     #endregion

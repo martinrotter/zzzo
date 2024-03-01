@@ -57,7 +57,7 @@ namespace ZZZO.Common
       MenuItem menuItem)
     {
       string commandName = menuItem.GetBindingExpression(MenuItem.CommandProperty).ParentBinding.Path.Path;
-      var commandParameter = menuItem.GetBindingExpression(MenuItem.CommandParameterProperty)?.ParentBinding.ElementName;
+      string commandParameter = menuItem.GetBindingExpression(MenuItem.CommandParameterProperty)?.ParentBinding.ElementName;
 
       Binding bCommand = new Binding(commandName);
       bCommand.Source = dataContext;
@@ -84,6 +84,35 @@ namespace ZZZO.Common
 
       window.InputBindings.Add(i);
       menuItem.InputGestureText = keyGesture.DisplayString;
+    }
+
+    public static T GetPropertyValue<T>(this object obj, string propertyName)
+    {
+      PropertyInfo propertyInfo = obj.GetType().GetProperty(
+        propertyName,
+        BindingFlags.Public | BindingFlags.Instance);
+
+      return (T)propertyInfo.GetValue(obj);
+    }
+
+    public static void SetPropertyValue(this object obj, string propertyName, object? propertyValue)
+    {
+      PropertyInfo propertyInfo = obj.GetType().GetProperty(
+        propertyName,
+        BindingFlags.Public | BindingFlags.Instance);
+
+      propertyInfo.SetValue(obj, propertyValue, null);
+    }
+
+    public static void UpdateExclusiveProperty(object master, IEnumerable<object> others, string propertyName)
+    {
+      foreach (object other in others)
+      {
+        if (other != master)
+        {
+          other.SetPropertyValue(propertyName, false);
+        }
+      }
     }
 
     #endregion
