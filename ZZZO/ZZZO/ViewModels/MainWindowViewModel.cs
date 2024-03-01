@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using MaterialDesignThemes.Wpf;
 using ZZZO.Commands;
 using ZZZO.Common.API;

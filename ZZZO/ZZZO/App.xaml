@@ -17,6 +17,9 @@
         <ResourceDictionary>
           <Thickness x:Key="FormMargin">9,9,9,9</Thickness>
 
+          <Color x:Key="ThemeColorMain">#59C9A5</Color>
+          <Color x:Key="ThemeColorAccent">#D81E5B</Color>
+
           <Style BasedOn="{StaticResource {x:Type Button}}"
                  TargetType="{x:Type Button}">
             <Setter Property="Margin"

@@ -1,8 +1,10 @@
 ﻿using System.Globalization;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using CefSharp;
 using CefSharp.Wpf;
 using MaterialDesignThemes.Wpf;
+using ZZZO.Common.API;
 using ZZZO.ViewModels;
 using ZZZO.Windows;
 using Color = System.Windows.Media.Color;
@@ -67,13 +69,63 @@ namespace ZZZO
       // CefSharp.
       Cef.Initialize(new CefSettings());
 
+      Core.PropertyChanged += (sender, args) =>
+      {
+        if (args.PropertyName == nameof(ZzzoCore.Zasedani))
+        {
+          if (Core.Zasedani != null)
+          {
+            AktualizovatBarvy(Core.Zasedani.LogoObce);
+
+            Core.Zasedani.PropertyChanged += (o, zasArgs) =>
+            {
+              if (zasArgs.PropertyName == nameof(Zasedani.LogoObce))
+              {
+                AktualizovatBarvy(Core.Zasedani.LogoObce);
+              }
+            };
+          }
+          else
+          {
+            SetDefaultTheme();
+          }
+        }
+      };
+
       // Theme.
-      AdjustThemeContrastAndColors(
-        (Color)ColorConverter.ConvertFromString("#59C9A5"),
-        (Color)ColorConverter.ConvertFromString("#D81E5B"));
+      SetDefaultTheme();
     }
 
-    private void AdjustThemeContrastAndColors(Color primary = default, Color secondary = default)
+    private void SetDefaultTheme()
+    {
+      AdjustThemeContrastAndColors(
+        (Color)FindResource("ThemeColorMain"),
+        (Color)FindResource("ThemeColorAccent"));
+    }
+
+    private void AktualizovatBarvy(BitmapImage zasedaniLogoObce)
+    {
+      if (zasedaniLogoObce == null)
+      {
+        SetDefaultTheme();
+        return;
+      }
+
+      try
+      {
+        var clrs = ColorImageSearcher.Get2MostUsedColors(Core.Zasedani.LogoObce).ToArray();
+
+        App.Current.AdjustThemeContrastAndColors(
+          clrs[0],
+          clrs[1]);
+      }
+      catch
+      {
+        //
+      }
+    }
+
+    public void AdjustThemeContrastAndColors(Color primary = default, Color secondary = default)
     {
       PaletteHelper a = new PaletteHelper();
       Theme b = a.GetTheme() as Theme;
