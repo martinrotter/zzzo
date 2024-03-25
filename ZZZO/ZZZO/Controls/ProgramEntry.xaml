@@ -23,6 +23,8 @@
                 Grid.Column="0"
                 Orientation="Vertical">
       <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
+               Height="75"
+               TextWrapping="Wrap"
                Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
       <GroupBox Header="Text bodu programu">
         <local:TinyMceEditor Margin="-14 -14 0 0"

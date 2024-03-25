@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Documents;
 using System.Xml;
 using ZZZO.Common.API;
 
@@ -154,13 +155,15 @@ namespace ZZZO.Common.Generators
             .OrderBy(zs => zs.Prijmeni)
             .Select(zs => zs.Jmeno + " " + zs.Prijmeni))}.";
 
+      string nepritJmena = string.Join(
+        ", ",
+        zas.Zastupitele
+          .Where(zs => !zs.JePritomen)
+          .OrderBy(zs => zs.Prijmeni)
+          .Select(zs => zs.Jmeno + " " + zs.Prijmeni));
+
       body.AppendElem("p").InnerText =
-        $"Nepřítomní zastupitelé: {string.Join(
-          ", ",
-          zas.Zastupitele
-            .Where(zs => !zs.JePritomen)
-            .OrderBy(zs => zs.Prijmeni)
-            .Select(zs => zs.Jmeno + " " + zs.Prijmeni))}.";
+        $"Nepřítomní zastupitelé: {(string.IsNullOrWhiteSpace(nepritJmena) ? "-" : nepritJmena + ".")}";
 
       body.AppendElem("p").InnerText = $"Zasedání ZO navštívilo {zas.PocetHostu} " +
                                        $"{Sklonovat("host", "hosté", "hostů", zas.PocetHostu)} z řad veřejnosti.";
@@ -338,22 +341,29 @@ namespace ZZZO.Common.Generators
         return null;
       }
 
-      IEnumerable<HlasovaniZastupitele> choiceFor = resolution.VolbyZastupitelu.Where(vol =>
+      int countOfPresentVoters = zas.Zastupitele.Count(vol => vol.JePritomen);
+      List<HlasovaniZastupitele> choiceFor = resolution.VolbyZastupitelu.Where(vol =>
         vol.Zastupitel.JePritomen &&
-        vol.Volba == HlasovaniZastupitele.VolbaHlasovani.Pro);
+        vol.Volba == HlasovaniZastupitele.VolbaHlasovani.Pro).ToList();
 
-      IEnumerable<HlasovaniZastupitele> choiceAgainst = resolution.VolbyZastupitelu.Where(vol =>
+      List<HlasovaniZastupitele> choiceAgainst = resolution.VolbyZastupitelu.Where(vol =>
         vol.Zastupitel.JePritomen &&
-        vol.Volba == HlasovaniZastupitele.VolbaHlasovani.Proti);
+        vol.Volba == HlasovaniZastupitele.VolbaHlasovani.Proti).ToList();
 
-      IEnumerable<HlasovaniZastupitele> choiceDontKnow = resolution.VolbyZastupitelu.Where(vol =>
+      List<HlasovaniZastupitele> choiceDontKnow = resolution.VolbyZastupitelu.Where(vol =>
         vol.Zastupitel.JePritomen &&
-        vol.Volba == HlasovaniZastupitele.VolbaHlasovani.ZdrzujeSe);
+        vol.Volba == HlasovaniZastupitele.VolbaHlasovani.ZdrzujeSe).ToList();
 
-      string choiceForStr = choiceFor.Count() + (choiceFor.Any() ? $" ({string.Join(", ", choiceFor.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})" : string.Empty);
-      string choiceAgainstStr = choiceAgainst.Count() + (choiceAgainst.Any() ? $" ({string.Join(", ", choiceAgainst.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})" : string.Empty);
-      string choiceDontKnowStr = choiceDontKnow.Count() + (choiceDontKnow.Any() ? $" ({string.Join(", ", choiceDontKnow.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})" : string.Empty);
-      bool accepted = choiceFor.Count() > zas.Zastupitele.Count / 2;
+      string choiceForStr = choiceFor.Count() + ((choiceFor.Any() && choiceFor.Count < countOfPresentVoters)
+        ? $" ({string.Join(", ", choiceFor.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
+        : string.Empty);
+      string choiceAgainstStr = choiceAgainst.Count() + ((choiceAgainst.Any() && choiceAgainst.Count < countOfPresentVoters)
+        ? $" ({string.Join(", ", choiceAgainst.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
+        : string.Empty);
+      string choiceDontKnowStr = choiceDontKnow.Count() + ((choiceDontKnow.Any() && choiceDontKnow.Count < countOfPresentVoters)
+        ? $" ({string.Join(", ", choiceDontKnow.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
+        : string.Empty);
+      bool accepted = choiceFor.Count() > countOfPresentVoters / 2;
 
       XmlElement div = root.AppendElem("div").AppendClass("resolution-vote-box").AppendClass(accepted ? "success" : "failure");
 

@@ -30,7 +30,8 @@
              IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource CollapseOnTrueConverter}}"
              Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" />
     <GroupBox Header="Hlasování">
-      <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
+      <StackPanel Orientation="Vertical">
+              <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                 materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"
                 Height="250"
                 CanUserDeleteRows="False"
@@ -88,6 +89,20 @@
                               Binding="{Binding Poznamka}" />
         </DataGrid.Columns>
       </DataGrid>
+
+      <WrapPanel Grid.Row="1"
+                 Orientation="Horizontal">
+        <Button Command="{Binding AddProgramEntryCmd}"
+                ToolTip="Všichni jsou PRO">
+          <materialDesign:PackIcon Kind="CheckAll" />
+        </Button>
+
+        <Button Command="{Binding RemoveProgramEntryCmd}"
+                ToolTip="Všichni jsou PROTI">
+          <materialDesign:PackIcon Kind="CloseBoxMultiple" />
+        </Button>
+      </WrapPanel>
+      </StackPanel>
     </GroupBox>
   </StackPanel>
 </UserControl>

@@ -124,16 +124,17 @@ public class ProgramViewModel : ViewModelBase
 
   private void AddProgramEntry()
   {
-    Core.Zasedani.Program.BodyProgramu.Add(new BodProgramu
+    int targetIdx = ChosenProgramEntry != null
+      ? Core.Zasedani.Program.BodyProgramu.IndexOf(ChosenProgramEntry) + 1
+      : Core.Zasedani.Program.BodyProgramu.Count;
+
+    Core.Zasedani.Program.BodyProgramu.Insert(targetIdx, new BodProgramu
     {
       Nadpis = "Nový bod programu",
       Text = "Text bodu programu"
     });
 
-    if (Core.Zasedani.Program.BodyProgramu.Count == 1)
-    {
-      ChosenProgramEntry = Core.Zasedani.Program.BodyProgramu[0];
-    }
+    ChosenProgramEntry = Core.Zasedani.Program.BodyProgramu[targetIdx];
   }
 
   private void MoveProgramEntryDown()

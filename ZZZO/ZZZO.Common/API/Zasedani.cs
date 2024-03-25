@@ -316,7 +316,7 @@ public class Zasedani : ObservableObject
     string json = JsonConvert.SerializeObject(this, new JsonSerializerSettings
     {
       DateTimeZoneHandling = DateTimeZoneHandling.Local,
-      DateFormatString = "yyyy-MM-ddThh:mm",
+      DateFormatString = "yyyy-MM-ddTHH:mm",
       Formatting = Formatting.Indented
     });
 
