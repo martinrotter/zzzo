@@ -9,6 +9,8 @@ Svésedlice, Czechia - style for generating municipality meeting reports.
   --failure-color: red;
   --warning-color: orange;
   --signature-color: gray;
+
+  font-family: "EB Garamond", serif;
 }
 
 /* Targets all the pages */
@@ -19,7 +21,6 @@ Svésedlice, Czechia - style for generating municipality meeting reports.
 
 body {
   margin: 0;
-  font-family: "EB Garamond", serif;
   font-optical-sizing: auto;
   font-size: 11pt;
   line-height: 1;

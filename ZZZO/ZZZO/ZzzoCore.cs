@@ -106,7 +106,7 @@ namespace ZZZO
         string initialDirectory = Path.GetDirectoryName(zasedani.VystupniSoubor);
         string initialFileName = Path.GetFileName(zasedani.VystupniSoubor) + $".{fileSuffix}";
 
-        d.InitialDirectory = initialDirectory ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        d.InitialDirectory = initialDirectory != null && Directory.Exists(initialDirectory) ? initialDirectory : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         d.FileName = initialFileName;
       }
 

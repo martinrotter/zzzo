@@ -1,0 +1,10 @@
+<style>
+  div {
+    font-family: "Times New Roman";
+  }
+</style>
+<div class='text center'> 
+  <span class='pageNumber'></span>
+  -
+  <span class='totalPages'></span>
+</div>

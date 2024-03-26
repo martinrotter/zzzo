@@ -108,6 +108,11 @@ namespace ZZZO.ViewModels
       get;
     }
 
+    public string SelectedHtmlFooterStyle
+    {
+      get => $"{SelectedHtmlStyle}.footer";
+    }
+
     public string SelectedHtmlStyle
     {
       get
@@ -197,12 +202,7 @@ namespace ZZZO.ViewModels
             PrintBackground = true,
             PreferCssPageSize = true,
             HeaderTemplate = "<div class='text center'></div>",
-            FooterTemplate = 
-              "<div class='text center'>" +
-              "<span class='pageNumber'></span>" +
-              " - " +
-              "<span class='totalPages'></span>" +
-              "</div>"
+            FooterTemplate = Common.Generators.GeneratorHtml.GetStyle(SelectedHtmlFooterStyle)
           });
         }
         catch (Exception ex)

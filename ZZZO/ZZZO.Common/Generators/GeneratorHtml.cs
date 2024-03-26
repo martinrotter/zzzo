@@ -46,7 +46,7 @@ namespace ZZZO.Common.Generators
     public List<string> Styles
     {
       get;
-    } = Directory.GetFiles(Constants.PathsAndFiles.AppStylesFolder, "*", SearchOption.TopDirectoryOnly)
+    } = Directory.GetFiles(Constants.PathsAndFiles.AppStylesFolder, "*.css", SearchOption.TopDirectoryOnly)
       .Select(Path.GetFileName).ToList();
 
     public override string Title
@@ -386,7 +386,7 @@ namespace ZZZO.Common.Generators
       return accepted ? generatedResolutionTitle : null;
     }
 
-    private string GetStyle(string styleName)
+    public static string GetStyle(string styleName)
     {
       return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, styleName));
     }
