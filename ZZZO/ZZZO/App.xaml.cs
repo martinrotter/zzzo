@@ -67,7 +67,10 @@ namespace ZZZO
       base.OnStartup(e);
 
       // CefSharp.
-      Cef.Initialize(new CefSettings());
+      Cef.Initialize(new CefSettings
+      {
+        Locale = CultureInfo.CurrentCulture.IetfLanguageTag
+      });
 
       Core.PropertyChanged += (sender, args) =>
       {

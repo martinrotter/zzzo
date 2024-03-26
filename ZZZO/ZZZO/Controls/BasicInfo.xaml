@@ -55,7 +55,7 @@
           <materialDesign:PackIcon VerticalAlignment="Center" Kind="Badge" />
           <TextBlock Margin="5,0,0,0">Vybrat znak</TextBlock>
         </WrapPanel>
-      </Button> 
+      </Button>
       <Button VerticalAlignment="Center"
               CommandParameter="{Binding Core.Zasedani.NazevObce}"
               Command="{Binding ShowCityLogosCmd}">

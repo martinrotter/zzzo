@@ -65,7 +65,7 @@
           </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <local:Resolution DataContext="{Binding ElementName=CmbUsneseni, Path=SelectedValue}"
+        <local:Resolution DataContext="{Binding ResolutionViewModel}"
                           IsEnabled="{Binding ElementName=CmbUsneseni, Path=SelectedValue, Converter={StaticResource NotNullConverter}}" />
       </StackPanel>
     </GroupBox>

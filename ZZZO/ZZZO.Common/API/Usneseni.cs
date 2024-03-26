@@ -19,7 +19,13 @@ public class Usneseni : ObservableObject
   [JsonIgnore]
   public bool JeSchvaleno
   {
-    get => VolbyZastupitelu.Count(vol => vol.Volba == HlasovaniZastupitele.VolbaHlasovani.Pro) > VolbyZastupitelu.Count / 2;
+    get
+    {
+      var pritomni = VolbyZastupitelu.Where(zas => zas.Zastupitel.JePritomen);
+
+      return pritomni.Count(zas => zas.Volba == HlasovaniZastupitele.VolbaHlasovani.Pro) >
+             pritomni.Count() / 2;
+    }
   }
 
   public string Text

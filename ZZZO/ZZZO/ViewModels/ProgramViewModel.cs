@@ -34,7 +34,6 @@ public class ProgramViewModel : ViewModelBase
   }
 
   public BodProgramu ChosenProgramEntry
-
   {
     get => _chosenProgramEntry;
     set

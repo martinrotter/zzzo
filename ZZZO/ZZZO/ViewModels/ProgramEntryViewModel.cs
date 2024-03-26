@@ -11,6 +11,7 @@ public class ProgramEntryViewModel : ViewModelBase
   private Usneseni _chosenUsneseni;
   private ZzzoCore _core;
   private BodProgramu _programEntry;
+  private ResolutionViewModel _resolutionViewModel;
 
   #endregion
 
@@ -19,6 +20,21 @@ public class ProgramEntryViewModel : ViewModelBase
   public ICommand AddUsneseniCmd
   {
     get;
+  }
+
+  public ResolutionViewModel ResolutionViewModel
+  {
+    get => _resolutionViewModel;
+    set
+    {
+      if (Equals(value, _resolutionViewModel))
+      {
+        return;
+      }
+
+      _resolutionViewModel = value;
+      OnPropertyChanged();
+    }
   }
 
   public Usneseni ChosenUsneseni
@@ -32,6 +48,9 @@ public class ProgramEntryViewModel : ViewModelBase
       }
 
       _chosenUsneseni = value;
+
+      ResolutionViewModel.Usneseni = _chosenUsneseni;
+      
       OnPropertyChanged();
     }
   }
@@ -78,6 +97,7 @@ public class ProgramEntryViewModel : ViewModelBase
   public ProgramEntryViewModel(ZzzoCore core)
   {
     Core = core;
+    ResolutionViewModel = new ResolutionViewModel(core);
 
     AddUsneseniCmd = new RelayCommand(obj => AddUsneseni(), obj => true);
     RemoveUsneseniCmd = new RelayCommand(obj => RemoveUsneseni(), obj => ChosenUsneseni != null);

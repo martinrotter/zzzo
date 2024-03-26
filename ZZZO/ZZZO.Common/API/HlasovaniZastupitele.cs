@@ -4,8 +4,11 @@ using Newtonsoft.Json;
 
 namespace ZZZO.Common.API;
 
-public class HlasovaniZastupitele
+public class HlasovaniZastupitele : ObservableObject
 {
+  private VolbaHlasovani _volba = VolbaHlasovani.ZdrzujeSe;
+  private Zastupitel _zastupitel;
+
   #region Enumy
 
   public enum VolbaHlasovani
@@ -47,26 +50,48 @@ public class HlasovaniZastupitele
 
   public VolbaHlasovani Volba
   {
-    get;
-    set;
-  } = VolbaHlasovani.ZdrzujeSe;
+    get => _volba;
+    set
+    {
+      if (value == _volba)
+      {
+        return;
+      }
+
+      _volba = value;
+      OnPropertyChanged();
+    }
+  }
 
   [JsonIgnore]
   public List<VolbaHlasovani> Volby
   {
-    get => new List<VolbaHlasovani>
-    {
-      VolbaHlasovani.Pro,
-      VolbaHlasovani.Proti,
-      VolbaHlasovani.ZdrzujeSe
-    };
+    get => Enum.GetValues<VolbaHlasovani>().ToList();
   }
 
   [JsonProperty("Zastupitel", IsReference = true)]
   public Zastupitel Zastupitel
   {
-    get;
-    set;
+    get => _zastupitel;
+    set
+    {
+      if (Equals(value, _zastupitel))
+      {
+        return;
+      }
+
+      _zastupitel = value;
+
+      _zastupitel.PropertyChanged += (sender, args) =>
+      {
+        OnPropertyChanged(nameof(JmenoPrijmeniZastupitele));
+        OnPropertyChanged(nameof(Poznamka));
+      };
+
+      OnPropertyChanged();
+      OnPropertyChanged(nameof(JmenoPrijmeniZastupitele));
+      OnPropertyChanged(nameof(Poznamka));
+    }
   }
 
   #endregion
