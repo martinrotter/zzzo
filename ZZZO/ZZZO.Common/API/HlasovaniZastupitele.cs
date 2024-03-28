@@ -14,13 +14,13 @@ public class HlasovaniZastupitele : ObservableObject
   public enum VolbaHlasovani
   {
     [Description("Pro")]
-    Pro,
+    Pro = 0,
 
     [Description("Proti")]
-    Proti,
+    Proti = 1,
 
     [Description("Zdržuje se")]
-    ZdrzujeSe
+    ZdrzujeSe = 2
   }
 
   #endregion
@@ -64,9 +64,9 @@ public class HlasovaniZastupitele : ObservableObject
   }
 
   [JsonIgnore]
-  public List<VolbaHlasovani> Volby
+  public IEnumerable<VolbaHlasovani> Volby
   {
-    get => Enum.GetValues<VolbaHlasovani>().ToList();
+    get => Enum.GetValues<VolbaHlasovani>();
   }
 
   [JsonProperty("Zastupitel", IsReference = true)]

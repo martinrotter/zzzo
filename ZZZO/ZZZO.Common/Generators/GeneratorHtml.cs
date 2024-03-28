@@ -119,14 +119,15 @@ namespace ZZZO.Common.Generators
         throw new Exception("nejsou vybráni ověřovatelé");
       }
 
-      BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.SchvalovaniProgramu);
+      BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
 
       if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
       {
         throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
       }
 
-      IEnumerable<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => !prog.SchvalovaniProgramu);
+      IEnumerable<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
+                                                                                     prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani);
 
       XmlElement body = html.AppendElem("body");
 
@@ -210,9 +211,10 @@ namespace ZZZO.Common.Generators
                                        "informoval přítomné zastupitele i veřejnost o " +
                                        "projednaných bodech a splněných úkolech.";
 
-      foreach (BodProgramu bodProgramu in bodyProgramu.Where(prog => !prog.SchvalovaniProgramu))
+      foreach (BodProgramu bodProgramu in bodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
+                                                                     prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani))
       {
-        body.AppendElem(bodProgramu.JePodbod ? "h3" : "h2").InnerText = $"{bodProgramu.NadpisPoradi}{bodProgramu.Nadpis}{(bodProgramu.JeDoplneny ? " (doplněný bod programu)" : string.Empty)}";
+        body.AppendElem(bodProgramu.JePodbod ? "h3" : "h2").InnerText = $"{bodProgramu.NadpisPoradi}{bodProgramu.Nadpis}{(bodProgramu.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : string.Empty)}";
 
         if (!string.IsNullOrWhiteSpace(bodProgramu.Text))
         {
@@ -289,7 +291,8 @@ namespace ZZZO.Common.Generators
 
       foreach (BodProgramu thisEntry in bodyProgramu)
       {
-        if (thisEntry.SchvalovaniProgramu)
+        if (thisEntry.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu ||
+            thisEntry.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver)
         {
           // Schvalování programu není v "programu" jako takovém.
           continue;
@@ -304,13 +307,13 @@ namespace ZZZO.Common.Generators
           }
 
           thisEntry.NadpisPoradi = $"{mainCounter - 1}{nestedCounter++}. ";
-          nestedOl.AppendElem("li").InnerText = $"{thisEntry.NadpisPoradi}{thisEntry.Nadpis}{(thisEntry.JeDoplneny ? " (doplněný bod programu)" : string.Empty)}";
+          nestedOl.AppendElem("li").InnerText = $"{thisEntry.NadpisPoradi}{thisEntry.Nadpis}{(thisEntry.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : string.Empty)}";
         }
         else
         {
           nestedOl = null;
           thisEntry.NadpisPoradi = $"{mainCounter++}. ";
-          mainOl.AppendElem("li").InnerText = $"{thisEntry.NadpisPoradi}{thisEntry.Nadpis}{(thisEntry.JeDoplneny ? " (doplněný bod programu)" : string.Empty)}";
+          mainOl.AppendElem("li").InnerText = $"{thisEntry.NadpisPoradi}{thisEntry.Nadpis}{(thisEntry.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : string.Empty)}";
         }
       }
     }
@@ -321,7 +324,8 @@ namespace ZZZO.Common.Generators
       string generatedResolutionTitle = null;
       XmlElement root = body.AppendElem("div").AppendClass("resolution-container");
 
-      if (!programEntry.SchvalovaniProgramu)
+      if (programEntry.Typ != BodProgramu.TypBoduProgramu.SchvaleniProgramu &&
+          programEntry.Typ != BodProgramu.TypBoduProgramu.SchvaleniZapisOver)
       {
         if (resolution.ZoBereNaVedomi)
         {

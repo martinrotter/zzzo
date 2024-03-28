@@ -37,6 +37,11 @@ public class ProgramEntryViewModel : ViewModelBase
     }
   }
 
+  public IEnumerable<BodProgramu.TypBoduProgramu> TypyBoduProgramu
+  {
+    get => Enum.GetValues<BodProgramu.TypBoduProgramu>();
+  }
+
   public Usneseni ChosenUsneseni
   {
     get => _chosenUsneseni;

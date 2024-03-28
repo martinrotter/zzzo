@@ -13,6 +13,7 @@
              d:DesignWidth="500">
   <UserControl.Resources>
     <converters:NotNullConverter x:Key="NotNullConverter" />
+    <converters:EnumConverter x:Key="EnumConverter" />
   </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
@@ -22,21 +23,24 @@
     <StackPanel Grid.Row="0"
                 Grid.Column="0"
                 Orientation="Vertical">
+      <ComboBox ItemsSource="{Binding TypyBoduProgramu}" SelectedValue="{Binding ProgramEntry.Typ}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Converter={StaticResource EnumConverter}}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
       <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
                Height="75"
                TextWrapping="Wrap"
                Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
+      <CheckBox Content="Podbod předchozího bodu programu"
+                IsChecked="{Binding ProgramEntry.JePodbod, UpdateSourceTrigger=PropertyChanged}" />
       <GroupBox Header="Text bodu programu">
         <local:TinyMceEditor Margin="-14 -14 0 0"
                              HtmlContent="{Binding ProgramEntry.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Height="400" />
       </GroupBox>
-      <CheckBox Content="Tento bod se týká schvalování programu"
-                IsChecked="{Binding ProgramEntry.SchvalovaniProgramu, UpdateSourceTrigger=PropertyChanged}" />
-      <CheckBox Content="Podbod předchozího bodu programu"
-                IsChecked="{Binding ProgramEntry.JePodbod, UpdateSourceTrigger=PropertyChanged}" />
-      <CheckBox Content="Doplněný bod programu"
-                IsChecked="{Binding ProgramEntry.JeDoplneny, UpdateSourceTrigger=PropertyChanged}" />
     </StackPanel>
 
     <GroupBox Grid.Row="0"

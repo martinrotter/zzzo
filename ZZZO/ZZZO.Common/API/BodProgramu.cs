@@ -1,37 +1,41 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace ZZZO.Common.API;
 
 public class BodProgramu : ObservableObject
 {
+  #region Enumy
+
+  public enum TypBoduProgramu
+  {
+    [Description("Schvalování zapisovatele/ověřovatelů")]
+    SchvaleniZapisOver = 0,
+
+    [Description("Schvalování programu zasedání")]
+    SchvaleniProgramu = 1,
+
+    [Description("Bod zasedání")]
+    BodZasedani = 2,
+
+    [Description("Doplněný bod zasedání")]
+    DoplnenyBodZasedani = 3
+  }
+
+  #endregion
+
   #region Proměnné
 
-  private bool _jeDoplneny;
   private bool _jePodbod;
   private string _nadpis;
   private string _nadpisPoradi;
-  private bool _schvalovaniProgramu;
   private string _text;
+  private TypBoduProgramu _typ;
   private ObservableCollection<Usneseni> _usneseni = new ObservableCollection<Usneseni>();
 
   #endregion
 
   #region Vlastnosti
-
-  public bool JeDoplneny
-  {
-    get => _jeDoplneny;
-    set
-    {
-      if (value == _jeDoplneny)
-      {
-        return;
-      }
-
-      _jeDoplneny = value;
-      OnPropertyChanged();
-    }
-  }
 
   public bool JePodbod
   {
@@ -78,21 +82,6 @@ public class BodProgramu : ObservableObject
     }
   }
 
-  public bool SchvalovaniProgramu
-  {
-    get => _schvalovaniProgramu;
-    set
-    {
-      if (value == _schvalovaniProgramu)
-      {
-        return;
-      }
-
-      _schvalovaniProgramu = value;
-      OnPropertyChanged();
-    }
-  }
-
   public string Text
   {
     get => _text;
@@ -104,6 +93,21 @@ public class BodProgramu : ObservableObject
       }
 
       _text = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public TypBoduProgramu Typ
+  {
+    get => _typ;
+    set
+    {
+      if (value == _typ)
+      {
+        return;
+      }
+
+      _typ = value;
       OnPropertyChanged();
     }
   }
@@ -121,6 +125,15 @@ public class BodProgramu : ObservableObject
       _usneseni = value;
       OnPropertyChanged();
     }
+  }
+
+  #endregion
+
+  #region Konstruktory
+
+  public BodProgramu()
+  {
+    Typ = TypBoduProgramu.BodZasedani;
   }
 
   #endregion

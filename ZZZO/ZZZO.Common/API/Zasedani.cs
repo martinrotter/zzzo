@@ -188,6 +188,8 @@ public class Zasedani : ObservableObject
     }
   }
 
+
+
   /// <summary>
   /// Výstupní soubor bez přípony.
   /// </summary>
@@ -195,9 +197,16 @@ public class Zasedani : ObservableObject
   {
     get
     {
-      return _vystupniSoubor ??= Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-        $"zápis-{DatumKonani:yyyy-MM}-zo");
+      var soubor = _vystupniSoubor;
+
+      if (string.IsNullOrWhiteSpace(_vystupniSoubor) || !Directory.Exists(Path.GetDirectoryName(_vystupniSoubor)))
+      {
+        _vystupniSoubor = Path.Combine(
+          Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+          $"zápis-{DatumKonani:yyyy-MM}-zo");
+      }
+
+      return _vystupniSoubor;
     }
 
     set
@@ -250,6 +259,10 @@ public class Zasedani : ObservableObject
   public static Zasedani LoadFromFile(string file)
   {
     Zasedani zas = JsonConvert.DeserializeObject<Zasedani>(File.ReadAllText(file, Encoding.UTF8));
+
+    zas.VystupniSoubor = Path.Combine(
+      Path.GetDirectoryName(file),
+      Path.GetFileNameWithoutExtension(file));
     return zas;
   }
 
@@ -392,7 +405,7 @@ public class Zasedani : ObservableObject
 
     var schvaleniProgramu = new BodProgramu
     {
-      SchvalovaniProgramu = true,
+      Typ = BodProgramu.TypBoduProgramu.SchvaleniProgramu,
       Nadpis = "Schvalování programu"
     };
 
@@ -424,7 +437,7 @@ public class Zasedani : ObservableObject
     zas.Program.BodyProgramu.Add(new BodProgramu
     {
       Nadpis = "Čtvrtý",
-      JeDoplneny = true
+      Typ = BodProgramu.TypBoduProgramu.DoplnenyBodZasedani
     });
 
     zas.Program.BodyProgramu.Add(new BodProgramu
