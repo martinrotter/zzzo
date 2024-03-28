@@ -13,6 +13,8 @@
                                      SecondaryColor="Lime" />
         <ResourceDictionary
           Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+        <ResourceDictionary
+          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
 
         <ResourceDictionary>
           <Thickness x:Key="FormMargin">9,9,9,9</Thickness>
@@ -24,6 +26,28 @@
                  TargetType="{x:Type Button}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                 TargetType="{x:Type materialDesign:PopupBox}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
+            <Setter Property="Width" Value="40"></Setter>
+            <Setter Property="Height" Value="40"></Setter>
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignRaisedLightButton}"
+                 x:Key="PopupButton" TargetType="{x:Type Button}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
+          </Style>
+
+          <Style BasedOn="{StaticResource MaterialDesignFloatingActionButton}"
+                 x:Key="RoundButton" TargetType="{x:Type Button}">
+            <Setter Property="Margin"
+                    Value="{StaticResource FormMargin}" />
+            <Setter Property="Width" Value="40"></Setter>
+            <Setter Property="Height" Value="40"></Setter>
           </Style>
 
           <Style BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}"

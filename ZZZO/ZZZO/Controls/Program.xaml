@@ -7,6 +7,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:ZZZO.Converters"
              xmlns:viewmodels="clr-namespace:ZZZO.ViewModels"
+             xmlns:api="clr-namespace:ZZZO.Common.API;assembly=ZZZO.Common"
              d:DataContext="{d:DesignInstance Type=viewmodels:ProgramViewModel}"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
@@ -17,8 +18,14 @@
              d:DesignHeight="600"
              d:DesignWidth="900">
   <UserControl.Resources>
-    <converters:ConditionalMarginConverter x:Key="ConditionalMarginConverter" />
-    <Thickness x:Key="PodbodMargin">10,0,0,0</Thickness>
+    <ResourceDictionary>
+      <converters:ConditionalMarginConverter x:Key="ConditionalMarginConverter" />
+      <Thickness x:Key="PodbodMargin">10,0,0,0</Thickness>
+
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
   </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
@@ -55,20 +62,52 @@
         </ListView>
         <WrapPanel Grid.Row="1"
                    Orientation="Horizontal">
-          <Button Command="{Binding AddProgramEntryCmd}"
-                  ToolTip="Přidat bod programu">
-            <materialDesign:PackIcon Kind="PlusCircle" />
-          </Button>
-          <Button Command="{Binding RemoveProgramEntryCmd}"
+          <materialDesign:PopupBox
+            PlacementMode="TopAndAlignCentres"
+            PopupHorizontalOffset="20"
+            ToolTip="Přidat bod programu"
+            ToolTipService.Placement="Bottom">
+            <materialDesign:PopupBox.ToggleContent>
+              <materialDesign:PackIcon Kind="PlusCircle" />
+            </materialDesign:PopupBox.ToggleContent>
+            <StackPanel>
+              <Button
+                Style="{StaticResource PopupButton}"
+                Command="{Binding AddProgramEntryCmd}"
+                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.SchvaleniZapisOver}"
+                Content="Schválení zapisovatele" />
+              <Button
+                Style="{StaticResource PopupButton}"
+                Command="{Binding AddProgramEntryCmd}"
+                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.SchvaleniProgramu}"
+                Content="Schválení programu" />
+              <Button
+                Style="{StaticResource PopupButton}"
+                Command="{Binding AddProgramEntryCmd}"
+                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.BodZasedani}"
+                Content="Řádny bod programu" />
+              <Button
+                Style="{StaticResource PopupButton}"
+                Command="{Binding AddProgramEntryCmd}"
+                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.DoplnenyBodZasedani}"
+                Content="Doplněný bod programu" />
+            </StackPanel>
+          </materialDesign:PopupBox>
+
+          <Button Style="{StaticResource RoundButton}"
+                  Command="{Binding RemoveProgramEntryCmd}"
                   ToolTip="Smazat vybraný bod programu">
             <materialDesign:PackIcon Kind="MinusCircle" />
           </Button>
 
-          <Button Command="{Binding MoveProgramEntryUpCmd}"
+          <Button Style="{StaticResource RoundButton}"
+                  Command="{Binding MoveProgramEntryUpCmd}"
                   ToolTip="Posunout bod nahoru">
             <materialDesign:PackIcon Kind="ArrowUpCircle" />
           </Button>
-          <Button Command="{Binding MoveProgramEntryDownCmd}"
+
+          <Button Style="{StaticResource RoundButton}"
+                  Command="{Binding MoveProgramEntryDownCmd}"
                   ToolTip="Posunout bod dolů">
             <materialDesign:PackIcon Kind="ArrowDownCircle" />
           </Button>

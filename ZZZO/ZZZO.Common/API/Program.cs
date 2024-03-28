@@ -28,5 +28,52 @@ namespace ZZZO.Common.API
     }
 
     #endregion
+
+    #region Metody
+
+    public BodProgramu VygenerovatBodProgramu(Zasedani zas, BodProgramu.TypBoduProgramu typProgramu)
+    {
+      BodProgramu bod = new BodProgramu();
+
+      bod.Typ = typProgramu;
+
+      switch (typProgramu)
+      {
+        case BodProgramu.TypBoduProgramu.SchvaleniZapisOver:
+          bod.Nadpis = "Schválení zapisovatele a ověřovatelů zápisu";
+
+          zas.AddUsneseni(bod, new Usneseni
+          {
+            Text = bod.Nadpis
+          });
+
+          break;
+
+        case BodProgramu.TypBoduProgramu.SchvaleniProgramu:
+          bod.Nadpis = "Schválení programu";
+
+          zas.AddUsneseni(bod, new Usneseni
+          {
+            Text = bod.Nadpis
+          });
+
+          break;
+
+        case BodProgramu.TypBoduProgramu.BodZasedani:
+        case BodProgramu.TypBoduProgramu.DoplnenyBodZasedani:
+          bod.Nadpis = "Řádný bod zasedání";
+
+          zas.AddUsneseni(bod, new Usneseni
+          {
+            Text = "Usnesení z tohoto bodu zasedání"
+          });
+
+          break;
+      }
+
+      return bod;
+    }
+
+    #endregion
   }
 }

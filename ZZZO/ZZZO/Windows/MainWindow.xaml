@@ -9,7 +9,7 @@
         x:Name="Window"
         Title="{Binding WindowTitle}"
         Height="900"
-        Width="1200"
+        Width="1300"
         WindowStartupLocation="CenterScreen"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModels="clr-namespace:ZZZO.ViewModels"

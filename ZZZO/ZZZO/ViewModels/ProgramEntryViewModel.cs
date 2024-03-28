@@ -93,7 +93,7 @@ public class ProgramEntryViewModel : ViewModelBase
 
       _programEntry = value;
       
-      if (_programEntry != null && _programEntry.Usneseni != null)
+      if (_programEntry != null)
       {
         _programEntry.PropertyChanged += (sender, args) =>
         {
@@ -103,13 +103,14 @@ public class ProgramEntryViewModel : ViewModelBase
           }
         };
 
-        _programEntry.Usneseni.CollectionChanged += (sender, args) =>
+        if (_programEntry.Usneseni != null)
         {
-          OnPropertyChanged(nameof(LzeEditovatUsneseni));
-        };
+          _programEntry.Usneseni.CollectionChanged += (sender, args) => { OnPropertyChanged(nameof(LzeEditovatUsneseni)); };
+        }
       }
       
       OnPropertyChanged();
+      OnPropertyChanged(nameof(LzeEditovatUsneseni));
     }
   }
 

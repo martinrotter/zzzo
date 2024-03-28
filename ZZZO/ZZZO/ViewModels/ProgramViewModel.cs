@@ -107,7 +107,7 @@ public class ProgramViewModel : ViewModelBase
     Core = core;
     EntryViewModel = new ProgramEntryViewModel(core);
 
-    AddProgramEntryCmd = new RelayCommand(obj => AddProgramEntry(), obj => true);
+    AddProgramEntryCmd = new RelayCommand(obj => AddProgramEntry(obj), obj => true);
     RemoveProgramEntryCmd = new RelayCommand(obj => RemoveProgramEntry(), obj => ChosenProgramEntry != null);
 
     MoveProgramEntryUpCmd = new RelayCommand(obj => MoveProgramEntryUp(), obj => ChosenProgramEntry != null &&
@@ -121,18 +121,17 @@ public class ProgramViewModel : ViewModelBase
 
   #region Metody
 
-  private void AddProgramEntry()
+  private void AddProgramEntry(object o)
   {
+    BodProgramu.TypBoduProgramu cilovyBodProgramu = o is BodProgramu.TypBoduProgramu bp
+      ? bp
+      : BodProgramu.TypBoduProgramu.BodZasedani;
+
     int targetIdx = ChosenProgramEntry != null
       ? Core.Zasedani.Program.BodyProgramu.IndexOf(ChosenProgramEntry) + 1
       : Core.Zasedani.Program.BodyProgramu.Count;
 
-    Core.Zasedani.Program.BodyProgramu.Insert(targetIdx, new BodProgramu
-    {
-      Nadpis = "Nový bod programu",
-      Text = "Text bodu programu"
-    });
-
+    Core.Zasedani.Program.BodyProgramu.Insert(targetIdx, Core.Zasedani.Program.VygenerovatBodProgramu(Core.Zasedani, cilovyBodProgramu));
     ChosenProgramEntry = Core.Zasedani.Program.BodyProgramu[targetIdx];
   }
 
