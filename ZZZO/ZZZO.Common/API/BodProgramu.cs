@@ -24,6 +24,12 @@ public class BodProgramu : ObservableObject
 
   #endregion
 
+  public bool JeEditovatelny
+  {
+    get => Typ == TypBoduProgramu.DoplnenyBodZasedani ||
+           Typ == TypBoduProgramu.BodZasedani;
+  }
+
   #region Proměnné
 
   private bool _jePodbod;
@@ -108,7 +114,9 @@ public class BodProgramu : ObservableObject
       }
 
       _typ = value;
+
       OnPropertyChanged();
+      OnPropertyChanged(nameof(JeEditovatelny));
     }
   }
 

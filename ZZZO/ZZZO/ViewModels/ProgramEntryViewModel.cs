@@ -42,6 +42,11 @@ public class ProgramEntryViewModel : ViewModelBase
     get => Enum.GetValues<BodProgramu.TypBoduProgramu>();
   }
 
+  public bool LzeEditovatUsneseni
+  {
+    get => _programEntry != null && _programEntry.JeEditovatelny && _programEntry.Usneseni.Count > 0;
+  }
+
   public Usneseni ChosenUsneseni
   {
     get => _chosenUsneseni;
@@ -54,6 +59,7 @@ public class ProgramEntryViewModel : ViewModelBase
 
       _chosenUsneseni = value;
 
+      ResolutionViewModel.ProgramEntry = _programEntry;
       ResolutionViewModel.Usneseni = _chosenUsneseni;
       
       OnPropertyChanged();
@@ -86,6 +92,23 @@ public class ProgramEntryViewModel : ViewModelBase
       }
 
       _programEntry = value;
+      
+      if (_programEntry != null && _programEntry.Usneseni != null)
+      {
+        _programEntry.PropertyChanged += (sender, args) =>
+        {
+          if (args.PropertyName == nameof(BodProgramu.JeEditovatelny))
+          {
+            OnPropertyChanged(nameof(LzeEditovatUsneseni));
+          }
+        };
+
+        _programEntry.Usneseni.CollectionChanged += (sender, args) =>
+        {
+          OnPropertyChanged(nameof(LzeEditovatUsneseni));
+        };
+      }
+      
       OnPropertyChanged();
     }
   }

@@ -120,10 +120,18 @@ namespace ZZZO.Common.Generators
       }
 
       BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
+      BodProgramu schvaleniZapisovatele = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver);
+
 
       if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
       {
         throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
+      }
+
+      
+      if (schvaleniZapisovatele?.Usneseni == null || schvaleniZapisovatele.Usneseni.Count == 0)
+      {
+        throw new Exception("v programu chybí bod a usnesení pro schválení zapisovatele/ověřovatelů");
       }
 
       IEnumerable<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
@@ -180,11 +188,19 @@ namespace ZZZO.Common.Generators
       body.AppendElem("h2").InnerText = "Určení ověřovatelů zápisu a zapisovatele v souladu s \u00a7 95 odst. 1 č. 128/2000 Sb.";
 
       body.AppendElem("p").InnerText =
-        $"Řídící osoba zasedání ZO {zas.NazevObce} rozhodla, že zapisovatelem je " +
-        $"{zapisovatel.Jmeno} {zapisovatel.Prijmeni} a ověřovateli zápisu jsou {string.Join(
+        $"Řídící osoba zasedání ZO {zas.NazevObce} navrhla, aby zapisovatelem byl " +
+        $"{zapisovatel.Jmeno} {zapisovatel.Prijmeni} a ověřovateli zápisu byli {string.Join(
           " a ",
           overovatele.Select(over => over.Jmeno + " " + over.Prijmeni))}.";
 
+      GenerateResolution(
+        body,
+        zas,
+        schvaleniZapisovatele,
+        schvaleniZapisovatele.Usneseni.First(),
+        lastResolutionNumber,
+        "Hlasování o navrženém zapisovateli a ověřovatelích zápisu");
+      
       progress.Report(40);
 
       ///
@@ -194,11 +210,18 @@ namespace ZZZO.Common.Generators
 
       GenerateProgramEntries(body, bodyProgramu.ToList());
 
-      body.AppendElem("p").InnerText = "Pan řídící navrhl schválit výše uvedený návrh programu. " +
+      body.AppendElem("p").InnerText = $"Řídící osoba zasedání ZO {zas.NazevObce} navrhla schválit výše " +
+                                       $"uvedený návrh programu. " +
                                        $"Všechna hlasování na tomto zasedání ZO {zas.NazevObce} " +
                                        "jsou veřejná a zastupitelé hlasují zdvižením ruky.";
 
-      GenerateResolution(body, zas, schvaleniProgramu, schvaleniProgramu.Usneseni.First(), lastResolutionNumber, "Hlasování o návrhu programu");
+      GenerateResolution(
+        body,
+        zas,
+        schvaleniProgramu,
+        schvaleniProgramu.Usneseni.First(),
+        lastResolutionNumber,
+        "Hlasování o návrhu programu");
 
       progress.Report(50);
 

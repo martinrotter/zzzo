@@ -22,16 +22,18 @@
     </Style>
   </UserControl.Resources>
   <StackPanel Orientation="Vertical">
-    <CheckBox Name="CbBereNaVedomi"
-              Content="ZO bere na vědomí"
-              IsChecked="{Binding Usneseni.ZoBereNaVedomi, UpdateSourceTrigger=PropertyChanged}" />
     <TextBox materialDesign:HintAssist.Hint="Text usnesení"
              MinLines="4"
              TextWrapping="Wrap"
              AcceptsReturn="True"
-             IsEnabled="{Binding ElementName=CbBereNaVedomi, Path=IsChecked, Converter={StaticResource CollapseOnTrueConverter}}"
+             IsEnabled="{Binding JeEditovatelne}"
              Text="{Binding Usneseni.Text, UpdateSourceTrigger=PropertyChanged}" />
-    <GroupBox Header="Hlasování">
+    <CheckBox Name="CbBereNaVedomi"
+              Content="ZO bere na vědomí"
+              IsEnabled="{Binding ProgramEntry.JeEditovatelny}"
+              IsChecked="{Binding Usneseni.ZoBereNaVedomi, UpdateSourceTrigger=PropertyChanged}" />
+    <GroupBox Header="Hlasování"
+              Visibility="{Binding Usneseni.ZoNebereNaVedomi, Converter={StaticResource BooleanToVisibilityConverter}}">
       <WrapPanel Orientation="Vertical">
         <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                   materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"

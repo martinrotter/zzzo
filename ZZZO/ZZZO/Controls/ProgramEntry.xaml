@@ -17,8 +17,8 @@
   </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="5*" />
-      <ColumnDefinition Width="4*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
     <StackPanel Grid.Row="0"
                 Grid.Column="0"
@@ -33,10 +33,13 @@
       <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
                Height="75"
                TextWrapping="Wrap"
+               Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
                Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
-      <CheckBox Content="Podbod předchozího bodu programu"
+      <CheckBox Content="Jedná se o předchozího bodu programu"
+                Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsChecked="{Binding ProgramEntry.JePodbod, UpdateSourceTrigger=PropertyChanged}" />
-      <GroupBox Header="Text bodu programu">
+      <GroupBox Header="Text bodu programu"
+                Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}">
         <local:TinyMceEditor Margin="-14 -14 0 0"
                              HtmlContent="{Binding ProgramEntry.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Height="400" />
@@ -49,10 +52,12 @@
       <StackPanel Orientation="Vertical">
         <WrapPanel Orientation="Horizontal">
           <Button Command="{Binding AddUsneseniCmd}"
+                  IsEnabled="{Binding ProgramEntry.JeEditovatelny}"
                   ToolTip="Přidat nové usnesení">
             <materialDesign:PackIcon Kind="PlusCircle" />
           </Button>
           <Button ToolTip="Smazat vybrané usnesení"
+                  IsEnabled="{Binding ProgramEntry.JeEditovatelny}"
                   Command="{Binding RemoveUsneseniCmd}">
             <materialDesign:PackIcon Kind="MinusCircle" />
           </Button>
@@ -60,7 +65,7 @@
         <ComboBox IsSynchronizedWithCurrentItem="True"
                   Name="CmbUsneseni"
                   SelectedValue="{Binding ChosenUsneseni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  IsEnabled="{Binding ElementName=CmbUsneseni, Path=HasItems}"
+                  IsEnabled="{Binding LzeEditovatUsneseni}"
                   ItemsSource="{Binding ProgramEntry.Usneseni}">
           <ComboBox.ItemTemplate>
             <DataTemplate>

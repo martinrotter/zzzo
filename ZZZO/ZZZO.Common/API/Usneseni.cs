@@ -59,6 +59,11 @@ public class Usneseni : ObservableObject
     }
   }
 
+  public bool ZoNebereNaVedomi
+  {
+    get => !ZoBereNaVedomi;
+  }
+
   public bool ZoBereNaVedomi
   {
     get => _zoBereNaVedomi;
@@ -71,6 +76,7 @@ public class Usneseni : ObservableObject
 
       _zoBereNaVedomi = value;
       OnPropertyChanged();
+      OnPropertyChanged(nameof(ZoNebereNaVedomi));
     }
   }
 

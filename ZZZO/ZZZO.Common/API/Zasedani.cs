@@ -403,6 +403,19 @@ public class Zasedani : ObservableObject
       PopisMista = "zasedací místnosti"
     };
 
+    var schvaleniZapisovatele = new BodProgramu
+    {
+      Typ = BodProgramu.TypBoduProgramu.SchvaleniZapisOver,
+      Nadpis = "Schvalování zapisovatele"
+    };
+
+    zas.Program.BodyProgramu.Add(schvaleniZapisovatele);
+
+    zas.AddUsneseni(schvaleniZapisovatele, new Usneseni
+    {
+      Text = "Hlasování o zapisovateli/ověřovatelích"
+    });
+
     var schvaleniProgramu = new BodProgramu
     {
       Typ = BodProgramu.TypBoduProgramu.SchvaleniProgramu,

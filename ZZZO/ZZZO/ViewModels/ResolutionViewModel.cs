@@ -26,6 +26,12 @@ public class ResolutionViewModel : ViewModelBase
     get;
   }
 
+  public bool JeEditovatelne
+  {
+    get => ProgramEntry != null && ProgramEntry.JeEditovatelny &&
+           (Usneseni == null || !Usneseni.ZoBereNaVedomi);
+  }
+
   public Usneseni Usneseni
   {
     get => _usneseni;
@@ -37,7 +43,20 @@ public class ResolutionViewModel : ViewModelBase
       }
 
       _usneseni = value;
+
+      if (_usneseni != null)
+      {
+        _usneseni.PropertyChanged += (sender, args) =>
+        {
+          if (args.PropertyName == nameof(Usneseni.ZoBereNaVedomi))
+          {
+            OnPropertyChanged(nameof(JeEditovatelne));
+          }
+        };
+      }
+
       OnPropertyChanged();
+      OnPropertyChanged(nameof(JeEditovatelne));
     }
   }
 
@@ -67,7 +86,20 @@ public class ResolutionViewModel : ViewModelBase
       }
 
       _programEntry = value;
+
+      if (_programEntry != null)
+      {
+        _programEntry.PropertyChanged += (sender, args) =>
+        {
+          if (args.PropertyName == nameof(BodProgramu.Typ))
+          {
+            OnPropertyChanged(nameof(JeEditovatelne));
+          }
+        };
+      }
+
       OnPropertyChanged();
+      OnPropertyChanged(nameof(JeEditovatelne));
     }
   }
 
@@ -78,7 +110,6 @@ public class ResolutionViewModel : ViewModelBase
   public ResolutionViewModel(ZzzoCore core)
   {
     Core = core;
-
     
     AllAgreeCmd = new RelayCommand(obj => MarkAllAgreed(), obj => Usneseni != null);
     AllDisagreeCmd = new RelayCommand(obj => MarkAllDisagreed(), obj => Usneseni != null);
