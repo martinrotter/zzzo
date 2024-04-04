@@ -84,13 +84,13 @@
               <Button
                 Style="{StaticResource PopupButton}"
                 Command="{Binding AddProgramEntryCmd}"
-                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.BodZasedani}"
-                Content="Řádny bod programu" />
+                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.DoplnenyBodZasedani}"
+                Content="Doplněný bod programu" />
               <Button
                 Style="{StaticResource PopupButton}"
                 Command="{Binding AddProgramEntryCmd}"
-                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.DoplnenyBodZasedani}"
-                Content="Doplněný bod programu" />
+                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.BodZasedani}"
+                Content="Řádny bod programu" />
             </StackPanel>
           </materialDesign:PopupBox>
 

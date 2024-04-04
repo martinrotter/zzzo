@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Documents;
 using System.Xml;
 using ZZZO.Common.API;
 
@@ -57,6 +56,11 @@ namespace ZZZO.Common.Generators
     #endregion
 
     #region Metody
+
+    public static string GetStyle(string styleName)
+    {
+      return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, styleName));
+    }
 
     protected override byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress, object param)
     {
@@ -122,13 +126,11 @@ namespace ZZZO.Common.Generators
       BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
       BodProgramu schvaleniZapisovatele = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver);
 
-
       if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
       {
         throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
       }
 
-      
       if (schvaleniZapisovatele?.Usneseni == null || schvaleniZapisovatele.Usneseni.Count == 0)
       {
         throw new Exception("v programu chybí bod a usnesení pro schválení zapisovatele/ověřovatelů");
@@ -174,11 +176,15 @@ namespace ZZZO.Common.Generators
       body.AppendElem("p").InnerText =
         $"Nepřítomní zastupitelé: {(string.IsNullOrWhiteSpace(nepritJmena) ? "-" : nepritJmena + ".")}";
 
-      body.AppendElem("p").InnerText = $"Zasedání ZO navštívilo {zas.PocetHostu} " +
-                                       $"{Sklonovat("host", "hosté", "hostů", zas.PocetHostu)} z řad veřejnosti.";
+      body.AppendElem("p").InnerText =
+        $"Zasedání ZO {Sklonovat("navštívil", "navštívili", "navštívilo", zas.PocetHostu)} {zas.PocetHostu} " +
+        $"{Sklonovat("host", "hosté", "hostů", zas.PocetHostu)} z řad veřejnosti.";
 
       body.AppendElem("p").InnerText =
         $"Zasedání ZO řídil pan {ridici.Jmeno} {ridici.Prijmeni}.";
+
+      body.AppendElem("p").InnerText = $"Všechna hlasování na tomto zasedání ZO {zas.NazevObce} " +
+                                       "jsou veřejná a zastupitelé hlasují zdvižením ruky.";
 
       progress.Report(30);
 
@@ -200,7 +206,7 @@ namespace ZZZO.Common.Generators
         schvaleniZapisovatele.Usneseni.First(),
         lastResolutionNumber,
         "Hlasování o navrženém zapisovateli a ověřovatelích zápisu");
-      
+
       progress.Report(40);
 
       ///
@@ -211,9 +217,7 @@ namespace ZZZO.Common.Generators
       GenerateProgramEntries(body, bodyProgramu.ToList());
 
       body.AppendElem("p").InnerText = $"Řídící osoba zasedání ZO {zas.NazevObce} navrhla schválit výše " +
-                                       $"uvedený návrh programu. " +
-                                       $"Všechna hlasování na tomto zasedání ZO {zas.NazevObce} " +
-                                       "jsou veřejná a zastupitelé hlasují zdvižením ruky.";
+                                       $"uvedený návrh programu.";
 
       GenerateResolution(
         body,
@@ -369,6 +373,7 @@ namespace ZZZO.Common.Generators
       }
 
       int countOfPresentVoters = zas.Zastupitele.Count(vol => vol.JePritomen);
+
       List<HlasovaniZastupitele> choiceFor = resolution.VolbyZastupitelu.Where(vol =>
         vol.Zastupitel.JePritomen &&
         vol.Volba == HlasovaniZastupitele.VolbaHlasovani.Pro).ToList();
@@ -381,15 +386,18 @@ namespace ZZZO.Common.Generators
         vol.Zastupitel.JePritomen &&
         vol.Volba == HlasovaniZastupitele.VolbaHlasovani.ZdrzujeSe).ToList();
 
-      string choiceForStr = choiceFor.Count() + ((choiceFor.Any() && choiceFor.Count < countOfPresentVoters)
+      string choiceForStr = choiceFor.Count() + (choiceFor.Any() && choiceFor.Count < countOfPresentVoters
         ? $" ({string.Join(", ", choiceFor.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
         : string.Empty);
-      string choiceAgainstStr = choiceAgainst.Count() + ((choiceAgainst.Any() && choiceAgainst.Count < countOfPresentVoters)
+
+      string choiceAgainstStr = choiceAgainst.Count() + (choiceAgainst.Any() && choiceAgainst.Count < countOfPresentVoters
         ? $" ({string.Join(", ", choiceAgainst.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
         : string.Empty);
-      string choiceDontKnowStr = choiceDontKnow.Count() + ((choiceDontKnow.Any() && choiceDontKnow.Count < countOfPresentVoters)
+
+      string choiceDontKnowStr = choiceDontKnow.Count() + (choiceDontKnow.Any() && choiceDontKnow.Count < countOfPresentVoters
         ? $" ({string.Join(", ", choiceDontKnow.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
         : string.Empty);
+
       bool accepted = choiceFor.Count() > countOfPresentVoters / 2;
 
       XmlElement div = root.AppendElem("div").AppendClass("resolution-vote-box").AppendClass(accepted ? "success" : "failure");
@@ -411,11 +419,6 @@ namespace ZZZO.Common.Generators
       }
 
       return accepted ? generatedResolutionTitle : null;
-    }
-
-    public static string GetStyle(string styleName)
-    {
-      return File.ReadAllText(Path.Combine(Constants.PathsAndFiles.AppStylesFolder, styleName));
     }
 
     private string Sklonovat(string jednaPolozka, string dvePolozky, string vicePolozek, int pocet)

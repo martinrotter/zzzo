@@ -15,7 +15,7 @@ public class BodProgramu : ObservableObject
     [Description("Schvalování programu zasedání")]
     SchvaleniProgramu = 1,
 
-    [Description("Bod zasedání")]
+    [Description("Řádný bod zasedání")]
     BodZasedani = 2,
 
     [Description("Doplněný bod zasedání")]

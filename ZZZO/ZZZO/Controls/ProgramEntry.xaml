@@ -35,7 +35,7 @@
                TextWrapping="Wrap"
                Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
                Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
-      <CheckBox Content="Jedná se o předchozího bodu programu"
+      <CheckBox Content="Jedná se o podbod předchozího bodu programu"
                 Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsChecked="{Binding ProgramEntry.JePodbod, UpdateSourceTrigger=PropertyChanged}" />
       <GroupBox Header="Text bodu programu"
