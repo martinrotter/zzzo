@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using HtmlAgilityPack;
 using Microsoft.Win32;
 using ZZZO.Common;
@@ -141,6 +142,10 @@ namespace ZZZO
         string baseUrl = $"{Constants.Uris.RekosBase}/vyhledani-symbolu?obec={cityName}&sort=municipality.name&page=";
         int pageNumber = 1;
 
+        cl.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
+          Constants.Names.AppShortName,
+          Constants.Names.AppBuildRevision));
+
         string mainHtml = cl
           .GetStringAsync(baseUrl + pageNumber++)
           .Result;
@@ -197,6 +202,11 @@ namespace ZZZO
       return Task.Run(() =>
       {
         using HttpClient cl = new HttpClient();
+
+        cl.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
+          Constants.Names.AppShortName,
+          Constants.Names.AppBuildRevision));
+
         cityLogo.LogoObceData = cl.GetByteArrayAsync(cityLogo.LogoObceUrl).Result;
         return cityLogo;
       });
