@@ -13,10 +13,11 @@ ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplika
 3. Spusťte aplikaci poklepáním na soubor `ZZZO.exe`.
     1. Pokud aplikace neběží či hlásí chybu, je třeba nainstalovat sdílené běhové knihovny MSVC 2022.
     2. Knihovny stáhněte [zde](https://github.com/martinrotter/generator-zasedani-zo/raw/master/3rd-party/VcRedist/VC_redist.x86.exe) nebo [zde](https://aka.ms/vs/17/release/vc_redist.x86.exe) a nainstalujte.
+    3. Opakujte krok 3.
 4. Hotovo!
 
 ### Seznam funkcí
-* rozpracované zápisy lze ukládat a načítat a kdykoliv tak pokračovat v práci,
+* rozpracované zápisy lze ukládat a načítat, a kdykoliv tak pokračovat v práci,
 * program umí dle zadaného názvu obce najít online logo dané obce,
 * lze pohodlně editovat seznam zastupitelů, body programu a další související věci,
 * vygenerované zápisy odpovídají § 95 odst. 1 zákona č. 128/2000 Sb. o obcích,
