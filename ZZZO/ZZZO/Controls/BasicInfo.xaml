@@ -41,7 +41,7 @@
 
     <WrapPanel>
       <Border Margin="10,0,0,0"
-              BorderBrush="{StaticResource PrimaryHueMidBrush}"
+              BorderBrush="{DynamicResource PrimaryHueMidBrush}"
               BorderThickness="1">
         <Image Stretch="Uniform"
                Width="64"
