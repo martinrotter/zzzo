@@ -17,7 +17,7 @@ ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplika
 4. Hotovo!
 
 ### Seznam funkcí
-* rozpracované zápisy lze ukládat a načítat a kdykoliv tak pokračovat v práci,
+* rozpracované zápisy lze ukládat a načítat, a kdykoliv tak pokračovat v práci,
 * program umí dle zadaného názvu obce najít online logo dané obce,
 * lze pohodlně editovat seznam zastupitelů, body programu a další související věci,
 * vygenerované zápisy odpovídají § 95 odst. 1 zákona č. 128/2000 Sb. o obcích,
