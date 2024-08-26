@@ -1,7 +1,7 @@
 # ZZZO - zápisník zasedání zastupitelstev obcí
-Jednoduchá utilita na generování zápisů ze zasedání zastupitelstev obcí.
+Jednoduchá utilita na generování pozvánek a zápisů ze zasedání zastupitelstev obcí.
 
-Utilita umožňuje načítání/ukládání rozpracovaných zápisů a následné generování výstupu ve formátu HTML nebo PDF. Je možno zápisy i přímo tisknout.
+Utilita umožňuje načítání/ukládání rozpracovaných zápisů/pozvánek a následné generování výstupu ve formátu HTML nebo PDF. Je možno zápisy i přímo tisknout.
 
 ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplikace - vaše data tak nejsou uložena v žádném cloudu a máte je tak vždy pod kontrolou.
 
@@ -19,6 +19,7 @@ ZZZO je svobodná aplikace, která bude vždy zdarma! ZZZO je desktopová aplika
 ### Seznam funkcí
 * rozpracované zápisy lze ukládat a načítat, a kdykoliv tak pokračovat v práci,
 * program umí dle zadaného názvu obce najít online logo dané obce,
+* kromě zápisů program umí generovat i jednoduchou pozvánku,
 * lze pohodlně editovat seznam zastupitelů, body programu a další související věci,
 * vygenerované zápisy odpovídají § 95 odst. 1 zákona č. 128/2000 Sb. o obcích,
 * aplikace podporuje standardní CSS styly pro úpravu formátu výstupního dokumentu, je tedy docela jednoduché implementovat zcela vlastní styl, který poté stačí uložit do podsložky `Styles`,
