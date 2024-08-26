@@ -5,8 +5,8 @@ using System.Windows.Input;
 using CefSharp;
 using CefSharp.Wpf;
 using ZZZO.Commands;
-using ZZZO.Common.API;
 using ZZZO.Common.Generators;
+using static ZZZO.Common.Generators.Generator;
 
 namespace ZZZO.ViewModels
 {
@@ -20,6 +20,7 @@ namespace ZZZO.ViewModels
 
     private int _generateProgress;
     private string _selectedHtmlStyle;
+    private TypDokumentu _selectedKindOfDocument;
 
     #endregion
 
@@ -113,6 +114,30 @@ namespace ZZZO.ViewModels
       get => $"{SelectedHtmlStyle}.footer";
     }
 
+    public TypDokumentu SelectedKindOfDocument
+    {
+      get
+      {
+        if (_selectedKindOfDocument == default)
+        {
+          _selectedKindOfDocument = GeneratorHtml.KindsOfDocuments.First();
+        }
+
+        return _selectedKindOfDocument;
+      }
+
+      set
+      {
+        if (value == _selectedKindOfDocument)
+        {
+          return;
+        }
+
+        _selectedKindOfDocument = value;
+        OnPropertyChanged();
+      }
+    }
+
     public string SelectedHtmlStyle
     {
       get
@@ -158,7 +183,7 @@ namespace ZZZO.ViewModels
           OnPropertyChanged(nameof(SelectedHtmlStyle));
         }
       };
-      
+
       GenerateDocumentCmd = new RelayCommandEmpty(GenerateDocument, () => GenerateProgress <= 0);
       ExportHtmlCmd = new RelayCommandEmpty(ExportHtml, () => GenerateProgress <= 0 && GeneratedHtml != null);
       ExportPdfCmd = new RelayCommand<ChromiumWebBrowser>(ExportPdf, browser => GenerateProgress <= 0 && GeneratedHtml != null);
@@ -202,7 +227,7 @@ namespace ZZZO.ViewModels
             PrintBackground = true,
             PreferCssPageSize = true,
             HeaderTemplate = "<div class='text center'></div>",
-            FooterTemplate = Common.Generators.GeneratorHtml.GetStyle(SelectedHtmlFooterStyle)
+            FooterTemplate = GeneratorHtml.GetStyle(SelectedHtmlFooterStyle)
           });
         }
         catch (Exception ex)
@@ -219,7 +244,11 @@ namespace ZZZO.ViewModels
 
     private void GenerateDocument()
     {
-      GenerateWithGenerator(GeneratorHtml, SelectedHtmlStyle);
+      GenerateWithGenerator(GeneratorHtml, new GeneratorHtmlParams
+      {
+        HtmlStyle = SelectedHtmlStyle,
+        KindOfDocument = SelectedKindOfDocument
+      });
     }
 
     private async void GenerateWithGenerator(Generator generator, object param = null)
@@ -235,7 +264,11 @@ namespace ZZZO.ViewModels
       }
       catch (Exception ex)
       {
-        MessageBox.Show($"Chyba při generování zápisu: {ex.Message}.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(
+          $"Chyba při generování dokumentu: {ex.Message}.",
+          "Chyba",
+          MessageBoxButton.OK, MessageBoxImage.Error);
+
         Generated(generator, null);
       }
       finally

@@ -33,6 +33,25 @@ namespace ZZZO.Common.Generators
     #endregion
   }
 
+  public class GeneratorHtmlParams
+  {
+    #region Vlastnosti
+
+    public string HtmlStyle
+    {
+      get;
+      set;
+    }
+
+    public Generator.TypDokumentu KindOfDocument
+    {
+      get;
+      set;
+    }
+
+    #endregion
+  }
+
   public class GeneratorHtml : Generator
   {
     #region Vlastnosti
@@ -41,6 +60,15 @@ namespace ZZZO.Common.Generators
     {
       get => "html";
     }
+
+    public List<TypDokumentu> KindsOfDocuments
+    {
+      get;
+    } = new List<TypDokumentu>
+    {
+      TypDokumentu.Pozvanka,
+      TypDokumentu.Zapis
+    };
 
     public List<string> Styles
     {
@@ -64,14 +92,28 @@ namespace ZZZO.Common.Generators
 
     protected override byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress, object param)
     {
+      GeneratorHtmlParams prms = (GeneratorHtmlParams)param;
+
       progress.Report(1);
 
       XmlDocument html = new XmlDocument();
       XmlElement htmlElem = html.CreateElement("html");
 
       html.AppendChild(htmlElem);
-      GenerateHeader(htmlElem, zas, progress, param as string);
-      GenerateBody(htmlElem, zas, progress);
+
+      GenerateHeader(htmlElem, zas, progress, prms);
+
+      switch (prms.KindOfDocument)
+      {
+        case TypDokumentu.Zapis:
+          GenerateRecordBody(htmlElem, zas, progress);
+          break;
+
+        case TypDokumentu.Pozvanka:
+        default:
+          GenerateInvitationBody(htmlElem, zas, progress);
+          break;
+      }
 
       progress.Report(100);
 
@@ -91,7 +133,47 @@ namespace ZZZO.Common.Generators
         .Replace("&lt;", "<"));
     }
 
-    private void GenerateBody(XmlElement html, Zasedani zas, IProgress<int> progress)
+    private void GenerateInvitationBody(XmlElement html, Zasedani zas, IProgress<int> progress)
+    {
+      XmlElement body = html.AppendElem("body");
+
+      if (zas.LogoObce != null)
+      {
+        body.AppendElem("img").AppendClass("logo").SetAttr("src", $"data:image/png;base64,{Convert.ToBase64String(zas.LogoObceData)}");
+      }
+
+      body.AppendElem("h1").AppendClass("text-center").InnerText = $"Pozvánka na {zas.Poradi}. zasedání zastupitelstva obce {zas.NazevObce}";
+      body.AppendElem("p").InnerText =
+        $"Starosta obce {zas.NazevObce} podle \u00a7 103 odst. 5 zákona č. 128/2000 Sb. o obcích svolává " +
+        $"{zas.Poradi}. zasedání zastupitelstva obce {zas.NazevObce}.";
+
+      var dateTimeBox = body.AppendElem("div").AppendClass("resolution-vote-box").AppendClass("success");
+
+      dateTimeBox.AppendElem("p").InnerText = $"Datum konání: {zas.DatumCasKonani:dddd, d. M. yyyy v H:mm} SEČ";
+      dateTimeBox.AppendElem("p").InnerText = $"Místo konání: {zas.AdresaKonani}, v {zas.AdresaKonani.PopisMista}";
+
+      body.AppendElem("h2").InnerText = "Navržený program";
+
+      BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
+      BodProgramu schvaleniZapisovatele = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver);
+
+      if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
+      {
+        throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
+      }
+
+      if (schvaleniZapisovatele?.Usneseni == null || schvaleniZapisovatele.Usneseni.Count == 0)
+      {
+        throw new Exception("v programu chybí bod a usnesení pro schválení zapisovatele/ověřovatelů");
+      }
+
+      List<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
+                                                                                     prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani).ToList();
+
+      GenerateProgramEntries(body, bodyProgramu);
+    }
+
+    private void GenerateRecordBody(XmlElement html, Zasedani zas, IProgress<int> progress)
     {
       int lastResolutionNumber = 0;
       List<string> acceptedResolutions = new List<string>();
@@ -293,16 +375,32 @@ namespace ZZZO.Common.Generators
       }
     }
 
-    private void GenerateHeader(XmlElement html, Zasedani zas, IProgress<int> progress, string styleName)
+    private void GenerateHeader(
+      XmlElement html,
+      Zasedani zas,
+      IProgress<int> progress,
+      GeneratorHtmlParams prms)
     {
       XmlElement head = html.AppendElem("head");
 
-      head.AppendElem("style").InnerText = GetStyle(styleName ?? Styles.First());
+      head.AppendElem("style").InnerText = GetStyle(prms.HtmlStyle ?? Styles.First());
       head.AppendElem("meta").SetAttr("charset", "UTF-8");
       head.AppendElem("meta").SetAttr("name", "viewport").SetAttr("content", "width=device-width, initial-scale=1.0");
 
-      head.AppendElem("title").InnerText = $"Zápis z {zas.Poradi}. zasedání zastupitelstva obce " +
-                                           $"{zas.NazevObce} konaného dne {zas.DatumCasKonani:d. M. yyyy}";
+      switch (prms.KindOfDocument)
+      {
+        case TypDokumentu.Pozvanka:
+          head.AppendElem("title").InnerText = $"Pozvánka na {zas.Poradi}. zasedání zastupitelstva obce " +
+                                               $"{zas.NazevObce}, které se bude konat dne {zas.DatumCasKonani:d. M. yyyy}";
+          break;
+
+        case TypDokumentu.Zapis:
+          head.AppendElem("title").InnerText = $"Zápis z {zas.Poradi}. zasedání zastupitelstva obce " +
+                                               $"{zas.NazevObce} konaného dne {zas.DatumCasKonani:d. M. yyyy}";
+          break;
+      }
+
+
 
       progress.Report(10);
     }

@@ -15,6 +15,7 @@
   <UserControl.Resources>
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:NotNullConverter x:Key="NotNullConverter" />
+    <converters:EnumConverter x:Key="EnumConverter" />
   </UserControl.Resources>
 
   <GroupBox Header="HTML + PDF">
@@ -25,6 +26,19 @@
                   ItemsSource="{Binding GeneratorHtml.Styles}"
                   Margin="{StaticResource FormMargin}"
                   SelectedValue="{Binding SelectedHtmlStyle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <ComboBox materialDesign:TextFieldAssist.PrefixText="Dokument -> "
+                  Style="{StaticResource MaterialDesignComboBox}"
+                  ItemsSource="{Binding GeneratorHtml.KindsOfDocuments}"
+                  Margin="{StaticResource FormMargin}"
+                  SelectedValue="{Binding SelectedKindOfDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Converter={StaticResource EnumConverter}}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        
         <Button Content="Přegenerovat dokument"
                 Command="{Binding GenerateDocumentCmd}" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"

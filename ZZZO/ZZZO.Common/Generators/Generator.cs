@@ -1,11 +1,23 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using ZZZO.Common.API;
 
 namespace ZZZO.Common.Generators
 {
   public abstract class Generator : ObservableObject
   {
+    #region Enumy
+
+    public enum TypDokumentu
+    {
+      [Description("Zápis")]
+      Zapis = 1,
+
+      [Description("Pozvánka")]
+      Pozvanka = 2
+    }
+
+    #endregion
+
     #region Proměnné
 
     private bool _isGenerating;
