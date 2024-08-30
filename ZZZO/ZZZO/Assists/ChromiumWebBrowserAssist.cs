@@ -37,7 +37,14 @@ namespace ZZZO.Assists
     {
       if (e.Property.Name == HtmlProperty.Name && d is ChromiumWebBrowser browser)
       {
-        browser.LoadHtml(e.NewValue as string, Constants.Uris.Document);
+        if (e.NewValue is string html)
+        {
+          browser.LoadHtml(html, Constants.Uris.Document);
+        }
+        else
+        {
+          browser.LoadHtml("<p>Nevalidní HTML.</p>", Constants.Uris.Document);
+        }
       }
     }
 
