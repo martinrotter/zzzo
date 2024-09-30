@@ -10,6 +10,7 @@
         Title="{Binding WindowTitle}"
         Height="900"
         Width="1300"
+        UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
