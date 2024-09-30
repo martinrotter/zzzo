@@ -31,9 +31,10 @@
         </ComboBox.ItemTemplate>
       </ComboBox>
       <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
-               MinLines="2"
-               MaxLines="2"
+               MinLines="4"
+               MaxLines="4"
                TextWrapping="Wrap"
+               AcceptsReturn="True"
                Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
                Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
       <CheckBox Content="Jedná se o podbod předchozího bodu programu"
