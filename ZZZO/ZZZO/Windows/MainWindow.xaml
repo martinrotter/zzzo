@@ -14,11 +14,9 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
         d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
-        FontFamily="{materialDesign:MaterialDesignFont}">
+        Style="{StaticResource MaterialDesignWindow}">
 
   <materialDesign:DialogHost x:Name="DialogHost" KeyDown="OnDialogHostKeyDown">
     <DockPanel>

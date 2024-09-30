@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CefSharp;
 using CefSharp.Wpf;
@@ -151,6 +152,9 @@ namespace ZZZO
         Contrast = Contrast.Medium,
         DesiredContrastRatio = 2.0f
       };
+
+      // Vynutíme barvu pozadí.
+      b.Background = new ColorReference(ThemeColorReference.None, Colors.White);
 
       a.SetTheme(b);
     }

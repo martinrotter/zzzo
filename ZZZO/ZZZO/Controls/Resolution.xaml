@@ -24,6 +24,7 @@
   <StackPanel Orientation="Vertical">
     <TextBox materialDesign:HintAssist.Hint="Text usnesení"
              MinLines="4"
+             MaxLines="4"
              TextWrapping="Wrap"
              AcceptsReturn="True"
              IsEnabled="{Binding JeEditovatelne}"

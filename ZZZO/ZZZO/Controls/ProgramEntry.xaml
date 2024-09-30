@@ -31,7 +31,8 @@
         </ComboBox.ItemTemplate>
       </ComboBox>
       <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
-               Height="75"
+               MinLines="2"
+               MaxLines="2"
                TextWrapping="Wrap"
                Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
                Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
@@ -41,6 +42,8 @@
       <GroupBox Header="Text bodu programu"
                 Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}">
         <local:TinyMceEditor Margin="-14 -14 0 0"
+                             SnapsToDevicePixels="True"
+                             UseLayoutRounding="True"
                              HtmlContent="{Binding ProgramEntry.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Height="400" />
       </GroupBox>

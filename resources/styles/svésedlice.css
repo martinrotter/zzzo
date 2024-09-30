@@ -97,14 +97,17 @@ h1, h2, h3, h4, h5, h6 {
 
 .resolution-success-icon {
   color: var(--success-color);
+  font-weight: bold;
 }
 
 .resolution-failure-icon {
   color: var(--failure-color);
+  font-weight: bold;
 }
 
 .resolution-dontknow-icon {
   color: var(--warning-color);
+  font-weight: bold;
 }
 
 .resolution-vote-box {
