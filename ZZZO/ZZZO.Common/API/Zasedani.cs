@@ -203,7 +203,7 @@ public class Zasedani : ObservableObject
       {
         _vystupniSoubor = Path.Combine(
           Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-          $"zápis-{DatumKonani:yyyy-MM}-zo");
+          $"zo-{DatumKonani:yyyy-MM}");
       }
 
       return _vystupniSoubor;

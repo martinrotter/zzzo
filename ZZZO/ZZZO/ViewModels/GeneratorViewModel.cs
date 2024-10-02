@@ -1,12 +1,15 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using CefSharp;
 using CefSharp.Wpf;
 using ZZZO.Commands;
+using ZZZO.Common;
 using ZZZO.Common.Generators;
 using static ZZZO.Common.Generators.Generator;
+using EnumConverter = ZZZO.Converters.EnumConverter;
 
 namespace ZZZO.ViewModels
 {
@@ -197,7 +200,8 @@ namespace ZZZO.ViewModels
     private void ExportHtml()
     {
       string html = GeneratedHtml;
-      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "html", true);
+      string suffix = EnumConverter.GetEnumDescription(SelectedKindOfDocument).ToLower();
+      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "html", true, suffix);
 
       if (!string.IsNullOrWhiteSpace(file))
       {
@@ -214,7 +218,8 @@ namespace ZZZO.ViewModels
 
     private async void ExportPdf(ChromiumWebBrowser browser)
     {
-      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "pdf", true);
+      string suffix = EnumConverter.GetEnumDescription(SelectedKindOfDocument).ToLower();
+      string file = ZzzoCore.ChooseSaveFile(Core.Zasedani, "pdf", true, suffix);
 
       if (!string.IsNullOrWhiteSpace(file))
       {

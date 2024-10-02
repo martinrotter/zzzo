@@ -84,9 +84,12 @@ namespace ZZZO
       Zasedani zasedani,
       string fileSuffix,
       bool forceChooseFile,
+      string fileNameSuffix = null,
       string title = null)
     {
-      string initialFullPath = (zasedani?.VystupniSoubor ?? string.Empty) + $".{fileSuffix}";
+      string initialFullPath = (zasedani?.VystupniSoubor ?? string.Empty) +
+                               (!string.IsNullOrWhiteSpace(fileNameSuffix) ? $"-{fileNameSuffix}" : string.Empty) +
+                               $".{fileSuffix}";
 
       if (!forceChooseFile && File.Exists(initialFullPath))
       {
@@ -105,7 +108,10 @@ namespace ZZZO
       if (zasedani != null && !string.IsNullOrWhiteSpace(zasedani.VystupniSoubor))
       {
         string initialDirectory = Path.GetDirectoryName(zasedani.VystupniSoubor);
-        string initialFileName = Path.GetFileName(zasedani.VystupniSoubor) + $".{fileSuffix}";
+
+        string initialFileName = string.IsNullOrWhiteSpace(fileNameSuffix)
+          ? Path.GetFileName(zasedani.VystupniSoubor) + $".{fileSuffix}"
+          : $"{Path.GetFileName(zasedani.VystupniSoubor)}-{fileNameSuffix}" + $".{fileSuffix}";
 
         d.InitialDirectory = initialDirectory != null && Directory.Exists(initialDirectory) ? initialDirectory : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         d.FileName = initialFileName;
@@ -117,6 +123,11 @@ namespace ZZZO
         {
           string chosenDir = Path.GetDirectoryName(d.FileName);
           string chosenFile = Path.GetFileNameWithoutExtension(d.FileName);
+
+          if (!string.IsNullOrWhiteSpace(fileNameSuffix) && chosenFile.EndsWith($"-{fileNameSuffix}"))
+          {
+            chosenFile = chosenFile.Substring(0, chosenFile.Length - fileNameSuffix.Length - 1);
+          }
 
           zasedani.VystupniSoubor = Path.Combine(chosenDir, chosenFile);
         }

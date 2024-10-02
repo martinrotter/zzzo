@@ -28,7 +28,7 @@ namespace ZZZO.Converters
 
     #region Metody
 
-    private static string GetEnumDescription(Enum value)
+    public static string GetEnumDescription(Enum value)
     {
       FieldInfo fi = value.GetType().GetField(value.ToString());
 
