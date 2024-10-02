@@ -156,7 +156,7 @@ namespace ZZZO.Common.Generators
 
       BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
       BodProgramu schvaleniZapisovatele = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver);
-
+      
       if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
       {
         throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
@@ -168,7 +168,7 @@ namespace ZZZO.Common.Generators
       }
 
       List<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
-                                                                                     prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani).ToList();
+                                                                              prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani).ToList();
 
       GenerateProgramEntries(body, bodyProgramu);
     }
@@ -207,6 +207,7 @@ namespace ZZZO.Common.Generators
 
       BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
       BodProgramu schvaleniZapisovatele = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver);
+      BodProgramu minulyZapis = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu);
 
       if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
       {
@@ -314,11 +315,9 @@ namespace ZZZO.Common.Generators
       ///
       /// Kontrola zápisu.
       /// 
-      body.AppendElem("h2").InnerText = "Kontrola zápisu a plnění usnesení z minulého zasedání ZO";
+      body.AppendElem("h2").InnerText = minulyZapis.Nadpis;
 
-      body.AppendElem("p").InnerText = "Starosta obce zhodnotil program z minulého jednání ZO a " +
-                                       "informoval přítomné zastupitele i veřejnost o " +
-                                       "projednaných bodech a splněných úkolech.";
+      body.AppendElem("p").InnerText = minulyZapis.Text;
 
       foreach (BodProgramu bodProgramu in bodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
                                                                      prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani))
@@ -417,7 +416,8 @@ namespace ZZZO.Common.Generators
       foreach (BodProgramu thisEntry in bodyProgramu)
       {
         if (thisEntry.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu ||
-            thisEntry.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver)
+            thisEntry.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver ||
+            thisEntry.Typ == BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu)
         {
           // Schvalování programu není v "programu" jako takovém.
           continue;
@@ -450,7 +450,8 @@ namespace ZZZO.Common.Generators
       XmlElement root = body.AppendElem("div").AppendClass("resolution-container");
 
       if (programEntry.Typ != BodProgramu.TypBoduProgramu.SchvaleniProgramu &&
-          programEntry.Typ != BodProgramu.TypBoduProgramu.SchvaleniZapisOver)
+          programEntry.Typ != BodProgramu.TypBoduProgramu.SchvaleniZapisOver &&
+          programEntry.Typ != BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu)
       {
         if (resolution.ZoBereNaVedomi)
         {

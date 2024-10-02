@@ -19,15 +19,25 @@ public class BodProgramu : ObservableObject
     BodZasedani = 2,
 
     [Description("Doplněný bod zasedání")]
-    DoplnenyBodZasedani = 3
+    DoplnenyBodZasedani = 3,
+
+    [Description("Kontrola minulého zápisu")]
+    KontrolaMinulehoZapisu = 4,
   }
 
   #endregion
 
-  public bool JeEditovatelny
+  public bool MuzeEditovatUsneseni
   {
     get => Typ == TypBoduProgramu.DoplnenyBodZasedani ||
            Typ == TypBoduProgramu.BodZasedani;
+  }
+
+  public bool JeEditovatelny
+  {
+    get => Typ == TypBoduProgramu.DoplnenyBodZasedani ||
+           Typ == TypBoduProgramu.BodZasedani ||
+           Typ == TypBoduProgramu.KontrolaMinulehoZapisu;
   }
 
   #region Proměnné
@@ -117,6 +127,7 @@ public class BodProgramu : ObservableObject
 
       OnPropertyChanged();
       OnPropertyChanged(nameof(JeEditovatelny));
+      OnPropertyChanged(nameof(MuzeEditovatUsneseni));
     }
   }
 

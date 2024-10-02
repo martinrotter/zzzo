@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 
@@ -371,13 +372,6 @@ public class Zasedani : ObservableObject
 
     zas.AddZastupitel(new Zastupitel
     {
-      Prijmeni = "Fialový",
-      Jmeno = "Alex",
-      JePritomen = true
-    });
-
-    zas.AddZastupitel(new Zastupitel
-    {
       Prijmeni = "Zelený",
       Jmeno = "Miloš",
       JePritomen = true,
@@ -403,70 +397,56 @@ public class Zasedani : ObservableObject
       PopisMista = "zasedací místnosti"
     };
 
-    var schvaleniZapisovatele = new BodProgramu
-    {
-      Typ = BodProgramu.TypBoduProgramu.SchvaleniZapisOver,
-      Nadpis = "Schvalování zapisovatele"
-    };
+    zas.Program.BodyProgramu.Add(zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.SchvaleniZapisOver));
 
-    zas.Program.BodyProgramu.Add(schvaleniZapisovatele);
+    zas.Program.BodyProgramu.Add(zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.SchvaleniProgramu));
 
-    zas.AddUsneseni(schvaleniZapisovatele, new Usneseni
-    {
-      Text = "Hlasování o zapisovateli/ověřovatelích"
-    });
+    zas.Program.BodyProgramu.Add(zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu));
 
-    var schvaleniProgramu = new BodProgramu
-    {
-      Typ = BodProgramu.TypBoduProgramu.SchvaleniProgramu,
-      Nadpis = "Schvalování programu"
-    };
+    zas.Program.BodyProgramu.Add(zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.BodZasedani));
 
-    zas.Program.BodyProgramu.Add(schvaleniProgramu);
+    zas.Program.BodyProgramu.Add(zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.BodZasedani));
 
-    zas.AddUsneseni(schvaleniProgramu, new Usneseni
-    {
-      Text = "Hlasování o programu"
-    });
-    
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "První",
-      Text = "Detailní popis bodu programu."
-    });
+    zas.Program.BodyProgramu.Add(zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.DoplnenyBodZasedani));
 
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Druhý",
-      JePodbod = true
-    });
+    var bodRuzne = zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.BodZasedani,
+      true);
 
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Třetí",
-      JePodbod = true
-    });
+    bodRuzne.Nadpis = "Různé";
 
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Čtvrtý",
-      Typ = BodProgramu.TypBoduProgramu.DoplnenyBodZasedani
-    });
+    var bodDiskuse = zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.BodZasedani,
+      true);
 
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Různé"
-    });
+    bodDiskuse.Nadpis = "Diskuse";
+    bodDiskuse.Text = "Proběhla diskuse k různým tématům.";
 
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Diskuse"
-    });
+    var bodZaver = zas.Program.VygenerovatBodProgramu(
+      zas,
+      BodProgramu.TypBoduProgramu.BodZasedani,
+      true);
 
-    zas.Program.BodyProgramu.Add(new BodProgramu
-    {
-      Nadpis = "Závěr"
-    });
+    bodZaver.Nadpis = "Závěr";
+    bodZaver.Text = "Po skončení diskuse bylo toto zasedání zastupitelstva obce skončeno.";
+
+    zas.Program.BodyProgramu.Add(bodRuzne);
+    zas.Program.BodyProgramu.Add(bodDiskuse);
+    zas.Program.BodyProgramu.Add(bodZaver);
 
     return zas;
   }

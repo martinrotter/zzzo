@@ -44,7 +44,7 @@ public class ProgramEntryViewModel : ViewModelBase
 
   public bool LzeEditovatUsneseni
   {
-    get => _programEntry != null && _programEntry.JeEditovatelny && _programEntry.Usneseni.Count > 0;
+    get => _programEntry?.MuzeEditovatUsneseni == true && _programEntry.Usneseni.Count > 0;
   }
 
   public Usneseni ChosenUsneseni
@@ -97,7 +97,7 @@ public class ProgramEntryViewModel : ViewModelBase
       {
         _programEntry.PropertyChanged += (sender, args) =>
         {
-          if (args.PropertyName == nameof(BodProgramu.JeEditovatelny))
+          if (args.PropertyName == nameof(BodProgramu.MuzeEditovatUsneseni))
           {
             OnPropertyChanged(nameof(LzeEditovatUsneseni));
           }

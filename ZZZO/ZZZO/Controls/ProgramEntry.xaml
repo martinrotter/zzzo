@@ -56,12 +56,12 @@
       <StackPanel Orientation="Vertical">
         <WrapPanel Orientation="Horizontal">
           <Button Command="{Binding AddUsneseniCmd}"
-                  IsEnabled="{Binding ProgramEntry.JeEditovatelny}"
+                  IsEnabled="{Binding ProgramEntry.MuzeEditovatUsneseni}"
                   ToolTip="Přidat nové usnesení">
             <materialDesign:PackIcon Kind="PlusCircle" />
           </Button>
           <Button ToolTip="Smazat vybrané usnesení"
-                  IsEnabled="{Binding ProgramEntry.JeEditovatelny}"
+                  IsEnabled="{Binding ProgramEntry.MuzeEditovatUsneseni}"
                   Command="{Binding RemoveUsneseniCmd}">
             <materialDesign:PackIcon Kind="MinusCircle" />
           </Button>

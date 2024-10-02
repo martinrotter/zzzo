@@ -28,7 +28,7 @@ public class ResolutionViewModel : ViewModelBase
 
   public bool JeEditovatelne
   {
-    get => ProgramEntry != null && ProgramEntry.JeEditovatelny &&
+    get => ProgramEntry?.JeEditovatelny == true &&
            (Usneseni == null || !Usneseni.ZoBereNaVedomi);
   }
 

@@ -84,6 +84,11 @@
               <Button
                 Style="{StaticResource PopupButton}"
                 Command="{Binding AddProgramEntryCmd}"
+                CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.KontrolaMinulehoZapisu}"
+                Content="Kontrola minulého zápisu" />
+              <Button
+                Style="{StaticResource PopupButton}"
+                Command="{Binding AddProgramEntryCmd}"
                 CommandParameter="{x:Static api:BodProgramu+TypBoduProgramu.DoplnenyBodZasedani}"
                 Content="Doplněný bod programu" />
               <Button

@@ -31,7 +31,7 @@
              Text="{Binding Usneseni.Text, UpdateSourceTrigger=PropertyChanged}" />
     <CheckBox Name="CbBereNaVedomi"
               Content="ZO bere na vědomí"
-              IsEnabled="{Binding ProgramEntry.JeEditovatelny}"
+              IsEnabled="{Binding ProgramEntry.MuzeEditovatUsneseni}"
               IsChecked="{Binding Usneseni.ZoBereNaVedomi, UpdateSourceTrigger=PropertyChanged}" />
     <GroupBox Header="Hlasování"
               Visibility="{Binding Usneseni.ZoNebereNaVedomi, Converter={StaticResource BooleanToVisibilityConverter}}">

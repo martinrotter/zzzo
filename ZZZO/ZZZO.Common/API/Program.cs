@@ -31,7 +31,7 @@ namespace ZZZO.Common.API
 
     #region Metody
 
-    public BodProgramu VygenerovatBodProgramu(Zasedani zas, BodProgramu.TypBoduProgramu typProgramu)
+    public BodProgramu VygenerovatBodProgramu(Zasedani zas, BodProgramu.TypBoduProgramu typProgramu, bool bezUsneseni = false)
     {
       BodProgramu bod = new BodProgramu();
 
@@ -59,9 +59,16 @@ namespace ZZZO.Common.API
 
           break;
 
+        case BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu:
+          bod.Nadpis = "Kontrola zápisu a plnění usnesení z minulého zasedání ZO";
+          bod.Text = "Starosta obce zhodnotil program z minulého jednání ZO a " +
+                     "informoval přítomné zastupitele i veřejnost o " +
+                     "projednaných bodech a splněných úkolech.";
+          break;
+
         case BodProgramu.TypBoduProgramu.BodZasedani:
         case BodProgramu.TypBoduProgramu.DoplnenyBodZasedani:
-          bod.Nadpis = "Řádný bod zasedání";
+          bod.Nadpis = "Bod zasedání";
 
           zas.AddUsneseni(bod, new Usneseni
           {
@@ -69,6 +76,11 @@ namespace ZZZO.Common.API
           });
 
           break;
+      }
+
+      if (bezUsneseni)
+      {
+        bod.Usneseni.Clear();
       }
 
       return bod;
