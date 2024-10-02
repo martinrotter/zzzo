@@ -11,7 +11,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <PlatformTarget>x86</PlatformTarget>
     <StartupObject>ZZZO.App</StartupObject>
-    <AssemblyVersion>0.0.3</AssemblyVersion>
+    <AssemblyVersion>0.0.4</AssemblyVersion>
     <ProductVersion>$(AssemblyVersion)</ProductVersion>
     <InformationalVersion>$(AssemblyVersion)$(SourceRevisionId)</InformationalVersion>
     <Copyright>Martin Rotter</Copyright>
