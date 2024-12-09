@@ -54,6 +54,8 @@
                  TargetType="{x:Type TextBox}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+            <Setter Property="SpellCheck.IsEnabled"
+                    Value="True"></Setter>
           </Style>
 
           <Style BasedOn="{StaticResource {x:Type DatePicker}}"
