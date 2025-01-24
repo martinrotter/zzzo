@@ -32,6 +32,10 @@ hr {
 }
 
 ol {
+  padding-left: 1.5em;
+}
+
+.ol-verbatim {
   list-style: none;
   padding-left: 1.5em;
 }
@@ -44,11 +48,6 @@ table {
 td, th {
   padding: 4px;
   border: 1px solid var(--table-border);
-}
-
-.ol-classic {
-  list-style: revert;
-  padding-left: 1.5em;
 }
 
 img {

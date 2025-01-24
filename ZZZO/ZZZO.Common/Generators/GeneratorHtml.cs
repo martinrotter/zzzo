@@ -407,7 +407,7 @@ namespace ZZZO.Common.Generators
     private void GenerateProgramEntries(XmlElement body, IEnumerable<BodProgramu> bodyProgramu)
     {
       XmlElement div = body.AppendElem("div").AppendClass("program");
-      XmlElement mainOl = div.AppendElem("ol");
+      XmlElement mainOl = div.AppendElem("ol").AppendClass("ol-verbatim");
       XmlElement nestedOl = null;
 
       int mainCounter = 1;
@@ -428,7 +428,7 @@ namespace ZZZO.Common.Generators
           if (nestedOl == null)
           {
             nestedCounter = 'a';
-            nestedOl = mainOl.AppendElem("ol");
+            nestedOl = mainOl.AppendElem("ol").AppendClass("ol-verbatim");
           }
 
           thisEntry.NadpisPoradi = $"{mainCounter - 1}{nestedCounter++}. ";
