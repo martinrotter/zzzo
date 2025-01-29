@@ -343,7 +343,7 @@ namespace ZZZO.Common.Generators
         }
       }
 
-      body.AppendElem("h2").InnerText = "Přijatá usnesení";
+      body.AppendElem("h2").AppendClass("break-it").InnerText = "Přijatá usnesení";
 
       foreach (string acceptedResolution in acceptedResolutions)
       {
@@ -510,11 +510,17 @@ namespace ZZZO.Common.Generators
 
       if (accepted)
       {
-        div.AppendElem("p").AppendClass("resolution-success").InnerText = "<span class=\"resolution-success-icon\">\u2713</span> Návrh byl přijat.";
+        div.AppendElem("p")
+          .AppendClass("resolution-decision-box")
+          .AppendClass("resolution-decision-success")
+          .AppendClass("resolution-success").InnerText = "<span class=\"resolution-success-icon\">\u2713</span> Návrh byl přijat.";
       }
       else
       {
-        div.AppendElem("p").AppendClass("resolution-failure").InnerText = "<span class=\"resolution-failure-icon\">\u00D7</span> Návrh nebyl přijat.";
+        div.AppendElem("p")
+          .AppendClass("resolution-decision-box")
+          .AppendClass("resolution-decision-failure")
+          .AppendClass("resolution-failure").InnerText = "<span class=\"resolution-failure-icon\">\u00D7</span> Návrh nebyl přijat.";
       }
 
       return accepted ? generatedResolutionTitle : null;
