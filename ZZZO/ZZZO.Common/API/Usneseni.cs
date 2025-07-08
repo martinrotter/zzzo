@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using System.Linq;
+using System.Collections.Specialized;
 using Newtonsoft.Json;
 
 namespace ZZZO.Common.API;
@@ -21,7 +21,7 @@ public class Usneseni : ObservableObject
   {
     get
     {
-      var pritomni = VolbyZastupitelu.Where(zas => zas.Zastupitel.JePritomen);
+      IEnumerable<HlasovaniZastupitele> pritomni = VolbyZastupitelu.Where(zas => zas.Zastupitel.JePritomen);
 
       return pritomni.Count(zas => zas.Volba == HlasovaniZastupitele.VolbaHlasovani.Pro) >
              pritomni.Count() / 2;
@@ -59,11 +59,6 @@ public class Usneseni : ObservableObject
     }
   }
 
-  public bool ZoNebereNaVedomi
-  {
-    get => !ZoBereNaVedomi;
-  }
-
   public bool ZoBereNaVedomi
   {
     get => _zoBereNaVedomi;
@@ -78,6 +73,31 @@ public class Usneseni : ObservableObject
       OnPropertyChanged();
       OnPropertyChanged(nameof(ZoNebereNaVedomi));
     }
+  }
+
+  public bool ZoNebereNaVedomi
+  {
+    get => !ZoBereNaVedomi;
+  }
+
+  #endregion
+
+  #region Konstruktory
+
+  public Usneseni()
+  {
+    _volbyZastupitelu.CollectionChanged += (sender, args) =>
+    {
+      if (args.Action != NotifyCollectionChangedAction.Add || args.NewItems == null)
+      {
+        return;
+      }
+
+      foreach (HlasovaniZastupitele hlas in args.NewItems)
+      {
+        hlas.PropertyChanged += (o, eventArgs) => { OnPropertyChanged(nameof(JeSchvaleno)); };
+      }
+    };
   }
 
   #endregion

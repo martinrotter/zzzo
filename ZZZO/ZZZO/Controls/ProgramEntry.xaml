@@ -14,6 +14,7 @@
   <UserControl.Resources>
     <converters:NotNullConverter x:Key="NotNullConverter" />
     <converters:EnumConverter x:Key="EnumConverter" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
   </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>

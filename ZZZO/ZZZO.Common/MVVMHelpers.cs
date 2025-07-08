@@ -1,9 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ZZZO.Common;
+
+public class DependentPropertiesAttribute : Attribute
+{
+  #region Proměnné
+
+  #endregion
+
+  #region Vlastnosti
+
+  public string[] Properties
+  {
+    get;
+  }
+
+  #endregion
+
+  #region Konstruktory
+
+  public DependentPropertiesAttribute(params string[] dp)
+  {
+    Properties = dp;
+  }
+
+  #endregion
+}
 
 /// <summary>
 /// Observable object with INotifyPropertyChanged implemented

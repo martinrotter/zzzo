@@ -7,6 +7,7 @@
              xmlns:extensions="clr-namespace:ZZZO.Extensions"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
+             xmlns:api="clr-namespace:ZZZO.Common.API;assembly=ZZZO.Common"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=viewModels:ResolutionViewModel}"
              d:DesignHeight="450"
@@ -15,6 +16,7 @@
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:EnumConverter x:Key="EnumConverter" />
     <converters:CollapseOnTrueConverter x:Key="CollapseOnTrueConverter" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
     <Style x:Key="StyleGridTextCenterVertical" TargetType="{x:Type TextBlock}"
            BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">
@@ -48,17 +50,62 @@
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding Usneseni.VolbyZastupitelu}"
                   extensions:DataGridExtensions.DefaultSorting="A:JmenoPrijmeniZastupitele">
+          <DataGrid.CellStyle>
+            <Style BasedOn="{StaticResource MaterialDesignDataGridCell}"
+                   TargetType="{x:Type DataGridCell}">
+              <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                  <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+
+                <Trigger Property="IsSelected" Value="True">
+                  <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </DataGrid.CellStyle>
           <DataGrid.RowStyle>
             <Style BasedOn="{StaticResource MaterialDesignDataGridRow}"
                    TargetType="{x:Type DataGridRow}">
               <Setter Property="IsEnabled"
                       Value="{Binding Zastupitel.JePritomen}" />
+
               <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                  <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+
+                <Trigger Property="IsSelected" Value="True">
+                  <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+
                 <DataTrigger Binding="{Binding Zastupitel.JePritomen}"
                              Value="False">
                   <Setter Property="Foreground"
                           Value="{DynamicResource SecondaryHueLightBrush}" />
                 </DataTrigger>
+
+                <MultiDataTrigger>
+                  <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Volba}"
+                               Value="{x:Static api:HlasovaniZastupitele+VolbaHlasovani.Pro}"></Condition>
+                    <Condition Binding="{Binding Zastupitel.JePritomen}"
+                               Value="True"></Condition>
+                  </MultiDataTrigger.Conditions>
+                  <Setter Property="Background"
+                          Value="{StaticResource ColorOk}" />
+                </MultiDataTrigger>
+
+                <MultiDataTrigger>
+                  <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Volba}"
+                               Value="{x:Static api:HlasovaniZastupitele+VolbaHlasovani.Proti}"></Condition>
+                    <Condition Binding="{Binding Zastupitel.JePritomen}"
+                               Value="True"></Condition>
+                  </MultiDataTrigger.Conditions>
+                  <Setter Property="Background"
+                          Value="{StaticResource ColorNotOk}" />
+                </MultiDataTrigger>
               </Style.Triggers>
             </Style>
           </DataGrid.RowStyle>
@@ -104,6 +151,16 @@
           <Button Command="{Binding AllDisagreeCmd}"
                   ToolTip="Všichni jsou PROTI">
             <materialDesign:PackIcon Kind="CloseBoxMultiple" />
+          </Button>
+
+          <Button HorizontalAlignment="Stretch"
+                  Style="{DynamicResource MaterialDesignFlatLightButton}"
+                  Visibility="{Binding Usneseni.JeSchvaleno, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  ToolTip="Usnesení je schváleno!">
+            <WrapPanel>
+              <materialDesign:PackIcon Kind="CheckBold" />
+              <TextBlock>Usnesení je schváleno!</TextBlock>
+            </WrapPanel>
           </Button>
         </WrapPanel>
       </WrapPanel>

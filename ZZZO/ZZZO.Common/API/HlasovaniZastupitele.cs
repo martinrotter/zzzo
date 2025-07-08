@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Windows.Markup;
+using System.Windows.Media;
 using Newtonsoft.Json;
 
 namespace ZZZO.Common.API;
 
 public class HlasovaniZastupitele : ObservableObject
 {
-  private VolbaHlasovani _volba = VolbaHlasovani.ZdrzujeSe;
-  private Zastupitel _zastupitel;
-
   #region Enumy
 
   public enum VolbaHlasovani
@@ -22,6 +20,13 @@ public class HlasovaniZastupitele : ObservableObject
     [Description("Zdržuje se")]
     ZdrzujeSe = 2
   }
+
+  #endregion
+
+  #region Proměnné
+
+  private VolbaHlasovani _volba = VolbaHlasovani.ZdrzujeSe;
+  private Zastupitel _zastupitel;
 
   #endregion
 
@@ -47,7 +52,7 @@ public class HlasovaniZastupitele : ObservableObject
       }
     }
   }
-
+  
   public VolbaHlasovani Volba
   {
     get => _volba;
