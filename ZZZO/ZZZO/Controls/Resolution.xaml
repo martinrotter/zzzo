@@ -158,8 +158,8 @@
                   Visibility="{Binding Usneseni.JeSchvaleno, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                   ToolTip="Usnesení je schváleno!">
             <WrapPanel>
-              <materialDesign:PackIcon Kind="CheckBold" />
-              <TextBlock>Usnesení je schváleno!</TextBlock>
+              <materialDesign:PackIcon Kind="CheckBold" Margin="4" />
+              <TextBlock Margin="4">Usnesení je schváleno!</TextBlock>
             </WrapPanel>
           </Button>
         </WrapPanel>
