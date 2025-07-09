@@ -14,6 +14,7 @@
   <UserControl.Resources>
     <converters:NotNullConverter x:Key="NotNullConverter" />
     <converters:EnumConverter x:Key="EnumConverter" />
+    <converters:NotNullToVisibleConverter x:Key="NotNullToVisibleConverter" />
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
   </UserControl.Resources>
   <Grid>
@@ -80,7 +81,7 @@
         </ComboBox>
 
         <local:Resolution DataContext="{Binding ResolutionViewModel}"
-                          IsEnabled="{Binding ElementName=CmbUsneseni, Path=SelectedValue, Converter={StaticResource NotNullConverter}}" />
+                          Visibility="{Binding ElementName=CmbUsneseni, Path=SelectedValue, Converter={StaticResource NotNullToVisibleConverter}}" />
       </StackPanel>
     </GroupBox>
   </Grid>
