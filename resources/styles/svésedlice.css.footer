@@ -1,10 +1,24 @@
 <style>
-  div {
+  .ftr {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    padding: 0px;
+
+    print-color-adjust: exact;
+    background-color: rgb(230, 244, 230);
     font-family: "Times New Roman";
   }
+
+  .ftr-text {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0px;
+    margin-top: 10px;
+  }
 </style>
-<div class='text center'> 
-  <span class='pageNumber'></span>
-  -
-  <span class='totalPages'></span>
+<div class='ftr text center'>
+  <div class='ftr-text'><span class='pageNumber'></span>&nbsp;-&nbsp;<span class='totalPages'></span></div>
 </div>

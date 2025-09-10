@@ -6,8 +6,11 @@ Svésedlice, Czechia - style for generating municipality meeting reports.
 
 :root {
   --success-color: rgb(50, 205, 50);
+  --success-color-bright: rgb(230, 244, 230);
+  --whiteish-color: rgb(247, 247, 247);
   --success-color-back: rgba(50, 205, 50, 0.1);
   --failure-color: rgb(255, 0, 0);
+  --failure-color-bright: rgb(244, 230, 230);
   --failure-color-back: rgba(255, 0, 0, 0.1);
   --warning-color: orange;
   --signature-color: gray;
@@ -112,20 +115,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .resolution-decision-box {
-	border: 2px solid;
-	display: table;
-	padding: 5px;
-	border-radius: 3px;
+  border: 2px solid;
+  display: table;
+  padding: 5px;
+  border-radius: 3px;
 }
 
 .resolution-decision-success {
   border-color: var(--success-color);
-  background-color: var(--success-color-back);
+  background: repeating-linear-gradient(45deg,
+      var(--success-color-bright),
+      var(--success-color-bright) 10px,
+      var(--whiteish-color) 10px,
+      var(--whiteish-color) 20px);
 }
 
 .resolution-decision-failure {
   border-color: var(--failure-color);
-  background-color: var(--failure-color-back);
+  background: repeating-linear-gradient(45deg,
+      var(--failure-color-bright),
+      var(--failure-color-bright) 10px,
+      var(--whiteish-color) 10px,
+      var(--whiteish-color) 20px);
 }
 
 .resolution-vote-box {
