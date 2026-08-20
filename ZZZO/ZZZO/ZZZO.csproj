@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -10,8 +10,12 @@
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <PlatformTarget>x86</PlatformTarget>
-    <StartupObject>ZZZO.App</StartupObject>
-    <AssemblyVersion>0.0.5</AssemblyVersion>
+    <StartupObject>ZZZO.Program</StartupObject>
+    <CefSharpExcludeSubProcessExe>true</CefSharpExcludeSubProcessExe>
+    <LargeAddressAware>true</LargeAddressAware>
+    <LargeAddressAwareAfterTargets>AfterBuild</LargeAddressAwareAfterTargets>
+    <LargeAddressAwareTargetAssembly>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\$(AssemblyName).exe</LargeAddressAwareTargetAssembly>
+    <AssemblyVersion>0.0.6</AssemblyVersion>
     <ProductVersion>$(AssemblyVersion)</ProductVersion>
     <InformationalVersion>$(AssemblyVersion)$(SourceRevisionId)</InformationalVersion>
     <Copyright>Martin Rotter</Copyright>
@@ -24,10 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.Wpf.NETCore" Version="139.0.280" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.12.2" />
-    <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
-    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
+    <PackageReference Include="CefSharp.Wpf.NETCore" Version="151.3.170" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="LargeAddressAware" Version="1.0.6" PrivateAssets="all" />
+    <PackageReference Include="MaterialDesignColors" Version="5.3.2" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,15 +79,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="139.0.28" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="151.3.17" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="139.0.28" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="151.3.17" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="139.0.28" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="151.3.17" />
   </ItemGroup>
+
+  <Target Name="SetPublishedAppHostLargeAddressAware" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' == 'win-x86' And Exists('$(PublishDir)$(AssemblyName).exe')">
+    <SetLargeAddressAware FilePath="$(PublishDir)$(AssemblyName).exe" />
+  </Target>
 
 </Project>

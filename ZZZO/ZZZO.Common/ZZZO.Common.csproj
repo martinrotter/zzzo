@@ -1,40 +1,64 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <UseWPF>true</UseWPF>
-    <LangVersion>11.0</LangVersion>
-    <PlatformTarget>x86</PlatformTarget>
-    <AssemblyVersion>0.0.5</AssemblyVersion>
-    <ProductVersion>$(AssemblyVersion)</ProductVersion>
-    <InformationalVersion>$(AssemblyVersion)$(SourceRevisionId)</InformationalVersion>
-    <Copyright>Martin Rotter</Copyright>
-    <Company>Martin Rotter</Company>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<UseWPF>true</UseWPF>
+		<LangVersion>11.0</LangVersion>
+		<PlatformTarget>x86</PlatformTarget>
+		<AssemblyVersion>0.0.6</AssemblyVersion>
+		<ProductVersion>$(AssemblyVersion)</ProductVersion>
+		<InformationalVersion>$(AssemblyVersion)$(SourceRevisionId)</InformationalVersion>
+		<Copyright>Martin Rotter</Copyright>
+		<Company>Martin Rotter</Company>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="powershell -Comman &quot;Get-Date -Format &quot;o&quot;&quot; &gt; &quot;$(ProjectDir)\Resources\build-date.txt&quot;&#xD;&#xA;git rev-parse HEAD  &gt; &quot;$(ProjectDir)\Resources\build-commit.txt&quot;" />
-  </Target>
+	<UsingTask TaskName="WriteTextWithoutNewline" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+			<FilePath ParameterType="System.String" Required="true" />
+			<Text ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System.IO" />
+			<Using Namespace="System.Text" />
+			<Code Type="Fragment" Language="cs"><![CDATA[
+				File.WriteAllText(FilePath, Text, Encoding.ASCII);
+			]]></Code>
+		</Task>
+	</UsingTask>
+
+	<Target Name="GenerateBuildMetadata" BeforeTargets="CoreResGen" DependsOnTargets="InitializeSourceControlInformation">
+
+		<PropertyGroup>
+			<_BuildDate>$([System.DateTimeOffset]::Now.ToString('o'))</_BuildDate>
+
+			<_BuildCommit Condition="'$(SourceRevisionId)' != ''">$(SourceRevisionId)</_BuildCommit>
+			<_BuildCommit Condition="'$(_BuildCommit)' == ''">unknown</_BuildCommit>
+		</PropertyGroup>
+
+		<WriteLinesToFile File="$(ProjectDir)Resources\build-date.txt" Lines="$(_BuildDate)" Overwrite="true" Encoding="ASCII" />
+		<WriteTextWithoutNewline FilePath="$(ProjectDir)Resources\build-commit.txt" Text="$(_BuildCommit)" />
+
+	</Target>
 
 </Project>

@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -68,10 +70,18 @@ namespace ZZZO
       base.OnStartup(e);
 
       // CefSharp.
-      Cef.Initialize(new CefSettings
-      {
-        Locale = CultureInfo.CurrentCulture.IetfLanguageTag
-      });
+      Cef.Initialize(
+        new CefSettings
+        {
+          BrowserSubprocessPath = Process.GetCurrentProcess().MainModule.FileName,
+          Locale = CultureInfo.CurrentCulture.IetfLanguageTag,
+          RootCachePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "ZZZO",
+            "Cef")
+        },
+        performDependencyCheck: false,
+        browserProcessHandler: null);
 
       Core.PropertyChanged += (sender, args) =>
       {

@@ -6,35 +6,33 @@ on:
     branches: ["*"]
     tags: ["*"]
 
+permissions:
+  contents: read
+
 jobs:
   build-zzzo:
     name: "zzzo: build"
-    runs-on: "${{ matrix.os }}"
-    strategy:
-      matrix:
-        os: [windows-2022]
-        include:
-          - os: windows-2022
-            script_name: .\resources\scripts\build-windows.ps1
+    runs-on: windows-2022
 
-    steps:         
+    steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          submodules: true
+          persist-credentials: false
+          submodules: recursive
 
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-      - name: Setup Nuget
-        uses: Nuget/setup-nuget@v1
-             
       - name: Build application
-        run: ${{ matrix.script_name }} "${{ matrix.os }}"
+        shell: pwsh
+        run: .\resources\scripts\build-windows.ps1
 
       - name: Upload binaries
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           if-no-files-found: error
           name: zzzo.zip
@@ -44,13 +42,13 @@ jobs:
     name: "zzzo: distribute"
     needs:
       - build-zzzo
-    runs-on: "windows-2022"
+    runs-on: windows-2022
     permissions:
       contents: write
 
     steps:
       - name: Download binaries from previous jobs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 
