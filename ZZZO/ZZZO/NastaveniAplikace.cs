@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ZZZO;
 
@@ -19,7 +20,7 @@ internal sealed class NastaveniAplikace
     try
     {
       if (!File.Exists(soubor)) return new NastaveniAplikace();
-      return JsonSerializer.Deserialize<NastaveniAplikace>(File.ReadAllText(soubor), MoznostiJson)
+      return JsonSerializer.Deserialize(File.ReadAllText(soubor), NastaveniJsonKontext.Default.NastaveniAplikace)
         ?? new NastaveniAplikace();
     }
     catch
@@ -36,7 +37,7 @@ internal sealed class NastaveniAplikace
       string adresar = Path.GetDirectoryName(soubor)!;
       Directory.CreateDirectory(adresar);
       string docasnySoubor = soubor + ".tmp";
-      File.WriteAllText(docasnySoubor, JsonSerializer.Serialize(nastaveni, MoznostiJson));
+      File.WriteAllText(docasnySoubor, JsonSerializer.Serialize(nastaveni, NastaveniJsonKontext.Default.NastaveniAplikace));
       File.Move(docasnySoubor, soubor, true);
     }
     catch
@@ -45,9 +46,10 @@ internal sealed class NastaveniAplikace
     }
   }
 
-  private static readonly JsonSerializerOptions MoznostiJson = new()
-  {
-    WriteIndented = true,
-    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-  };
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSerializable(typeof(NastaveniAplikace))]
+internal partial class NastaveniJsonKontext : JsonSerializerContext
+{
 }
