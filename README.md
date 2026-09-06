@@ -48,6 +48,7 @@ Samozřejmě, program umožňuje ukládat rozpracovaná zasedání do datových 
 - Společný stavový řádek kontroly je dole a zůstává vidět na všech záložkách. Výstražná ikona při najetí zobrazí úplný seznam chyb; kliknutím otevřete interaktivní seznam. Kliknutím na problém přejdete k příslušnému bodu, usnesení nebo zastupiteli. Nepřítomný nesmí být řídícím, zapisovatelem ani ověřovatelem; tlačítko „Zrušit role“ jeho přiřazení odstraní. Starosta může být nepřítomen.
 - Rozpracovaná data lze uložit i s obsahovými chybami. Neplatně napsané číselné hodnoty je však nutné opravit. Pozvánku neblokují nedokončená hlasování ani chybějící procedurální body.
 - Náhled zachovává scroll zvlášť pro pozvánku a zápis. Po změně dat, typu dokumentu nebo stylu je nutné náhled přegenerovat před exportem či tiskem. Původní výstupní CSS a PDF patička zůstaly zachovány.
+- Aplikace si mezi spuštěními pamatuje velikost, pozici a maximalizaci hlavního okna i oba splittery v sekci usnesení. Nastavení je čitelný JSON v `%LocalAppData%\ZZZO\nastaveni.json`; poškozené nastavení se bezpečně ignoruje.
 
 ### Datový formát
 

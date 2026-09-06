@@ -24,15 +24,13 @@
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top">
         <ComboBox IsEnabled="{Binding Pracuje, Converter={StaticResource InverseBooleanConverter}}" materialDesign:TextFieldAssist.PrefixText="Styl → "
-                  Style="{StaticResource MaterialDesignComboBox}"
+                  Style="{StaticResource KompaktniComboBox}"
                   ItemsSource="{Binding GeneratorHtml.Styles}"
-                  Margin="{StaticResource FormMargin}"
                   SelectedValue="{Binding SelectedHtmlStyle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <ComboBox IsEnabled="{Binding Pracuje, Converter={StaticResource InverseBooleanConverter}}" materialDesign:TextFieldAssist.PrefixText="Dokument → "
-                  Style="{StaticResource MaterialDesignComboBox}"
+                  Style="{StaticResource KompaktniComboBox}"
                   ItemsSource="{Binding GeneratorHtml.KindsOfDocuments}"
-                  Margin="{StaticResource FormMargin}"
                   SelectedValue="{Binding SelectedKindOfDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
           <ComboBox.ItemTemplate>
             <DataTemplate>
@@ -59,13 +57,13 @@
                 CommandParameter="{Binding ElementName=WebBrowser}" />
         <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                      Name="PbGenerator"
-                     Width="40"
-                     Height="40"
+                     Width="34"
+                     Height="34"
                      Minimum="0"
                      Maximum="100"
                      IsIndeterminate="{Binding Pracuje}" />
       </WrapPanel>
-      <TextBlock DockPanel.Dock="Top" Text="{Binding Stav}" TextWrapping="Wrap" Margin="8"/>
+      <TextBlock DockPanel.Dock="Top" Text="{Binding Stav}" TextWrapping="Wrap" Margin="5"/>
       <wpf:ChromiumWebBrowser
         Name="WebBrowser" />
     </DockPanel>

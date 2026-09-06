@@ -82,7 +82,7 @@
                  Height="64"
                  ToolTip="Logo obce"
                  Source="{Binding Core.Zasedani.LogoObce, UpdateSourceTrigger=PropertyChanged}" />
-          <Border x:Name="PlaceholderBezZnaku" Width="64" Height="64" Margin="9"
+          <Border x:Name="PlaceholderBezZnaku" Width="64" Height="64" Margin="5"
                   Background="#F4F6F7" BorderBrush="#D5DBDF" BorderThickness="1"
                   IsHitTestVisible="False" ToolTip="Znak obce není vybrán">
             <Border.Style>
@@ -193,9 +193,9 @@
 
       <GroupBox Header="Zastupitelé">
         <StackPanel Orientation="Vertical">
-          <DataGrid materialDesign:DataGridAssist.CellPadding="6,3"
-                    materialDesign:DataGridAssist.ColumnHeaderPadding="8,8"
-                    RowHeight="40" HeadersVisibility="Column"
+          <DataGrid materialDesign:DataGridAssist.CellPadding="5,2"
+                    materialDesign:DataGridAssist.ColumnHeaderPadding="6,5"
+                    RowHeight="34" HeadersVisibility="Column"
                     GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E6EBE9"
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CefSharp;
@@ -35,6 +36,7 @@ namespace ZZZO
     #region Konstruktory
 
     internal string AdresarMezipametiProhlizece { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZZZO", "Cef");
+    internal string SouborNastaveni { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZZZO", "nastaveni.json");
 
     public App()
     {
@@ -45,8 +47,11 @@ namespace ZZZO
       CultureInfo.CurrentCulture = ci;
       CultureInfo.CurrentUICulture = ci;
       CultureInfo.DefaultThreadCurrentCulture = ci;
+      CultureInfo.DefaultThreadCurrentUICulture = ci;
       Thread.CurrentThread.CurrentCulture = ci;
       Thread.CurrentThread.CurrentUICulture = ci;
+      FrameworkElement.LanguageProperty.OverrideMetadata(
+        typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(ci.IetfLanguageTag)));
     }
 
     #endregion

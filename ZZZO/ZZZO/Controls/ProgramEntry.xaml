@@ -12,12 +12,15 @@
    <TextBlock Text="Název bodu" Margin="8,5,8,0"/>
    <TextBox Name="NazevBodu" Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}"/>
   </StackPanel>
-  <TabControl Grid.Row="1" Margin="0,9,0,0" SelectedIndex="{Binding VybranaZalozka}">
+  <TabControl x:Name="ZalozkyBodu" Grid.Row="1" Margin="0,5,0,0"
+              Style="{StaticResource MaterialDesignFilledTabControl}"
+              ItemContainerStyle="{StaticResource KompaktniVnitrniTabItem}"
+              SelectedIndex="{Binding VybranaZalozka}">
    <TabItem Header="Průběh projednání"><local:TinyMceEditor x:Name="EditorBodu" Polozka="{Binding ProgramEntry}"/></TabItem>
    <TabItem Header="{Binding NadpisUsneseni}" IsEnabled="{Binding MaUsneseni}">
-    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="80" MinHeight="55"/><RowDefinition Height="5"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-     <WrapPanel x:Name="PanelAkciUsneseni"><Button Content="+ Usnesení" Command="{Binding AddUsneseniCmd}"/><Button Content="Odstranit" Command="{Binding RemoveUsneseniCmd}"/><Button Content="↑" Command="{Binding UsneseniNahoruCmd}"/><Button Content="↓" Command="{Binding UsneseniDoluCmd}"/></WrapPanel>
-     <ListBox Grid.Row="1" Name="SeznamUsneseni" Margin="0,8,0,0" ItemsSource="{Binding ProgramEntry.Usneseni}" SelectedItem="{Binding ChosenUsneseni}">
+    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition x:Name="RadekSeznamuUsneseni" Height="74" MinHeight="52"/><RowDefinition Height="4"/><RowDefinition Height="*" MinHeight="120"/></Grid.RowDefinitions>
+     <WrapPanel x:Name="PanelAkciUsneseni" Margin="0,4,0,0"><Button Content="+ Usnesení" Command="{Binding AddUsneseniCmd}"/><Button Content="Odstranit" Command="{Binding RemoveUsneseniCmd}"/><Button Content="↑" Command="{Binding UsneseniNahoruCmd}"/><Button Content="↓" Command="{Binding UsneseniDoluCmd}"/></WrapPanel>
+     <ListBox Grid.Row="1" Name="SeznamUsneseni" Margin="0,5,0,0" ItemsSource="{Binding ProgramEntry.Usneseni}" SelectedItem="{Binding ChosenUsneseni}">
       <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
        <Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Background" Value="Transparent"/>
        <Setter Property="BorderBrush" Value="Transparent"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -32,8 +35,8 @@
        <TextBlock Text="{Binding Vytah}" TextTrimming="CharacterEllipsis" MinHeight="20"/>
       </DockPanel></DataTemplate></ListBox.ItemTemplate>
      </ListBox>
-     <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch"/>
-     <local:Resolution Grid.Row="3" DataContext="{Binding ResolutionViewModel}"/>
+     <GridSplitter Grid.Row="2" Height="4" HorizontalAlignment="Stretch"/>
+     <local:Resolution x:Name="DetailUsneseni" Grid.Row="3" DataContext="{Binding ResolutionViewModel}"/>
     </Grid>
    </TabItem>
   </TabControl>

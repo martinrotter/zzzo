@@ -11,7 +11,7 @@
    <Grid.ColumnDefinitions><ColumnDefinition Width="320" MinWidth="230"/><ColumnDefinition Width="5"/><ColumnDefinition Width="*" MinWidth="460"/></Grid.ColumnDefinitions>
    <GroupBox Header="Body programu">
     <DockPanel>
-     <Grid x:Name="PanelAkci" DockPanel.Dock="Bottom" Margin="0,6,0,0">
+     <Grid x:Name="PanelAkci" DockPanel.Dock="Bottom" Margin="0,4,0,0">
       <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
       <Button x:Name="PridatBod" Grid.Column="0" Click="OtevritNabidku" ToolTip="Přidat bod nebo podbod">
        <StackPanel Orientation="Horizontal"><md:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/><TextBlock Text="Přidat"/><md:PackIcon Kind="ChevronDown" VerticalAlignment="Center" Margin="4,0,0,0"/></StackPanel>
@@ -52,13 +52,13 @@
        </Style.Triggers>
       </Style></ListView.ItemContainerStyle>
       <ListView.ItemTemplate><DataTemplate>
-       <Border BorderThickness="4,0,0,0" BorderBrush="{Binding Barva}" Margin="{Binding Odsazeni}" Padding="8,6" ToolTip="{Binding PopisTypu}">
+       <Border BorderThickness="4,0,0,0" BorderBrush="{Binding Barva}" Margin="{Binding Odsazeni}" Padding="6,4" ToolTip="{Binding PopisTypu}">
         <DockPanel>
          <TextBlock DockPanel.Dock="Right" Foreground="#AA5B00" VerticalAlignment="Center" Margin="4,0">
           <TextBlock.Text><MultiBinding Converter="{StaticResource Validace}" ConverterParameter="Ikona"><Binding Path="Bod"/><Binding Path="DataContext.Core.Chyby" RelativeSource="{RelativeSource AncestorType=Window}"/></MultiBinding></TextBlock.Text>
           <TextBlock.ToolTip><MultiBinding Converter="{StaticResource Validace}"><Binding Path="Bod"/><Binding Path="DataContext.Core.Chyby" RelativeSource="{RelativeSource AncestorType=Window}"/></MultiBinding></TextBlock.ToolTip>
          </TextBlock>
-         <Border DockPanel.Dock="Right" Background="#E6EBEF" CornerRadius="12" MinWidth="24" Height="24" Margin="6,0,0,0" ToolTip="Počet usnesení tohoto bodu"><TextBlock Text="{Binding Bod.Usneseni.Count}" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+         <Border DockPanel.Dock="Right" Background="#E6EBEF" CornerRadius="11" MinWidth="22" Height="22" Margin="5,0,0,0" ToolTip="Počet usnesení tohoto bodu"><TextBlock Text="{Binding Bod.Usneseni.Count}" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
          <TextBlock Text="{Binding Cislo}" VerticalAlignment="Center"/>
          <TextBlock Text="{Binding Bod.Nadpis}" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
         </DockPanel>
@@ -68,7 +68,7 @@
     </DockPanel>
    </GroupBox>
    <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
-   <local:ProgramEntry Grid.Column="2" x:Name="UcProgramEntry" DataContext="{Binding EntryViewModel}" Margin="8,0,0,0"/>
+   <local:ProgramEntry Grid.Column="2" x:Name="UcProgramEntry" DataContext="{Binding EntryViewModel}" Margin="5,0,0,0"/>
   </Grid>
  </DockPanel>
 </UserControl>

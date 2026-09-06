@@ -19,7 +19,7 @@
           Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
 
         <ResourceDictionary>
-          <Thickness x:Key="FormMargin">9,9,9,9</Thickness>
+          <Thickness x:Key="FormMargin">5,5,5,5</Thickness>
 
           <Color x:Key="ThemeColorMain">#59C9A5</Color>
           <Color x:Key="ThemeColorAccent">#D81E5B</Color>
@@ -31,6 +31,8 @@
                  TargetType="{x:Type Button}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="MinHeight" Value="32" />
           </Style>
 
           <Style BasedOn="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
@@ -59,20 +61,29 @@
                  TargetType="{x:Type TextBox}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+            <!-- WPF na počítači bez českého slovníku vyhodnocuje česká slova jako chyby
+                 i při správně nastavené kultuře cs-CZ. Kontrolu proto v nativních polích
+                 vypínáme; kultura aplikace zůstává česká. -->
             <Setter Property="SpellCheck.IsEnabled"
-                    Value="True"></Setter>
+                    Value="False"></Setter>
           </Style>
 
           <Style BasedOn="{StaticResource {x:Type DatePicker}}"
                  TargetType="{x:Type DatePicker}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
           </Style>
 
           <Style BasedOn="{StaticResource {x:Type materialDesign:TimePicker}}"
                  TargetType="{x:Type materialDesign:TimePicker}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
           </Style>
 
           <Style TargetType="{x:Type controls:TinyMceEditor}">
@@ -85,10 +96,25 @@
                     Value="{StaticResource FormMargin}" />
           </Style>
 
-          <Style BasedOn="{StaticResource MaterialDesignOutlinedComboBox}"
+          <Style x:Key="KompaktniComboBox" BasedOn="{StaticResource MaterialDesignOutlinedComboBox}"
                  TargetType="{x:Type ComboBox}">
             <Setter Property="Margin"
                     Value="{StaticResource FormMargin}" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="10,2" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+          </Style>
+
+          <Style BasedOn="{StaticResource KompaktniComboBox}" TargetType="{x:Type ComboBox}" />
+
+          <Style x:Key="KompaktniHlavniTabItem" TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
+            <Setter Property="Padding" Value="16,5" />
+            <Setter Property="Height" Value="40" />
+          </Style>
+
+          <Style x:Key="KompaktniVnitrniTabItem" TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
+            <Setter Property="Padding" Value="14,4" />
+            <Setter Property="Height" Value="36" />
           </Style>
 
           <Style BasedOn="{StaticResource {x:Type CheckBox}}"

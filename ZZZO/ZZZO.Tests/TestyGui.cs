@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Data;
@@ -18,7 +19,26 @@ internal static class TestyGui
   {
     int kod = 1;
     Console.WriteLine("GUI: vytvářím aplikaci");
-    var app = new App { AdresarMezipametiProhlizece = Path.Combine(Program.Vystupy, "cef-" + Guid.NewGuid().ToString("N")) };
+    string souborNastaveni = Path.Combine(Program.Vystupy, "nastaveni", "nastaveni.json");
+    var ocekavaneNastaveni = new NastaveniAplikace
+    {
+      OknoVlevo = SystemParameters.WorkArea.Left + 30,
+      OknoNahore = SystemParameters.WorkArea.Top + 30,
+      SirkaOkna = 1180,
+      VyskaOkna = 780,
+      VyskaSeznamuUsneseni = 86,
+      SirkaPaneluHlasovani = 380
+    };
+    NastaveniAplikace.Ulozit(souborNastaveni, ocekavaneNastaveni);
+    var kontrolaJson = NastaveniAplikace.Nacist(souborNastaveni);
+    Program.Overit(kontrolaJson.SirkaOkna == 1180 && kontrolaJson.VyskaSeznamuUsneseni == 86 &&
+      File.ReadAllText(souborNastaveni).Contains("\"sirkaPaneluHlasovani\""),
+      "GUI nastavení má čitelný JSON roundtrip");
+    var app = new App
+    {
+      AdresarMezipametiProhlizece = Path.Combine(Program.Vystupy, "cef-" + Guid.NewGuid().ToString("N")),
+      SouborNastaveni = souborNastaveni
+    };
     app.DispatcherUnhandledException += (_, e) => { Console.Error.WriteLine(e.Exception); File.WriteAllText(Path.Combine(Program.Vystupy, "startup-error.txt"), e.Exception.ToString()); e.Handled = true; app.Shutdown(1); };
     app.InitializeComponent();
     var vazby = new ZachytitVazby();
@@ -30,6 +50,19 @@ internal static class TestyGui
         Console.WriteLine("GUI: čekám na okno");
         await PockatAsync(() => Task.FromResult(app.MainWindow is MainWindow));
         var okno = (MainWindow)app.MainWindow;
+        Program.Overit(Math.Abs(okno.Width - 1180) < 1 && Math.Abs(okno.Height - 780) < 1 &&
+          Math.Abs(okno.Left - ocekavaneNastaveni.OknoVlevo.Value) < 1 && Math.Abs(okno.Top - ocekavaneNastaveni.OknoNahore.Value) < 1,
+          "GUI obnoví velikost a pozici hlavního okna");
+        Program.Overit(okno.UcProgram.UcProgramEntry.RadekSeznamuUsneseni.Height.Value == 86 &&
+          okno.UcProgram.UcProgramEntry.DetailUsneseni.SloupecHlasovani.Width.Value == 380,
+          "GUI obnoví oba splittery v sekci usnesení");
+        Program.Overit(CultureInfo.CurrentCulture.Name == "cs-CZ" && CultureInfo.CurrentUICulture.Name == "cs-CZ" &&
+          CultureInfo.DefaultThreadCurrentCulture?.Name == "cs-CZ" && CultureInfo.DefaultThreadCurrentUICulture?.Name == "cs-CZ" &&
+          string.Equals(okno.Language.IetfLanguageTag, "cs-CZ", StringComparison.OrdinalIgnoreCase), $"GUI i výchozí vlákna používají kulturu a jazyk cs-CZ " +
+          $"(aktuální={CultureInfo.CurrentCulture.Name}, UI={CultureInfo.CurrentUICulture.Name}, výchozí={CultureInfo.DefaultThreadCurrentCulture?.Name}, " +
+          $"výchozí UI={CultureInfo.DefaultThreadCurrentUICulture?.Name}, WPF={okno.Language.IetfLanguageTag})");
+        Program.Overit(((Thickness)app.FindResource("FormMargin")).Left == 5 && okno.TcZasedani.Padding.Left == 5,
+          "GUI používá kompaktní sdílené mezery");
         okno.ShowInTaskbar = false; okno.Left = -20000; okno.Top = 0;
         var zas = Program.Ukazka();
         var bod = Program.PridatBod(zas, "Test editoru", RezimBodu.SUsnesenimi);
@@ -39,6 +72,8 @@ internal static class TestyGui
         app.Core.Zasedani = zas;
         okno.Show();
         okno.TcZasedani.SelectedIndex = 1;
+        Program.Overit(Najit<System.Windows.Controls.TextBox>(okno).All(t => !System.Windows.Controls.SpellCheck.GetIsEnabled(t)),
+          "GUI nativní textová pole nepodtrhávají češtinu bez nainstalovaného slovníku");
         var program = (ProgramViewModel)okno.UcProgram.DataContext;
         program.ChosenProgramEntry = bod;
         var editor = okno.UcProgram.UcProgramEntry.EditorBodu;
@@ -71,6 +106,9 @@ internal static class TestyGui
         okno.TcZasedani.SelectedIndex = 0;
         await Task.Delay(100);
         await OveritSeznamZastupiteluAsync(okno);
+        Program.Overit(okno.UcBasicInfo.DpDenKonani.ActualHeight <= 40 && okno.UcBasicInfo.DpCasKonani.ActualHeight <= 40 &&
+          okno.UcBasicInfo.DpDenKonani.Padding == new Thickness(0) && okno.UcBasicInfo.DpCasKonani.Padding == new Thickness(0),
+          "GUI datum a čas jsou kompaktní a jejich obsah je vertikálně vyrovnaný");
         UlozitSnimek(okno, "zakladni-udaje.png");
         okno.TcZasedani.SelectedIndex = 2;
         var generator = (GeneratorViewModel)okno.UcGenerator.DataContext;
@@ -78,6 +116,7 @@ internal static class TestyGui
         await PockatAsync(() => Task.FromResult(prohlizec.IsBrowserInitialized));
         bod.PrubehHtml = string.Concat(Enumerable.Repeat("<p>Dlouhý průběh pro kontrolu pozice náhledu.</p>", 70));
         await generator.VygenerovatAsync();
+        UlozitSnimek(okno, "generator.png");
         Program.Overit(generator.CanGenerateOutputs, "GUI aktuální náhled lze exportovat: " + generator.Stav);
         await prohlizec.EvaluateScriptAsync("scrollTo(0, 1400);");
         double pred = Convert.ToDouble((await prohlizec.EvaluateScriptAsync("scrollY")).Result);
@@ -184,6 +223,7 @@ internal static class TestyGui
 
   private static async Task OveritAkceProgramuAsync(MainWindow okno)
   {
+    var aplikace = (App)Application.Current;
     var usneseni = Najit<Resolution>(okno.UcProgram).Single();
     usneseni.TabulkaHlasovani.UpdateLayout();
     var obsahyHlasovani = usneseni.TabulkaHlasovani.Items.Cast<object>()
@@ -202,8 +242,26 @@ internal static class TestyGui
     double spodekTlacitek = editorBodu.PanelAkciUsneseni.TranslatePoint(
       new Point(0, editorBodu.PanelAkciUsneseni.ActualHeight), editorBodu).Y;
     double vrsekSeznamu = editorBodu.SeznamUsneseni.TranslatePoint(new Point(0, 0), editorBodu).Y;
-    Program.Overit(vrsekSeznamu - spodekTlacitek >= 7, "GUI seznam usnesení má mezeru pod tlačítky");
-    var aplikace = (App)Application.Current;
+    Program.Overit(vrsekSeznamu - spodekTlacitek >= 4, "GUI seznam usnesení má kompaktní mezeru pod tlačítky");
+    var hlavniZalozky = okno.TcZasedani.Items.OfType<System.Windows.Controls.TabItem>().ToList();
+    var vnitrniZalozky = editorBodu.ZalozkyBodu.Items.OfType<System.Windows.Controls.TabItem>().ToList();
+    Program.Overit(ReferenceEquals(editorBodu.ZalozkyBodu.Style, aplikace.FindResource("MaterialDesignFilledTabControl")),
+      "GUI vnitřní záložky používají stejný barevný pás jako hlavní navigace");
+    Program.Overit(editorBodu.PanelAkciUsneseni.Margin.Top == 4,
+      "GUI panel akcí usnesení má odstup od barevného pásu záložek");
+    var volbyBodu = Najit<System.Windows.Controls.ComboBox>(editorBodu).Take(2).ToList();
+    Program.Overit(hlavniZalozky.Count == 3 && hlavniZalozky.All(z => z.ActualHeight <= 42) &&
+      vnitrniZalozky.Count == 2 && vnitrniZalozky.All(z => z.ActualHeight <= 38) &&
+      volbyBodu.Count == 2 && volbyBodu.All(v => v.ActualHeight <= 40 && v.Padding.Top <= 3),
+      $"GUI hlavní i vnitřní záložky a volby bodu jsou kompaktní (hlavní: {string.Join(",", hlavniZalozky.Select(z => z.ActualHeight))}; " +
+      $"vnitřní: {string.Join(",", vnitrniZalozky.Select(z => z.ActualHeight))}; volby: {string.Join(",", volbyBodu.Select(v => v.ActualHeight))})");
+    Program.Overit(!aplikace.Core.Chyby.Any(), "GUI vzor je před testem validačního popupu bez chyb");
+    okno.StavovyRadekValidace.TlacitkoValidace.IsChecked = true;
+    await Task.Delay(150);
+    ((FrameworkElement)okno.StavovyRadekValidace.SeznamChyb.Child).UpdateLayout();
+    Program.Overit(((FrameworkElement)okno.StavovyRadekValidace.SeznamChyb.Child).ActualWidth <= 300,
+      "GUI validační popup bez chyb se přizpůsobí krátkému obsahu");
+    okno.StavovyRadekValidace.TlacitkoValidace.IsChecked = false;
     var zkusebniPrimarni = Color.FromRgb(36, 112, 168);
     aplikace.AdjustThemeContrastAndColors(zkusebniPrimarni, Color.FromRgb(170, 90, 40));
     await Task.Delay(100);

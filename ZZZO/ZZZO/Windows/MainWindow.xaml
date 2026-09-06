@@ -65,7 +65,8 @@
       <zzzoCcontrols:SouhrnValidace x:Name="StavovyRadekValidace" DockPanel.Dock="Bottom" DataContext="{Binding Core}"/>
       <TabControl Name="TcZasedani"
                   IsEnabled="{Binding Core.ZasedaniLoaded}"
-                  Padding="10"
+                  Padding="5"
+                  ItemContainerStyle="{StaticResource KompaktniHlavniTabItem}"
                   HorizontalContentAlignment="Stretch"
                   Style="{StaticResource MaterialDesignFilledTabControl}">
         <TabItem Header="Základní informace">

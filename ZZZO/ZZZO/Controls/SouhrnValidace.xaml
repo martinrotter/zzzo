@@ -39,7 +39,7 @@
    <Popup x:Name="SeznamChyb" PlacementTarget="{Binding ElementName=TlacitkoValidace}" Placement="Top" StaysOpen="False"
     IsOpen="{Binding IsChecked, ElementName=TlacitkoValidace, Mode=TwoWay}" AllowsTransparency="True"
     DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-    <Border Background="White" BorderBrush="#D0D5DA" BorderThickness="1" CornerRadius="5" Padding="12" Width="650" MaxHeight="420">
+    <Border Background="White" BorderBrush="#D0D5DA" BorderThickness="1" CornerRadius="5" Padding="10" MinWidth="240" MaxWidth="650" MaxHeight="420">
      <DockPanel>
       <TextBlock DockPanel.Dock="Top" Text="{Binding StavKontroly}" FontWeight="SemiBold" Margin="4,0,4,8"/>
       <ScrollViewer VerticalScrollBarVisibility="Auto">

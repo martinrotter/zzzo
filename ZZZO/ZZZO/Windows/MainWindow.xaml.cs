@@ -9,12 +9,17 @@ namespace ZZZO.Windows
 {
   public partial class MainWindow : Window
   {
+    private readonly NastaveniAplikace _nastaveni;
+
     #region Konstruktory
 
     public MainWindow()
     {
       InitializeComponent();
+      _nastaveni = NastaveniAplikace.Nacist(App.Current.SouborNastaveni);
       App.Current.SetDataContexts(this);
+      Loaded += (_, _) => ObnovitRozlozeni();
+      Closed += (_, _) => UlozitRozlozeni();
       App.Current.Core.PrejitNaChybu += chyba =>
       {
         if (chyba.Oblast == Common.Validace.OblastValidace.Program)
@@ -85,6 +90,55 @@ namespace ZZZO.Windows
     #endregion
 
     #region Metody
+
+    private void ObnovitRozlozeni()
+    {
+      if (JeRozmer(_nastaveni.SirkaOkna, MinWidth) && JeRozmer(_nastaveni.VyskaOkna, MinHeight))
+      {
+        Width = Math.Min(_nastaveni.SirkaOkna!.Value, Math.Max(MinWidth, SystemParameters.VirtualScreenWidth));
+        Height = Math.Min(_nastaveni.VyskaOkna!.Value, Math.Max(MinHeight, SystemParameters.VirtualScreenHeight));
+      }
+
+      if (_nastaveni.OknoVlevo is double vlevo && _nastaveni.OknoNahore is double nahore &&
+          double.IsFinite(vlevo) && double.IsFinite(nahore))
+      {
+        const double viditelnyOkraj = 80;
+        Left = Math.Clamp(vlevo, SystemParameters.VirtualScreenLeft - Width + viditelnyOkraj,
+          SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - viditelnyOkraj);
+        Top = Math.Clamp(nahore, SystemParameters.VirtualScreenTop,
+          SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - viditelnyOkraj);
+        WindowStartupLocation = WindowStartupLocation.Manual;
+      }
+
+      var bod = UcProgram.UcProgramEntry;
+      if (JeRozmer(_nastaveni.VyskaSeznamuUsneseni, 52))
+        bod.RadekSeznamuUsneseni.Height = new GridLength(_nastaveni.VyskaSeznamuUsneseni!.Value);
+      if (JeRozmer(_nastaveni.SirkaPaneluHlasovani, 320))
+        bod.DetailUsneseni.SloupecHlasovani.Width = new GridLength(_nastaveni.SirkaPaneluHlasovani!.Value);
+
+      if (_nastaveni.OknoMaximalizovane) WindowState = WindowState.Maximized;
+    }
+
+    private void UlozitRozlozeni()
+    {
+      Rect rozmery = RestoreBounds;
+      if (rozmery.Width < MinWidth || rozmery.Height < MinHeight)
+        rozmery = new Rect(Left, Top, ActualWidth, ActualHeight);
+
+      NastaveniAplikace.Ulozit(App.Current.SouborNastaveni, new NastaveniAplikace
+      {
+        OknoVlevo = rozmery.Left,
+        OknoNahore = rozmery.Top,
+        SirkaOkna = rozmery.Width,
+        VyskaOkna = rozmery.Height,
+        OknoMaximalizovane = WindowState == WindowState.Maximized,
+        VyskaSeznamuUsneseni = UcProgram.UcProgramEntry.RadekSeznamuUsneseni.Height.Value,
+        SirkaPaneluHlasovani = UcProgram.UcProgramEntry.DetailUsneseni.SloupecHlasovani.Width.Value
+      });
+    }
+
+    private static bool JeRozmer(double? hodnota, double minimum) =>
+      hodnota is double rozmer && double.IsFinite(rozmer) && rozmer >= minimum && rozmer <= 10000;
 
     private void OnDialogHostKeyDown(object sender, KeyEventArgs e)
     {
