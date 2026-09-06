@@ -103,11 +103,11 @@ namespace ZZZO.Windows
           double.IsFinite(vlevo) && double.IsFinite(nahore))
       {
         const double viditelnyOkraj = 80;
+        WindowStartupLocation = WindowStartupLocation.Manual;
         Left = Math.Clamp(vlevo, SystemParameters.VirtualScreenLeft - Width + viditelnyOkraj,
           SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - viditelnyOkraj);
         Top = Math.Clamp(nahore, SystemParameters.VirtualScreenTop,
           SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - viditelnyOkraj);
-        WindowStartupLocation = WindowStartupLocation.Manual;
       }
 
       var bod = UcProgram.UcProgramEntry;

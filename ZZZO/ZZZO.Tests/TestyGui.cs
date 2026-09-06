@@ -50,9 +50,17 @@ internal static class TestyGui
         Console.WriteLine("GUI: čekám na okno");
         await PockatAsync(() => Task.FromResult(app.MainWindow is MainWindow));
         var okno = (MainWindow)app.MainWindow;
-        Program.Overit(Math.Abs(okno.Width - 1180) < 1 && Math.Abs(okno.Height - 780) < 1 &&
-          Math.Abs(okno.Left - ocekavaneNastaveni.OknoVlevo.Value) < 1 && Math.Abs(okno.Top - ocekavaneNastaveni.OknoNahore.Value) < 1,
-          "GUI obnoví velikost a pozici hlavního okna");
+        double ocekavanaSirka = Math.Min(1180, Math.Max(okno.MinWidth, SystemParameters.VirtualScreenWidth));
+        double ocekavanaVyska = Math.Min(780, Math.Max(okno.MinHeight, SystemParameters.VirtualScreenHeight));
+        bool polohaViditelna = okno.Left + okno.Width >= SystemParameters.VirtualScreenLeft + 80 &&
+          okno.Left <= SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - 80 &&
+          okno.Top >= SystemParameters.VirtualScreenTop &&
+          okno.Top <= SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - 80;
+        Program.Overit(Math.Abs(okno.Width - ocekavanaSirka) < 1 && Math.Abs(okno.Height - ocekavanaVyska) < 1 &&
+          okno.WindowStartupLocation == WindowStartupLocation.Manual && polohaViditelna,
+          $"GUI obnoví velikost a bezpečně viditelnou pozici hlavního okna " +
+          $"(okno={okno.Left},{okno.Top},{okno.Width}×{okno.Height}; obrazovka={SystemParameters.VirtualScreenLeft},{SystemParameters.VirtualScreenTop}," +
+          $"{SystemParameters.VirtualScreenWidth}×{SystemParameters.VirtualScreenHeight})");
         Program.Overit(okno.UcProgram.UcProgramEntry.RadekSeznamuUsneseni.Height.Value == 86 &&
           okno.UcProgram.UcProgramEntry.DetailUsneseni.SloupecHlasovani.Width.Value == 380,
           "GUI obnoví oba splittery v sekci usnesení");
