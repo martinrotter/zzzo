@@ -5,11 +5,13 @@ using System.Text;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ZZZO.Common.API;
 
 public class Zasedani : ObservableObject
 {
+  public int VerzeFormatu { get; set; } = 2;
   #region Proměnné
 
   private Adresa _adresaKonani = new Adresa();
@@ -198,14 +200,8 @@ public class Zasedani : ObservableObject
   {
     get
     {
-      var soubor = _vystupniSoubor;
-
-      if (string.IsNullOrWhiteSpace(_vystupniSoubor) || !Directory.Exists(Path.GetDirectoryName(_vystupniSoubor)))
-      {
-        _vystupniSoubor = Path.Combine(
-          Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-          $"zo-{DatumKonani:yyyy-MM}");
-      }
+      if (string.IsNullOrWhiteSpace(_vystupniSoubor))
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $"zo-{DatumKonani:yyyy-MM}");
 
       return _vystupniSoubor;
     }
@@ -237,7 +233,7 @@ public class Zasedani : ObservableObject
     }
   }
 
-  [JsonProperty("Zastupitele", ItemIsReference = true, Order = -2)]
+  [JsonProperty("Zastupitele", Order = -2)]
   public ObservableCollection<Zastupitel> Zastupitele
   {
     get => _zastupitele;
@@ -259,7 +255,7 @@ public class Zasedani : ObservableObject
 
   public static Zasedani LoadFromFile(string file)
   {
-    Zasedani zas = JsonConvert.DeserializeObject<Zasedani>(File.ReadAllText(file, Encoding.UTF8));
+    Zasedani zas = NacistJson(File.ReadAllText(file, Encoding.UTF8));
 
     zas.VystupniSoubor = Path.Combine(
       Path.GetDirectoryName(file),
@@ -269,6 +265,7 @@ public class Zasedani : ObservableObject
 
   public void AddUsneseni(BodProgramu bodProgramu, Usneseni usneseni)
   {
+    bodProgramu.Rezim = RezimBodu.SUsnesenimi;
     bodProgramu.Usneseni.Add(usneseni);
 
     foreach (Zastupitel zastupitel in Zastupitele)
@@ -285,7 +282,7 @@ public class Zasedani : ObservableObject
   {
     Zastupitele.Add(zastupitel);
 
-    foreach (BodProgramu bodProgramu in Program.BodyProgramu)
+    foreach (BodProgramu bodProgramu in Program.VsechnyBody())
     {
       foreach (Usneseni usneseni in bodProgramu.Usneseni)
       {
@@ -302,15 +299,16 @@ public class Zasedani : ObservableObject
   {
     Zastupitele.Remove(zast);
 
-    foreach (BodProgramu bodProgramu in Program.BodyProgramu)
+    foreach (BodProgramu bodProgramu in Program.VsechnyBody())
     {
       foreach (Usneseni usneseni in bodProgramu.Usneseni)
       {
         // Odebereme zastupitele ze všech usnesení.
         foreach (HlasovaniZastupitele hlasovaniZastupitele in usneseni.VolbyZastupitelu)
         {
-          if (ReferenceEquals(hlasovaniZastupitele.Zastupitel, zast))
+          if (hlasovaniZastupitele.ZastupitelId == zast.Id)
           {
+            hlasovaniZastupitele.Zastupitel = null;
             usneseni.VolbyZastupitelu.Remove(hlasovaniZastupitele);
             break;
           }
@@ -321,9 +319,52 @@ public class Zasedani : ObservableObject
 
   public void SaveToFile(string file)
   {
-    byte[] json = ToJson();
-    File.WriteAllBytes(file, json);
+    string cil = Path.GetFullPath(file);
+    string docasny = cil + "." + Guid.NewGuid().ToString("N") + ".tmp";
+    File.WriteAllBytes(docasny, ToJson());
+    try
+    {
+      if (File.Exists(cil)) File.Replace(docasny, cil, null);
+      else File.Move(docasny, cil);
+    }
+    finally { if (File.Exists(docasny)) File.Delete(docasny); }
   }
+
+  public static Zasedani NacistJson(string json)
+  {
+    var obsah = JObject.Parse(json);
+    if ((int?)obsah["VerzeFormatu"] != 2)
+      throw new InvalidDataException("Tato verze souboru není podporována. Vytvořte nové zasedání.");
+    // Strukturálně poškozený soubor odmítneme před vytvořením objektového grafu.
+    void OveritPolozky(JToken token, string druh, int hloubka = 0)
+    {
+      if (token is not JArray seznam) throw new InvalidDataException($"Chybí seznam: {druh}.");
+      foreach (var polozka in seznam)
+      {
+        if (polozka is not JObject objekt || !Guid.TryParse((string)objekt["Id"], out var id) || id == Guid.Empty)
+          throw new InvalidDataException($"Neplatná položka nebo identifikátor: {druh}.");
+        if (druh == "body")
+        {
+          if (hloubka > 1) throw new InvalidDataException("Program podporuje pouze body a jednu úroveň podbodů.");
+          OveritPolozky(objekt["Usneseni"], "usnesení");
+          OveritPolozky(objekt["Podbody"], "body", hloubka + 1);
+        }
+        if (druh == "usnesení" && (objekt["VolbyZastupitelu"] is not JArray hlasy || hlasy.Any(h => h is not JObject)))
+          throw new InvalidDataException("Neplatný seznam hlasování.");
+      }
+    }
+    OveritPolozky(obsah["Zastupitele"], "zastupitelé");
+    OveritPolozky(obsah["Program"]?["BodyProgramu"], "body");
+    var zas = obsah.ToObject<Zasedani>(new JsonSerializer { MetadataPropertyHandling = MetadataPropertyHandling.Ignore, TypeNameHandling = TypeNameHandling.None })
+      ?? throw new InvalidDataException("Prázdný dokument.");
+    if (zas.Program == null || zas.AdresaKonani == null || zas.Zastupitele == null)
+      throw new InvalidDataException("Dokument nemá program, adresu nebo seznam zastupitelů.");
+    foreach (var hlas in zas.Program.VsechnyBody().SelectMany(b => b.Usneseni).SelectMany(u => u.VolbyZastupitelu))
+      hlas.Zastupitel = zas.Zastupitele.FirstOrDefault(z => z.Id == hlas.ZastupitelId);
+    return zas;
+  }
+
+  public Zasedani VytvoritSnimek() => NacistJson(Encoding.UTF8.GetString(ToJson()));
 
   public byte[] ToJson()
   {
@@ -338,6 +379,14 @@ public class Zasedani : ObservableObject
   }
 
   #endregion
+
+  public static Zasedani VytvoritNove()
+  {
+    var zas = new Zasedani();
+    foreach (var typ in new[] { BodProgramu.TypBoduProgramu.SchvaleniZapisOver, BodProgramu.TypBoduProgramu.SchvaleniProgramu, BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu })
+      zas.Program.BodyProgramu.Add(zas.Program.VygenerovatBodProgramu(zas, typ));
+    return zas;
+  }
 
   public static Zasedani GenerateSample()
   {
@@ -434,7 +483,7 @@ public class Zasedani : ObservableObject
       true);
 
     bodDiskuse.Nadpis = "Diskuse";
-    bodDiskuse.Text = "Proběhla diskuse k různým tématům.";
+    bodDiskuse.PrubehHtml = "Proběhla diskuse k různým tématům.";
 
     var bodZaver = zas.Program.VygenerovatBodProgramu(
       zas,
@@ -442,7 +491,7 @@ public class Zasedani : ObservableObject
       true);
 
     bodZaver.Nadpis = "Závěr";
-    bodZaver.Text = "Po skončení diskuse bylo toto zasedání zastupitelstva obce skončeno.";
+    bodZaver.PrubehHtml = "Po skončení diskuse bylo toto zasedání zastupitelstva obce skončeno.";
 
     zas.Program.BodyProgramu.Add(bodRuzne);
     zas.Program.BodyProgramu.Add(bodDiskuse);

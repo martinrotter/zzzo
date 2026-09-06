@@ -1,103 +1,56 @@
 ﻿using System.ComponentModel;
-using System.Windows.Markup;
-using System.Windows.Media;
 using Newtonsoft.Json;
-
 namespace ZZZO.Common.API;
 
 public class HlasovaniZastupitele : ObservableObject
 {
-  #region Enumy
-
   public enum VolbaHlasovani
   {
-    [Description("Pro")]
-    Pro = 0,
-
-    [Description("Proti")]
-    Proti = 1,
-
-    [Description("Zdržuje se")]
-    ZdrzujeSe = 2
+    [Description("Pro")] Pro,
+    [Description("Proti")] Proti,
+    [Description("Zdržel se")] ZdrzujeSe
   }
-
-  #endregion
-
-  #region Proměnné
-
-  private VolbaHlasovani _volba = VolbaHlasovani.ZdrzujeSe;
+  private VolbaHlasovani _volba = VolbaHlasovani.Pro;
   private Zastupitel _zastupitel;
-
-  #endregion
-
-  #region Vlastnosti
-
-  [JsonIgnore]
-  public string JmenoPrijmeniZastupitele
-  {
-    get => $"{Zastupitel.Jmeno} {Zastupitel.Prijmeni}";
-  }
-
-  public string Poznamka
-  {
-    get
-    {
-      if (!Zastupitel.JePritomen)
-      {
-        return "nepřítomen";
-      }
-      else
-      {
-        return "-";
-      }
-    }
-  }
-  
+  public Guid ZastupitelId { get; set; }
   public VolbaHlasovani Volba
   {
     get => _volba;
     set
     {
-      if (value == _volba)
+      if (SetProperty(ref _volba, value))
       {
-        return;
+        OnPropertyChanged(nameof(Pro));
+        OnPropertyChanged(nameof(Proti));
+        OnPropertyChanged(nameof(ZdrzelSe));
       }
-
-      _volba = value;
-      OnPropertyChanged();
     }
   }
-
-  [JsonIgnore]
-  public IEnumerable<VolbaHlasovani> Volby
-  {
-    get => Enum.GetValues<VolbaHlasovani>();
-  }
-
-  [JsonProperty("Zastupitel", IsReference = true)]
-  public Zastupitel Zastupitel
+  [JsonIgnore] public bool Pro { get => Volba == VolbaHlasovani.Pro; set { if (value) Volba = VolbaHlasovani.Pro; } }
+  [JsonIgnore] public bool Proti { get => Volba == VolbaHlasovani.Proti; set { if (value) Volba = VolbaHlasovani.Proti; } }
+  [JsonIgnore] public bool ZdrzelSe { get => Volba == VolbaHlasovani.ZdrzujeSe; set { if (value) Volba = VolbaHlasovani.ZdrzujeSe; } }
+  [JsonIgnore] public string JmenoPrijmeniZastupitele => Zastupitel == null ? "Neznámý zastupitel" : $"{Zastupitel.Jmeno} {Zastupitel.Prijmeni}";
+  [JsonIgnore] public string Poznamka => Zastupitel?.JePritomen == true ? "" : "nepřítomen";
+  [JsonIgnore] public Zastupitel Zastupitel
   {
     get => _zastupitel;
     set
     {
-      if (Equals(value, _zastupitel))
-      {
-        return;
-      }
-
+      if (ReferenceEquals(value, _zastupitel)) return;
+      if (_zastupitel != null) PropertyChangedEventManager.RemoveHandler(_zastupitel, ZastupitelZmenen, "");
       _zastupitel = value;
-
-      _zastupitel.PropertyChanged += (sender, args) =>
+      if (value != null)
       {
-        OnPropertyChanged(nameof(JmenoPrijmeniZastupitele));
-        OnPropertyChanged(nameof(Poznamka));
-      };
-
+        ZastupitelId = value.Id;
+        PropertyChangedEventManager.AddHandler(value, ZastupitelZmenen, "");
+      }
       OnPropertyChanged();
-      OnPropertyChanged(nameof(JmenoPrijmeniZastupitele));
-      OnPropertyChanged(nameof(Poznamka));
+      ZastupitelZmenen(this, null);
     }
   }
-
-  #endregion
+  private void ZastupitelZmenen(object sender, PropertyChangedEventArgs e)
+  {
+    OnPropertyChanged(nameof(JmenoPrijmeniZastupitele));
+    OnPropertyChanged(nameof(Poznamka));
+  }
 }

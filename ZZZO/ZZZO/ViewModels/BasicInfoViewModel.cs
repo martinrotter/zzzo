@@ -102,29 +102,15 @@ public class BasicInfoViewModel : ViewModelBase
       {
         OnPropertyChanged(nameof(Zastupitele));
 
-        if (Zastupitele != null)
-        {
-          Zastupitele.CollectionChanged += (o, eventArgs) =>
-          {
-            if (eventArgs.Action != NotifyCollectionChangedAction.Add || eventArgs.NewItems ==null)
-            {
-              return;
-            }
-
-            foreach (Zastupitel newZastupitel in eventArgs.NewItems)
-            {
-              newZastupitel.PropertyChanged += ReagovatNaZmenyExkluzivnichPropertyZastupitele;
-            }
-          };
-
-          foreach (Zastupitel zastupitel in Zastupitele)
-          {
-            zastupitel.PropertyChanged += ReagovatNaZmenyExkluzivnichPropertyZastupitele;
-          }
-        }
+        SledovatZastupitele();
       }
     };
 
+    Core.DataZmenena += SledovatZastupitele;
+    ZrusitRoleCmd = new RelayCommand(_ =>
+    {
+      ChosenZastupitel.JeRidici = false; ChosenZastupitel.JeZapisovatel = false; ChosenZastupitel.JeOverovatel = false;
+    }, _ => ChosenZastupitel != null && (ChosenZastupitel.JeRidici || ChosenZastupitel.JeZapisovatel || ChosenZastupitel.JeOverovatel));
     UpdateVillageLogoCmd = new RelayCommand(obj => UpdateVillageLogo(), obj => true);
     ShowCityLogosCmd = new RelayCommand<string>(str => ShowCityLogos(str), obj => true);
     RemoveVillageLogoCmd = new RelayCommand(obj => RemoveVillageLogo(), obj => Core?.Zasedani?.LogoObce != null);
@@ -136,13 +122,26 @@ public class BasicInfoViewModel : ViewModelBase
 
   #region Metody
 
+  public ICommand ZrusitRoleCmd { get; }
+  private readonly HashSet<Zastupitel> _sledovaniZastupitele = new();
+  private void SledovatZastupitele()
+  {
+    foreach (var z in _sledovaniZastupitele.Where(z => Zastupitele == null || !Zastupitele.Contains(z)).ToArray())
+    {
+      z.PropertyChanged -= ReagovatNaZmenyExkluzivnichPropertyZastupitele;
+      _sledovaniZastupitele.Remove(z);
+    }
+    if (Zastupitele != null)
+      foreach (var z in Zastupitele)
+        if (_sledovaniZastupitele.Add(z)) z.PropertyChanged += ReagovatNaZmenyExkluzivnichPropertyZastupitele;
+    if (Zastupitele == null || !Zastupitele.Contains(ChosenZastupitel)) ChosenZastupitel = Zastupitele?.FirstOrDefault();
+  }
+
   private void AddZastupitel()
   {
-    Core.Zasedani.AddZastupitel(new Zastupitel
-    {
-      Jmeno = "Nový",
-      Prijmeni = "Zastupitel"
-    });
+    var novy = new Zastupitel { JePritomen = true };
+    Core.Zasedani.AddZastupitel(novy);
+    ChosenZastupitel = novy;
 
     if (Core.Zasedani.Zastupitele.Count == 1)
     {
@@ -172,7 +171,7 @@ public class BasicInfoViewModel : ViewModelBase
 
   private void RemoveZastupitel()
   {
-    if (ChosenZastupitel != null)
+    if (ChosenZastupitel != null && MessageBox.Show("Odstranit zastupitele a jeho hlasy ze všech usnesení?", "Odstranit zastupitele", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
     {
       Core.Zasedani.RemoveZastupitel(ChosenZastupitel);
     }

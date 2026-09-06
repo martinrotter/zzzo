@@ -13,7 +13,7 @@ namespace ZZZO.Converters
     public object Convert(object value, Type targetType, object parameter,
       CultureInfo culture)
     {
-      string description = GetEnumDescription((Enum)value);
+      string description = value is Enum hodnota ? GetEnumDescription(hodnota) : string.Empty;
 
       return description;
     }
@@ -30,9 +30,10 @@ namespace ZZZO.Converters
 
     public static string GetEnumDescription(Enum value)
     {
+      if (value == null) return string.Empty;
       FieldInfo fi = value.GetType().GetField(value.ToString());
 
-      if (fi.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Any())
+      if (fi?.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Any())
       {
         return attributes.First().Description;
       }

@@ -55,22 +55,19 @@ namespace ZZZO.Common.Generators
 
     #region Metody
 
-    public Task<byte[]> Generate(Zasedani zasedani, IProgress<int> progress, object param = null)
+    public async Task<byte[]> Generate(Zasedani zasedani, IProgress<int> progress, object param = null)
     {
       if (IsGenerating)
       {
-        return null;
+        throw new InvalidOperationException("Generování již probíhá.");
       }
       else
       {
         IsGenerating = true;
       }
 
-      Task<byte[]> tsk = Task.Run(() => GenerateDoWork(zasedani, progress, param));
-
-      tsk.ContinueWith(task => IsGenerating = false);
-
-      return tsk;
+      try { return await Task.Run(() => GenerateDoWork(zasedani, progress, param)); }
+      finally { IsGenerating = false; }
     }
 
     protected abstract byte[] GenerateDoWork(Zasedani zas, IProgress<int> progress, object param);

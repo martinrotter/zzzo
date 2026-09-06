@@ -2,6 +2,8 @@
 name: zzzo
 
 on:
+  pull_request:
+  workflow_dispatch:
   push:
     branches: ["*"]
     tags: ["*"]
@@ -12,6 +14,7 @@ permissions:
 jobs:
   build-zzzo:
     name: "zzzo: build"
+    timeout-minutes: 20
     runs-on: windows-2022
 
     steps:
@@ -27,6 +30,22 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Test GUI, editors, preview and PDF export
+        shell: pwsh
+        run: .\resources\scripts\test-windows.ps1 -Gui
+
+      - name: Upload test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          if-no-files-found: warn
+          path: |
+            ZZZO/ZZZO.Tests/bin/Release/net10.0-windows7.0/win-x86/publish/test-results/*.png
+            ZZZO/ZZZO.Tests/bin/Release/net10.0-windows7.0/win-x86/publish/test-results/*.txt
+            ZZZO/ZZZO.Tests/bin/Release/net10.0-windows7.0/win-x86/publish/test-results/*.html
+            ZZZO/ZZZO.Tests/bin/Release/net10.0-windows7.0/win-x86/publish/test-results/*.pdf
+
       - name: Build application
         shell: pwsh
         run: .\resources\scripts\build-windows.ps1
@@ -39,6 +58,7 @@ jobs:
           path: ./zzzo.zip
 
   dist-binaries:
+    if: github.event_name == 'push'
     name: "zzzo: distribute"
     needs:
       - build-zzzo

@@ -11,6 +11,12 @@ namespace ZZZO.Controls
     {
       InitializeComponent();
 
+      var pozice = new PoziceNahledu(WebBrowser);
+      DataContextChanged += (_, e) =>
+      {
+        if (e.OldValue is ViewModels.GeneratorViewModel stary) { stary.ZobrazitNahledAsync = null; stary.VymazatNahled = null; }
+        if (e.NewValue is ViewModels.GeneratorViewModel novy) { novy.ZobrazitNahledAsync = pozice.ZobrazitAsync; novy.VymazatNahled = pozice.Vymazat; }
+      };
       WebBrowser.PreviewMouseWheel += BrowserPreviewMouseWheel;
       WebBrowser.KeyUp += BrowserKeyUp;
     }

@@ -1,91 +1,61 @@
 ﻿using System.Collections.ObjectModel;
+namespace ZZZO.Common.API;
 
-namespace ZZZO.Common.API
+public class Program : ObservableObject
 {
-  public class Program : ObservableObject
+  public ObservableCollection<BodProgramu> BodyProgramu { get; } = new();
+  public IEnumerable<BodProgramu> VsechnyBody()
   {
-    #region Proměnné
-
-    private ObservableCollection<BodProgramu> _bodyProgramu = new ObservableCollection<BodProgramu>();
-
-    #endregion
-
-    #region Vlastnosti
-
-    public ObservableCollection<BodProgramu> BodyProgramu
+    foreach (var bod in BodyProgramu)
     {
-      get => _bodyProgramu;
-      set
-      {
-        if (Equals(value, _bodyProgramu))
-        {
-          return;
-        }
-
-        _bodyProgramu = value;
-        OnPropertyChanged();
-      }
+      yield return bod;
+      foreach (var podbod in ProjitPodbody(bod)) yield return podbod;
     }
-
-    #endregion
-
-    #region Metody
-
-    public BodProgramu VygenerovatBodProgramu(Zasedani zas, BodProgramu.TypBoduProgramu typProgramu, bool bezUsneseni = false)
+  }
+  private static IEnumerable<BodProgramu> ProjitPodbody(BodProgramu bod)
+  {
+    foreach (var podbod in bod.Podbody)
     {
-      BodProgramu bod = new BodProgramu();
-
-      bod.Typ = typProgramu;
-
-      switch (typProgramu)
-      {
-        case BodProgramu.TypBoduProgramu.SchvaleniZapisOver:
-          bod.Nadpis = "Schválení zapisovatele a ověřovatelů zápisu";
-
-          zas.AddUsneseni(bod, new Usneseni
-          {
-            Text = bod.Nadpis
-          });
-
-          break;
-
-        case BodProgramu.TypBoduProgramu.SchvaleniProgramu:
-          bod.Nadpis = "Schválení programu";
-
-          zas.AddUsneseni(bod, new Usneseni
-          {
-            Text = bod.Nadpis
-          });
-
-          break;
-
-        case BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu:
-          bod.Nadpis = "Kontrola zápisu a plnění usnesení z minulého zasedání ZO";
-          bod.Text = "Starosta obce zhodnotil program z minulého jednání ZO a " +
-                     "informoval přítomné zastupitele i veřejnost o " +
-                     "projednaných bodech a splněných úkolech.";
-          break;
-
-        case BodProgramu.TypBoduProgramu.BodZasedani:
-        case BodProgramu.TypBoduProgramu.DoplnenyBodZasedani:
-          bod.Nadpis = "Bod zasedání";
-
-          zas.AddUsneseni(bod, new Usneseni
-          {
-            Text = "Usnesení z tohoto bodu zasedání"
-          });
-
-          break;
-      }
-
-      if (bezUsneseni)
-      {
-        bod.Usneseni.Clear();
-      }
-
-      return bod;
+      yield return podbod;
+      foreach (var dalsi in ProjitPodbody(podbod)) yield return dalsi;
     }
-
-    #endregion
+  }
+  public ObservableCollection<BodProgramu> KolekceBodu(BodProgramu bod) =>
+    BodyProgramu.Contains(bod) ? BodyProgramu : VsechnyBody().FirstOrDefault(b => b.Podbody.Contains(bod))?.Podbody;
+  public BodProgramu RodicBodu(BodProgramu bod) => VsechnyBody().FirstOrDefault(b => b.Podbody.Contains(bod));
+  public Dictionary<Guid, string> OcislovatBody()
+  {
+    var vysledek = new Dictionary<Guid, string>();
+    int poradi = 0;
+    foreach (var bod in BodyProgramu)
+    {
+      vysledek[bod.Id] = bod.JeBezny ? $"{++poradi}. " : "";
+      for (int i = 0; i < bod.Podbody.Count; i++)
+        vysledek[bod.Podbody[i].Id] = $"{poradi}{Pismeno(i)}. ";
+    }
+    return vysledek;
+  }
+  private static string Pismeno(int index)
+  {
+    string text = "";
+    do { text = (char)('a' + index % 26) + text; index = index / 26 - 1; } while (index >= 0);
+    return text;
+  }
+  public BodProgramu VygenerovatBodProgramu(Zasedani zas, BodProgramu.TypBoduProgramu typProgramu, bool bezUsneseni = false)
+  {
+    var bod = new BodProgramu { Typ = typProgramu };
+    bod.Nadpis = typProgramu switch
+    {
+      BodProgramu.TypBoduProgramu.SchvaleniZapisOver => "Schválení zapisovatele a ověřovatelů zápisu",
+      BodProgramu.TypBoduProgramu.SchvaleniProgramu => "Schválení programu",
+      BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu => "Kontrola zápisu a plnění usnesení z minulého zasedání ZO",
+      BodProgramu.TypBoduProgramu.DoplnenyBodZasedani => "Nový doplněný bod",
+      _ => "Nový bod"
+    };
+    if (typProgramu == BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu)
+      bod.PrubehHtml = "<p>Starosta obce zhodnotil program z minulého jednání ZO a informoval přítomné zastupitele i veřejnost o projednaných bodech a splněných úkolech.</p>";
+    if (!bezUsneseni && typProgramu is BodProgramu.TypBoduProgramu.SchvaleniZapisOver or BodProgramu.TypBoduProgramu.SchvaleniProgramu)
+      bod.PridatUsneseni(zas.Zastupitele).TextHtml = $"<p>{HtmlObsah.Zakodovat(bod.Nadpis)}</p>";
+    return bod;
   }
 }

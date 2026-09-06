@@ -1,8 +1,9 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ZZZO.Common.API;
+using ZZZO.Common.Validace;
 
 namespace ZZZO.Common.Generators
 {
@@ -94,7 +95,9 @@ namespace ZZZO.Common.Generators
     {
       GeneratorHtmlParams prms = (GeneratorHtmlParams)param;
 
-      progress.Report(1);
+      var chyby = ValidatorZasedani.Overit(zas).Where(c => c.Blokuje(prms.KindOfDocument)).ToList();
+      if (chyby.Count > 0) throw new InvalidOperationException(string.Join(Environment.NewLine, chyby.Select(c => c.Zprava)));
+      progress?.Report(1);
 
       XmlDocument html = new XmlDocument();
       XmlElement htmlElem = html.CreateElement("html");
@@ -115,22 +118,22 @@ namespace ZZZO.Common.Generators
           break;
       }
 
-      progress.Report(100);
+      progress?.Report(100);
 
       return DumpXmlToHtml(html);
     }
 
-    private string ConvertPlainTextToHtml(string text)
-    {
-      return Regex.Replace(text, "\\r\\n?", "<br/>");
-    }
-
     private byte[] DumpXmlToHtml(XmlDocument html)
     {
-      // NOTE: Replace encoded chars. Yes, this is hell.
-      return Encoding.UTF8.GetBytes("<!DOCTYPE html>\n" + html.OuterXml
-        .Replace("&gt;", ">")
-        .Replace("&lt;", "<"));
+      // XML by jinak prázdné HTML bloky zapsalo jako <div/>, což HTML parser chápe jinak.
+      var prazdne = html.SelectNodes("//*[not(node())]").Cast<XmlElement>().ToList();
+      foreach (var prvek in prazdne)
+        if (!new[] { "img", "br", "hr", "meta", "link", "input", "wbr", "col", "source" }.Contains(prvek.Name))
+          prvek.AppendChild(html.CreateTextNode(""));
+      string vystup = html.OuterXml;
+      foreach (XmlElement styl in html.GetElementsByTagName("style"))
+        vystup = vystup.Replace(styl.OuterXml, "<style>" + styl.InnerText + "</style>");
+      return Encoding.UTF8.GetBytes("<!DOCTYPE html>\n" + vystup);
     }
 
     private void GenerateInvitationBody(XmlElement html, Zasedani zas, IProgress<int> progress)
@@ -154,28 +157,14 @@ namespace ZZZO.Common.Generators
 
       body.AppendElem("h2").InnerText = "Navržený program";
 
-      BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
-      BodProgramu schvaleniZapisovatele = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver);
-      
-      if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
-      {
-        throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
-      }
-
-      if (schvaleniZapisovatele?.Usneseni == null || schvaleniZapisovatele.Usneseni.Count == 0)
-      {
-        throw new Exception("v programu chybí bod a usnesení pro schválení zapisovatele/ověřovatelů");
-      }
-
-      List<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
-                                                                              prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani).ToList();
-
+      var bodyProgramu = zas.Program.BodyProgramu.Where(b => b.JeBezny).ToList();
       GenerateProgramEntries(body, bodyProgramu);
     }
 
     private void GenerateRecordBody(XmlElement html, Zasedani zas, IProgress<int> progress)
     {
       int lastResolutionNumber = 0;
+      var cislaBodu = zas.Program.OcislovatBody();
       List<string> acceptedResolutions = new List<string>();
       Zastupitel ridici = zas.Zastupitele.FirstOrDefault(zs => zs.JeRidici);
 
@@ -205,23 +194,6 @@ namespace ZZZO.Common.Generators
         throw new Exception("nejsou vybráni ověřovatelé");
       }
 
-      BodProgramu schvaleniProgramu = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu);
-      BodProgramu schvaleniZapisovatele = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver);
-      BodProgramu minulyZapis = zas.Program.BodyProgramu.FirstOrDefault(prog => prog.Typ == BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu);
-
-      if (schvaleniProgramu?.Usneseni == null || schvaleniProgramu.Usneseni.Count == 0)
-      {
-        throw new Exception("v programu chybí bod a usnesení pro schválení programu jako takového");
-      }
-
-      if (schvaleniZapisovatele?.Usneseni == null || schvaleniZapisovatele.Usneseni.Count == 0)
-      {
-        throw new Exception("v programu chybí bod a usnesení pro schválení zapisovatele/ověřovatelů");
-      }
-
-      IEnumerable<BodProgramu> bodyProgramu = zas.Program.BodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
-                                                                                     prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani);
-
       XmlElement body = html.AppendElem("body");
 
       if (zas.LogoObce != null)
@@ -234,7 +206,7 @@ namespace ZZZO.Common.Generators
 
       ///
       /// Zahájení.
-      /// 
+      ///
       body.AppendElem("h2").InnerText = "Zahájení";
 
       body.AppendElem("p").InnerText =
@@ -269,77 +241,43 @@ namespace ZZZO.Common.Generators
       body.AppendElem("p").InnerText = $"Všechna hlasování na tomto zasedání ZO {zas.NazevObce} " +
                                        "jsou veřejná a zastupitelé hlasují zdvižením ruky.";
 
-      progress.Report(30);
+      progress?.Report(30);
 
-      ///
-      /// Určení ověřovatelů atd.
-      /// 
-      body.AppendElem("h2").InnerText = "Určení ověřovatelů zápisu a zapisovatele v souladu s \u00a7 95 odst. 1 č. 128/2000 Sb.";
-
-      body.AppendElem("p").InnerText =
-        $"Řídící osoba zasedání ZO {zas.NazevObce} navrhla, aby zapisovatelem byl " +
-        $"{zapisovatel.Jmeno} {zapisovatel.Prijmeni} a ověřovateli zápisu byli {string.Join(
-          " a ",
-          overovatele.Select(over => over.Jmeno + " " + over.Prijmeni))}.";
-
-      GenerateResolution(
-        body,
-        zas,
-        schvaleniZapisovatele,
-        schvaleniZapisovatele.Usneseni.First(),
-        lastResolutionNumber,
-        "Hlasování o navrženém zapisovateli a ověřovatelích zápisu");
-
-      progress.Report(40);
-
-      ///
-      /// Program a jeho schvalování.
-      /// 
-      body.AppendElem("h2").InnerText = "Schválení programu";
-
-      GenerateProgramEntries(body, bodyProgramu.ToList());
-
-      body.AppendElem("p").InnerText = $"Řídící osoba zasedání ZO {zas.NazevObce} navrhla schválit výše " +
-                                       $"uvedený návrh programu.";
-
-      GenerateResolution(
-        body,
-        zas,
-        schvaleniProgramu,
-        schvaleniProgramu.Usneseni.First(),
-        lastResolutionNumber,
-        "Hlasování o návrhu programu");
-
-      progress.Report(50);
-
-      ///
-      /// Kontrola zápisu.
-      /// 
-      body.AppendElem("h2").InnerText = minulyZapis.Nadpis;
-
-      body.AppendElem("p").InnerText = minulyZapis.Text;
-
-      foreach (BodProgramu bodProgramu in bodyProgramu.Where(prog => prog.Typ == BodProgramu.TypBoduProgramu.BodZasedani ||
-                                                                     prog.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani))
+      foreach (var bod in zas.Program.BodyProgramu)
       {
-        body.AppendElem(bodProgramu.JePodbod ? "h3" : "h2").InnerText = $"{bodProgramu.NadpisPoradi}{bodProgramu.Nadpis}{(bodProgramu.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : string.Empty)}";
+        VytvoritBod(bod, false);
+        foreach (var podbod in bod.Podbody) VytvoritBod(podbod, true);
+      }
 
-        if (!string.IsNullOrWhiteSpace(bodProgramu.Text))
+      void VytvoritBod(BodProgramu bod, bool jePodbod)
+      {
+        body.AppendElem(jePodbod ? "h3" : "h2").SetAttr("id", "bod-" + bod.Id.ToString("N"))
+          .InnerText = cislaBodu.GetValueOrDefault(bod.Id, "") + bod.Nadpis +
+          (bod.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : "");
+        if (bod.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver)
+          body.AppendElem("p").InnerText = $"Řídící osoba zasedání ZO {zas.NazevObce} navrhla, aby zapisovatelem byl {zapisovatel.Jmeno} {zapisovatel.Prijmeni} a ověřovateli zápisu byli {string.Join(" a ", overovatele.Select(z => z.Jmeno + " " + z.Prijmeni))}.";
+        if (bod.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu)
         {
-          body.AppendElem("div").InnerXml = bodProgramu.Text;
+          GenerateProgramEntries(body, zas.Program.BodyProgramu.Where(b => b.JeBezny));
+          body.AppendElem("p").InnerText = $"Řídící osoba zasedání ZO {zas.NazevObce} navrhla schválit výše uvedený návrh programu.";
         }
-
-        foreach (Usneseni usneseni in bodProgramu.Usneseni)
+        if (!string.IsNullOrWhiteSpace(bod.PrubehHtml)) HtmlObsah.Vlozit(body.AppendElem("div"), bod.PrubehHtml);
+        if (bod.Rezim == RezimBodu.BereNaVedomi)
+          body.AppendElem("div").AppendClass("resolution-container").AppendElem("p").AppendClass("resolution-text")
+            .InnerText = $"ZO {zas.NazevObce} bere na vědomí.";
+        if (bod.Rezim != RezimBodu.SUsnesenimi) return;
+        foreach (var u in bod.Usneseni)
         {
-          if (GenerateResolution(body, zas, bodProgramu, usneseni, lastResolutionNumber) is string resolutionText)
+          string hlasovani = bod.Typ switch
           {
-            acceptedResolutions.Add(resolutionText);
-          }
-
-          if (!usneseni.ZoBereNaVedomi)
-          {
-            lastResolutionNumber++;
-          }
+            BodProgramu.TypBoduProgramu.SchvaleniZapisOver => "Hlasování o navrženém zapisovateli a ověřovatelích zápisu",
+            BodProgramu.TypBoduProgramu.SchvaleniProgramu => "Hlasování o návrhu programu",
+            _ => null
+          };
+          var text = GenerateResolution(body, zas, bod, u, lastResolutionNumber, hlasovani);
+          if (text != null) acceptedResolutions.Add(text);
+          // Procedurální hlasování si zachovávají dosavadní samostatný režim číslování.
+          if (bod.JeBezny) lastResolutionNumber++;
         }
       }
 
@@ -347,29 +285,29 @@ namespace ZZZO.Common.Generators
 
       foreach (string acceptedResolution in acceptedResolutions)
       {
-        body.AppendElem("p").InnerText = acceptedResolution;
+        HtmlObsah.Vlozit(body.AppendElem("div"), acceptedResolution);
       }
 
       body.AppendElem("hr").AppendClass("resolution-list-line");
       body.AppendElem("p").InnerText = $"Celkový počet přijatých usnesení je {acceptedResolutions.Count}.";
 
-      progress.Report(80);
+      progress?.Report(80);
 
       ///
       /// Podpisy.
       ///
       XmlElement sigWrapper = body.AppendElem("div").AppendClass("signature-wrapper");
 
-      sigWrapper.AppendElem("div").AppendClass("signature").InnerText =
+      sigWrapper.AppendElem("div").AppendClass("signature").InnerXml =
         "<hr/>" +
-        $"{starosta.Jmeno} {starosta.Prijmeni}<br/>" +
+        $"{HtmlObsah.Zakodovat(starosta.Jmeno)} {HtmlObsah.Zakodovat(starosta.Prijmeni)}<br/>" +
         "starosta obce";
 
       foreach (Zastupitel overovatel in overovatele)
       {
-        sigWrapper.AppendElem("div").AppendClass("signature").InnerText =
+        sigWrapper.AppendElem("div").AppendClass("signature").InnerXml =
           "<hr/>" +
-          $"{overovatel.Jmeno} {overovatel.Prijmeni}<br/>" +
+          $"{HtmlObsah.Zakodovat(overovatel.Jmeno)} {HtmlObsah.Zakodovat(overovatel.Prijmeni)}<br/>" +
           "ověřovatel zápisu";
       }
     }
@@ -401,44 +339,28 @@ namespace ZZZO.Common.Generators
 
 
 
-      progress.Report(10);
+      progress?.Report(10);
     }
 
     private void GenerateProgramEntries(XmlElement body, IEnumerable<BodProgramu> bodyProgramu)
     {
-      XmlElement div = body.AppendElem("div").AppendClass("program");
-      XmlElement mainOl = div.AppendElem("ol").AppendClass("ol-verbatim");
-      XmlElement nestedOl = null;
-
-      int mainCounter = 1;
-      char nestedCounter = 'a';
-
-      foreach (BodProgramu thisEntry in bodyProgramu)
+      var seznam = body.AppendElem("div").AppendClass("program").AppendElem("ol").AppendClass("ol-verbatim");
+      int poradi = 0;
+      foreach (var bod in bodyProgramu)
       {
-        if (thisEntry.Typ == BodProgramu.TypBoduProgramu.SchvaleniProgramu ||
-            thisEntry.Typ == BodProgramu.TypBoduProgramu.SchvaleniZapisOver ||
-            thisEntry.Typ == BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu)
+        if (!bod.JeBezny) continue;
+        var radek = seznam.AppendElem("li");
+        radek.InnerText = $"{++poradi}. {bod.Nadpis}" + (bod.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : "");
+        if (bod.Podbody.Count == 0) continue;
+        var podseznam = radek.AppendElem("ol").AppendClass("ol-verbatim");
+        var cisla = new Program();
+        cisla.BodyProgramu.Add(bod);
+        foreach (var podbod in bod.Podbody)
         {
-          // Schvalování programu není v "programu" jako takovém.
-          continue;
-        }
-
-        if (thisEntry.JePodbod)
-        {
-          if (nestedOl == null)
-          {
-            nestedCounter = 'a';
-            nestedOl = mainOl.AppendElem("ol").AppendClass("ol-verbatim");
-          }
-
-          thisEntry.NadpisPoradi = $"{mainCounter - 1}{nestedCounter++}. ";
-          nestedOl.AppendElem("li").InnerText = $"{thisEntry.NadpisPoradi}{thisEntry.Nadpis}{(thisEntry.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : string.Empty)}";
-        }
-        else
-        {
-          nestedOl = null;
-          thisEntry.NadpisPoradi = $"{mainCounter++}. ";
-          mainOl.AppendElem("li").InnerText = $"{thisEntry.NadpisPoradi}{thisEntry.Nadpis}{(thisEntry.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : string.Empty)}";
+          var oznaceni = cisla.OcislovatBody()[podbod.Id];
+          oznaceni = poradi + oznaceni.Substring(1);
+          podseznam.AppendElem("li").InnerText = oznaceni + podbod.Nadpis +
+            (podbod.Typ == BodProgramu.TypBoduProgramu.DoplnenyBodZasedani ? " (doplněný bod programu)" : "");
         }
       }
     }
@@ -447,29 +369,16 @@ namespace ZZZO.Common.Generators
       XmlElement body, Zasedani zas, BodProgramu programEntry, Usneseni resolution, int lastOrder, string replacementTitle = null)
     {
       string generatedResolutionTitle = null;
-      XmlElement root = body.AppendElem("div").AppendClass("resolution-container");
-
-      if (programEntry.Typ != BodProgramu.TypBoduProgramu.SchvaleniProgramu &&
-          programEntry.Typ != BodProgramu.TypBoduProgramu.SchvaleniZapisOver &&
-          programEntry.Typ != BodProgramu.TypBoduProgramu.KontrolaMinulehoZapisu)
+      XmlElement root = body.AppendElem("div").AppendClass("resolution-container").SetAttr("id", "usneseni-" + resolution.Id.ToString("N"));
+      if (programEntry.JeBezny)
       {
-        if (resolution.ZoBereNaVedomi)
-        {
-          root.AppendElem("p").AppendClass("resolution-text").InnerText = $"ZO {zas.NazevObce} bere na vědomí.";
-        }
-        else
-        {
-          generatedResolutionTitle = resolution.GenerateTitle(lastOrder + 1, zas);
-
-          root.AppendElem("p").AppendClass("resolution-text-heading").InnerText = "Návrh usnesení:";
-          root.AppendElem("p").AppendClass("resolution-text").InnerText = generatedResolutionTitle;
-        }
+        root.AppendElem("p").AppendClass("resolution-text-heading").InnerText = "Návrh usnesení:";
+        var obsah = root.AppendElem("div").AppendClass("resolution-text");
+        VlozitTextUsneseni(obsah, $"Č. {lastOrder + 1}-{zas.DatumCasKonani.Month}/{zas.DatumCasKonani.Year} - ", resolution.TextHtml);
+        generatedResolutionTitle = obsah.InnerXml;
       }
-
-      if (resolution.ZoBereNaVedomi)
-      {
-        return null;
-      }
+      else
+        HtmlObsah.Vlozit(root.AppendElem("div").AppendClass("resolution-text"), resolution.TextHtml);
 
       int countOfPresentVoters = zas.Zastupitele.Count(vol => vol.JePritomen);
 
@@ -486,24 +395,24 @@ namespace ZZZO.Common.Generators
         vol.Volba == HlasovaniZastupitele.VolbaHlasovani.ZdrzujeSe).ToList();
 
       string choiceForStr = choiceFor.Count() + (choiceFor.Any() && choiceFor.Count < countOfPresentVoters
-        ? $" ({string.Join(", ", choiceFor.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
+        ? $" ({string.Join(", ", choiceFor.Select(ch => HtmlObsah.Zakodovat(ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni)))})"
         : string.Empty);
 
       string choiceAgainstStr = choiceAgainst.Count() + (choiceAgainst.Any() && choiceAgainst.Count < countOfPresentVoters
-        ? $" ({string.Join(", ", choiceAgainst.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
+        ? $" ({string.Join(", ", choiceAgainst.Select(ch => HtmlObsah.Zakodovat(ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni)))})"
         : string.Empty);
 
       string choiceDontKnowStr = choiceDontKnow.Count() + (choiceDontKnow.Any() && choiceDontKnow.Count < countOfPresentVoters
-        ? $" ({string.Join(", ", choiceDontKnow.Select(ch => ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni))})"
+        ? $" ({string.Join(", ", choiceDontKnow.Select(ch => HtmlObsah.Zakodovat(ch.Zastupitel.Jmeno + " " + ch.Zastupitel.Prijmeni)))})"
         : string.Empty);
 
-      bool accepted = choiceFor.Count() > countOfPresentVoters / 2;
+      bool accepted = VyhodnoceniHlasovani.Vyhodnotit(zas, resolution).JeSchvaleno;
 
       XmlElement div = root.AppendElem("div").AppendClass("resolution-vote-box").AppendClass(accepted ? "success" : "failure");
 
       div.AppendElem("p").AppendClass("resolution-vote-heading").InnerText = $"{replacementTitle ?? "Hlasování o návrhu usnesení"}:";
 
-      div.AppendElem("p").InnerText =
+      div.AppendElem("p").InnerXml =
         $"<span class=\"resolution-vote resolution-success-icon\">\u2713</span> PRO: {choiceForStr}<br/>" +
         $"<span class=\"resolution-vote resolution-failure-icon\">\u00D7</span> PROTI: {choiceAgainstStr}<br/>" +
         $"<span class=\"resolution-vote resolution-dontknow-icon\">?</span> ZDRŽUJE SE: {choiceDontKnowStr}";
@@ -513,17 +422,30 @@ namespace ZZZO.Common.Generators
         div.AppendElem("p")
           .AppendClass("resolution-decision-box")
           .AppendClass("resolution-decision-success")
-          .AppendClass("resolution-success").InnerText = "<span class=\"resolution-success-icon\">\u2713</span> Návrh byl přijat.";
+          .AppendClass("resolution-success").InnerXml = "<span class=\"resolution-success-icon\">\u2713</span> Návrh byl přijat.";
       }
       else
       {
         div.AppendElem("p")
           .AppendClass("resolution-decision-box")
           .AppendClass("resolution-decision-failure")
-          .AppendClass("resolution-failure").InnerText = "<span class=\"resolution-failure-icon\">\u00D7</span> Návrh nebyl přijat.";
+          .AppendClass("resolution-failure").InnerXml = "<span class=\"resolution-failure-icon\">\u00D7</span> Návrh nebyl přijat.";
       }
 
       return accepted ? generatedResolutionTitle : null;
+    }
+
+    private static void VlozitTextUsneseni(XmlElement cil, string prefix, string html)
+    {
+      HtmlObsah.Vlozit(cil, html);
+      var prvni = cil.FirstChild as XmlElement;
+      if (prvni?.Name == "p") prvni.PrependChild(cil.OwnerDocument.CreateTextNode(prefix));
+      else
+      {
+        var odstavec = cil.OwnerDocument.CreateElement("p");
+        odstavec.InnerText = prefix;
+        cil.PrependChild(odstavec);
+      }
     }
 
     private string Sklonovat(string jednaPolozka, string dvePolozky, string vicePolozek, int pocet)

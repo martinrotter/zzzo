@@ -6,6 +6,9 @@ using Microsoft.Win32;
 using ZZZO.Common;
 using ZZZO.Common.API;
 using ZZZO.ViewModels;
+using ZZZO.Common.Validace;
+using ZZZO.Commands;
+using System.Windows.Input;
 
 namespace ZZZO
 {
@@ -14,6 +17,39 @@ namespace ZZZO
     #region Proměnné
 
     private Zasedani _zasedani;
+    private SledovaniZasedani _sledovani;
+    private bool _zmeneno;
+    private readonly Dictionary<object, ChybaValidace> _chybyVstupu = new();
+    public bool VstupyPlatne => _chybyVstupu.Count == 0;
+    public void ZmenitChybuVstupu(object klic, ChybaValidace chyba)
+    {
+      if (chyba == null) _chybyVstupu.Remove(klic); else _chybyVstupu[klic] = chyba;
+      ZmenenaData();
+    }
+    public event Action DataZmenena;
+    public event Action<ChybaValidace> PrejitNaChybu;
+    public IReadOnlyList<ChybaValidace> Chyby { get; private set; } = Array.Empty<ChybaValidace>();
+    public string PopisValidace => $"Kontrola údajů: {Chyby.Count} {(Chyby.Count == 1 ? "problém" : Chyby.Count is >= 2 and <= 4 ? "problémy" : "problémů")}";
+    public string StavKontroly => !ZasedaniLoaded ? "Otevřete nebo vytvořte zasedání" : Chyby.Count == 0 ? "Údaje jsou v pořádku" : PopisValidace;
+    public long Revize { get; private set; }
+    public ICommand PrejitNaChybuCmd => new RelayCommand(o => { if (o is ChybaValidace c) PrejitNaChybu?.Invoke(c); });
+
+    public void AktualizovatValidaci()
+    {
+      Chyby = Zasedani == null ? Array.Empty<ChybaValidace>() : ValidatorZasedani.Overit(Zasedani).Concat(_chybyVstupu.Values).ToList();
+      OnPropertyChanged(nameof(Chyby));
+      OnPropertyChanged(nameof(PopisValidace));
+      OnPropertyChanged(nameof(StavKontroly));
+    }
+
+    private void ZmenenaData()
+    {
+      _zmeneno = true;
+      Revize++;
+      AktualizovatValidaci();
+      OnPropertyChanged(nameof(ZasedaniIsDirty));
+      DataZmenena?.Invoke();
+    }
 
     #endregion
 
@@ -29,9 +65,13 @@ namespace ZZZO
           return;
         }
 
+        _sledovani?.Dispose();
         _zasedani = value;
-
-        ZasedaniOriginalData = _zasedani.ToJson();
+        _chybyVstupu.Clear();
+        _zmeneno = false;
+        Revize++;
+        _sledovani = value == null ? null : new SledovaniZasedani(value, ZmenenaData);
+        AktualizovatValidaci();
 
         OnPropertyChanged();
         OnPropertyChanged(nameof(ZasedaniLoaded));
@@ -40,21 +80,12 @@ namespace ZZZO
 
     public bool ZasedaniIsDirty
     {
-      get => ZasedaniLoaded && ZasedaniOriginalData != null && !Zasedani.ToJson().SequenceEqual(ZasedaniOriginalData);
+      get => ZasedaniLoaded && _zmeneno;
     }
 
     public bool ZasedaniLoaded
     {
       get => Zasedani != null;
-    }
-
-    /// <summary>
-    /// Is used to determine if there is any change or not.
-    /// </summary>
-    private byte[] ZasedaniOriginalData
-    {
-      get;
-      set;
     }
 
     #endregion
@@ -250,12 +281,14 @@ namespace ZZZO
         return false;
       }
 
+      if (!VstupyPlatne) throw new InvalidOperationException("Před uložením opravte neplatně zadané hodnoty v přehledu kontroly údajů.");
       string soubor = ChooseSaveFile(Zasedani, Constants.PathsAndFiles.ZzzoFileSuffix, forceChooseFile);
 
       if (!string.IsNullOrEmpty(soubor))
       {
         Zasedani.SaveToFile(soubor);
-        ZasedaniOriginalData = Zasedani.ToJson();
+        _zmeneno = false;
+        OnPropertyChanged(nameof(ZasedaniIsDirty));
         return true;
       }
       else

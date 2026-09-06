@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ZZZO.Controls"
              xmlns:converters="clr-namespace:ZZZO.Converters"
              xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
              xmlns:viewmodels="clr-namespace:ZZZO.ViewModels"
@@ -18,16 +19,17 @@
     <converters:EnumConverter x:Key="EnumConverter" />
   </UserControl.Resources>
 
+  <DockPanel>
   <GroupBox Header="HTML + PDF">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top">
-        <ComboBox materialDesign:TextFieldAssist.PrefixText="Styl -> "
+        <ComboBox IsEnabled="{Binding Pracuje, Converter={StaticResource InverseBooleanConverter}}" materialDesign:TextFieldAssist.PrefixText="Styl → "
                   Style="{StaticResource MaterialDesignComboBox}"
                   ItemsSource="{Binding GeneratorHtml.Styles}"
                   Margin="{StaticResource FormMargin}"
                   SelectedValue="{Binding SelectedHtmlStyle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        
-        <ComboBox materialDesign:TextFieldAssist.PrefixText="Dokument -> "
+
+        <ComboBox IsEnabled="{Binding Pracuje, Converter={StaticResource InverseBooleanConverter}}" materialDesign:TextFieldAssist.PrefixText="Dokument → "
                   Style="{StaticResource MaterialDesignComboBox}"
                   ItemsSource="{Binding GeneratorHtml.KindsOfDocuments}"
                   Margin="{StaticResource FormMargin}"
@@ -38,7 +40,7 @@
             </DataTemplate>
           </ComboBox.ItemTemplate>
         </ComboBox>
-        
+
         <Button Content="Přegenerovat dokument"
                 Command="{Binding GenerateDocumentCmd}" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
@@ -61,11 +63,12 @@
                      Height="40"
                      Minimum="0"
                      Maximum="100"
-                     Value="{Binding GenerateProgress}" />
+                     IsIndeterminate="{Binding Pracuje}" />
       </WrapPanel>
+      <TextBlock DockPanel.Dock="Top" Text="{Binding Stav}" TextWrapping="Wrap" Margin="8"/>
       <wpf:ChromiumWebBrowser
-        assists:ChromiumWebBrowserAssist.Html="{Binding GeneratedHtml, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
         Name="WebBrowser" />
     </DockPanel>
   </GroupBox>
+  </DockPanel>
 </UserControl>

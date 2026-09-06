@@ -1,136 +1,27 @@
 ﻿using System.Windows.Input;
 using ZZZO.Commands;
 using ZZZO.Common.API;
-
 namespace ZZZO.ViewModels;
 
 public class ResolutionViewModel : ViewModelBase
 {
-  #region Proměnné
-
+  public ZzzoCore Core { get; }
   private Usneseni _usneseni;
-  private ZzzoCore _core;
-  private BodProgramu _programEntry;
-
-  #endregion
-
-  #region Vlastnosti
-
-  public ICommand AllAgreeCmd
-  {
-    get;
-  }
-
-  public ICommand AllDisagreeCmd
-  {
-    get;
-  }
-
-  public bool JeEditovatelne
-  {
-    get => ProgramEntry?.JeEditovatelny == true &&
-           (Usneseni == null || !Usneseni.ZoBereNaVedomi);
-  }
-
-  public Usneseni Usneseni
-  {
-    get => _usneseni;
-    set
-    {
-      if (Equals(value, _usneseni))
-      {
-        return;
-      }
-
-      _usneseni = value;
-
-      if (_usneseni != null)
-      {
-        _usneseni.PropertyChanged += (sender, args) =>
-        {
-          if (args.PropertyName == nameof(Usneseni.ZoBereNaVedomi))
-          {
-            OnPropertyChanged(nameof(JeEditovatelne));
-          }
-        };
-      }
-
-      OnPropertyChanged();
-      OnPropertyChanged(nameof(JeEditovatelne));
-    }
-  }
-
-  public ZzzoCore Core
-  {
-    get => _core;
-    set
-    {
-      if (Equals(value, _core))
-      {
-        return;
-      }
-
-      _core = value;
-      OnPropertyChanged();
-    }
-  }
-
-  public BodProgramu ProgramEntry
-  {
-    get => _programEntry;
-    set
-    {
-      if (Equals(value, _programEntry))
-      {
-        return;
-      }
-
-      _programEntry = value;
-
-      if (_programEntry != null)
-      {
-        _programEntry.PropertyChanged += (sender, args) =>
-        {
-          if (args.PropertyName == nameof(BodProgramu.Typ))
-          {
-            OnPropertyChanged(nameof(JeEditovatelne));
-          }
-        };
-      }
-
-      OnPropertyChanged();
-      OnPropertyChanged(nameof(JeEditovatelne));
-    }
-  }
-
-  #endregion
-
-  #region Konstruktory
-
+  public Usneseni Usneseni { get => _usneseni; set { if (SetProperty(ref _usneseni, value)) Obnovit(); } }
+  public VyhodnoceniHlasovani Vyhodnoceni => Usneseni == null || Core.Zasedani == null ? null : VyhodnoceniHlasovani.Vyhodnotit(Core.Zasedani, Usneseni);
+  public ICommand AllAgreeCmd { get; }
+  public ICommand AllDisagreeCmd { get; }
+  public ICommand VsichniSeZdrzeliCmd { get; }
   public ResolutionViewModel(ZzzoCore core)
   {
     Core = core;
-    
-    AllAgreeCmd = new RelayCommand(obj => MarkAllAgreed(), obj => Usneseni != null);
-    AllDisagreeCmd = new RelayCommand(obj => MarkAllDisagreed(), obj => Usneseni != null);
+    AllAgreeCmd = new RelayCommand(_ => Nastavit(HlasovaniZastupitele.VolbaHlasovani.Pro), _ => Usneseni != null);
+    AllDisagreeCmd = new RelayCommand(_ => Nastavit(HlasovaniZastupitele.VolbaHlasovani.Proti), _ => Usneseni != null);
+    VsichniSeZdrzeliCmd = new RelayCommand(_ => Nastavit(HlasovaniZastupitele.VolbaHlasovani.ZdrzujeSe), _ => Usneseni != null);
   }
-
-  private void MarkAllDisagreed()
+  private void Nastavit(HlasovaniZastupitele.VolbaHlasovani volba)
   {
-    foreach (HlasovaniZastupitele hlasovaniZastupitele in Usneseni.VolbyZastupitelu)
-    {
-      hlasovaniZastupitele.Volba = HlasovaniZastupitele.VolbaHlasovani.Proti;
-    }
+    foreach (var hlas in Usneseni.VolbyZastupitelu.Where(h => h.Zastupitel?.JePritomen == true)) hlas.Volba = volba;
   }
-
-  private void MarkAllAgreed()
-  {
-    foreach (HlasovaniZastupitele hlasovaniZastupitele in Usneseni.VolbyZastupitelu)
-    {
-      hlasovaniZastupitele.Volba = HlasovaniZastupitele.VolbaHlasovani.Pro;
-    }
-  }
-
-  #endregion
-
+  public void Obnovit() => OnPropertyChanged(nameof(Vyhodnoceni));
 }

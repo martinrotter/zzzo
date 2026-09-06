@@ -1,161 +1,84 @@
 ﻿using System.Windows.Input;
+using System.Windows;
 using ZZZO.Commands;
 using ZZZO.Common.API;
-
 namespace ZZZO.ViewModels;
 
 public class ProgramEntryViewModel : ViewModelBase
 {
-  #region Proměnné
-
-  private Usneseni _chosenUsneseni;
-  private ZzzoCore _core;
-  private BodProgramu _programEntry;
-  private ResolutionViewModel _resolutionViewModel;
-
-  #endregion
-
-  #region Vlastnosti
-
-  public ICommand AddUsneseniCmd
-  {
-    get;
-  }
-
-  public ResolutionViewModel ResolutionViewModel
-  {
-    get => _resolutionViewModel;
-    set
-    {
-      if (Equals(value, _resolutionViewModel))
-      {
-        return;
-      }
-
-      _resolutionViewModel = value;
-      OnPropertyChanged();
-    }
-  }
-
-  public IEnumerable<BodProgramu.TypBoduProgramu> TypyBoduProgramu
-  {
-    get => Enum.GetValues<BodProgramu.TypBoduProgramu>();
-  }
-
-  public bool LzeEditovatUsneseni
-  {
-    get => _programEntry?.MuzeEditovatUsneseni == true && _programEntry.Usneseni.Count > 0;
-  }
-
-  public Usneseni ChosenUsneseni
-  {
-    get => _chosenUsneseni;
-    set
-    {
-      if (Equals(value, _chosenUsneseni))
-      {
-        return;
-      }
-
-      _chosenUsneseni = value;
-
-      ResolutionViewModel.ProgramEntry = _programEntry;
-      ResolutionViewModel.Usneseni = _chosenUsneseni;
-      
-      OnPropertyChanged();
-    }
-  }
-
-  public ZzzoCore Core
-  {
-    get => _core;
-    set
-    {
-      if (Equals(value, _core))
-      {
-        return;
-      }
-
-      _core = value;
-      OnPropertyChanged();
-    }
-  }
-
+  public ZzzoCore Core { get; }
+  public ResolutionViewModel ResolutionViewModel { get; }
+  private BodProgramu _bod;
+  private Usneseni _usneseni;
+  private int _zalozka;
+  public int VybranaZalozka { get => _zalozka; set => SetProperty(ref _zalozka, value); }
   public BodProgramu ProgramEntry
   {
-    get => _programEntry;
+    get => _bod;
     set
     {
-      if (Equals(value, _programEntry))
-      {
-        return;
-      }
-
-      _programEntry = value;
-      
-      if (_programEntry != null)
-      {
-        _programEntry.PropertyChanged += (sender, args) =>
-        {
-          if (args.PropertyName == nameof(BodProgramu.MuzeEditovatUsneseni))
-          {
-            OnPropertyChanged(nameof(LzeEditovatUsneseni));
-          }
-        };
-
-        if (_programEntry.Usneseni != null)
-        {
-          _programEntry.Usneseni.CollectionChanged += (sender, args) => { OnPropertyChanged(nameof(LzeEditovatUsneseni)); };
-        }
-      }
-      
-      OnPropertyChanged();
-      OnPropertyChanged(nameof(LzeEditovatUsneseni));
+      if (!SetProperty(ref _bod, value)) return;
+      ChosenUsneseni = value?.Usneseni.FirstOrDefault();
+      VybranaZalozka = 0;
+      Obnovit();
     }
   }
-
-  public ICommand RemoveUsneseniCmd
+  public Usneseni ChosenUsneseni
   {
-    get;
+    get => _usneseni;
+    set { if (SetProperty(ref _usneseni, value)) ResolutionViewModel.Usneseni = value; }
   }
-
-  #endregion
-
-  #region Konstruktory
-
+  public IEnumerable<BodProgramu.TypBoduProgramu> TypyBoduProgramu => Enum.GetValues<BodProgramu.TypBoduProgramu>();
+  public IEnumerable<RezimBodu> Rezimy => Enum.GetValues<RezimBodu>();
+  public bool MaUsneseni => ProgramEntry?.Rezim == RezimBodu.SUsnesenimi;
+  public string NadpisUsneseni => $"Usnesení ({ProgramEntry?.Usneseni.Count ?? 0})";
+  public RezimBodu Rezim
+  {
+    get => ProgramEntry?.Rezim ?? RezimBodu.Informativni;
+    set
+    {
+      if (ProgramEntry == null || value == Rezim) return;
+      if (value != RezimBodu.SUsnesenimi && ProgramEntry.Usneseni.Count > 0 &&
+        MessageBox.Show($"Změna režimu odstraní {ProgramEntry.Usneseni.Count} usnesení včetně hlasování. Pokračovat?", "Změna režimu bodu", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+      { OnPropertyChanged(nameof(Rezim)); return; }
+      ProgramEntry.ZmenitRezim(value, Core.Zasedani.Zastupitele);
+      ChosenUsneseni = ProgramEntry.Usneseni.FirstOrDefault();
+      VybranaZalozka = MaUsneseni ? 1 : 0;
+      Obnovit();
+    }
+  }
+  public ICommand AddUsneseniCmd { get; }
+  public ICommand RemoveUsneseniCmd { get; }
+  public ICommand UsneseniNahoruCmd { get; }
+  public ICommand UsneseniDoluCmd { get; }
   public ProgramEntryViewModel(ZzzoCore core)
   {
     Core = core;
-    ResolutionViewModel = new ResolutionViewModel(core);
-
-    AddUsneseniCmd = new RelayCommand(obj => AddUsneseni(), obj => true);
-    RemoveUsneseniCmd = new RelayCommand(obj => RemoveUsneseni(), obj => ChosenUsneseni != null);
+    ResolutionViewModel = new(core);
+    AddUsneseniCmd = new RelayCommand(_ => { ChosenUsneseni = ProgramEntry.PridatUsneseni(Core.Zasedani.Zastupitele); VybranaZalozka = 1; }, _ => ProgramEntry != null);
+    RemoveUsneseniCmd = new RelayCommand(_ => Odebrat(), _ => ChosenUsneseni != null);
+    UsneseniNahoruCmd = new RelayCommand(_ => Presunout(-1), _ => LzePresunout(-1));
+    UsneseniDoluCmd = new RelayCommand(_ => Presunout(1), _ => LzePresunout(1));
   }
-
-  #endregion
-
-  #region Metody
-
-  private void AddUsneseni()
+  public void Obnovit()
   {
-    Core.Zasedani.AddUsneseni(ProgramEntry, new Usneseni
-    {
-      Text = "Text usnesení"
-    });
-
-    if (ProgramEntry.Usneseni.Count == 1)
-    {
-      ChosenUsneseni = ProgramEntry.Usneseni[0];
-    }
+    if (ProgramEntry != null && !ProgramEntry.Usneseni.Contains(ChosenUsneseni)) ChosenUsneseni = ProgramEntry.Usneseni.FirstOrDefault();
+    if (!MaUsneseni) VybranaZalozka = 0;
+    OnPropertyChanged(nameof(Rezim)); OnPropertyChanged(nameof(MaUsneseni)); OnPropertyChanged(nameof(NadpisUsneseni));
+    ResolutionViewModel.Obnovit();
   }
-
-  private void RemoveUsneseni()
+  private bool LzePresunout(int smer)
   {
-    if (ChosenUsneseni != null)
-    {
-      ProgramEntry.Usneseni.Remove(ChosenUsneseni);
-    }
+    int i = ProgramEntry?.Usneseni.IndexOf(ChosenUsneseni) ?? -1;
+    return i >= 0 && i + smer >= 0 && i + smer < ProgramEntry.Usneseni.Count;
   }
-
-  #endregion
+  private void Presunout(int smer) { int i = ProgramEntry.Usneseni.IndexOf(ChosenUsneseni); ProgramEntry.Usneseni.Move(i, i + smer); }
+  private void Odebrat()
+  {
+    var u = ChosenUsneseni;
+    if (MessageBox.Show("Odstranit vybrané usnesení včetně hlasování?", "Odstranit usnesení", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+    int i = ProgramEntry.Usneseni.IndexOf(u);
+    ProgramEntry.Usneseni.Remove(u);
+    ChosenUsneseni = ProgramEntry.Usneseni.Count == 0 ? null : ProgramEntry.Usneseni[Math.Min(i, ProgramEntry.Usneseni.Count - 1)];
+  }
 }

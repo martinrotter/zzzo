@@ -34,6 +34,8 @@ namespace ZZZO
 
     #region Konstruktory
 
+    internal string AdresarMezipametiProhlizece { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZZZO", "Cef");
+
     public App()
     {
       Current = this;
@@ -69,16 +71,19 @@ namespace ZZZO
     {
       base.OnStartup(e);
 
-      // CefSharp.
+      // Při publikování leží CEF u EXE; běžné SDK sestavení používá runtimes.
+      string nativniAdresar = Path.Combine(AppContext.BaseDirectory, "runtimes", "win-x86", "native");
+      string zdroje = File.Exists(Path.Combine(AppContext.BaseDirectory, "resources.pak")) ? AppContext.BaseDirectory : nativniAdresar;
+      string lokalizace = File.Exists(Path.Combine(AppContext.BaseDirectory, "locales", "cs.pak"))
+        ? Path.Combine(AppContext.BaseDirectory, "locales") : Path.Combine(nativniAdresar, "locales");
       Cef.Initialize(
         new CefSettings
         {
           BrowserSubprocessPath = Process.GetCurrentProcess().MainModule.FileName,
           Locale = CultureInfo.CurrentCulture.IetfLanguageTag,
-          RootCachePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ZZZO",
-            "Cef")
+          ResourcesDirPath = zdroje,
+          LocalesDirPath = lokalizace,
+          RootCachePath = AdresarMezipametiProhlizece
         },
         performDependencyCheck: false,
         browserProcessHandler: null);
@@ -106,8 +111,10 @@ namespace ZZZO
         }
       };
 
-      // Theme.
+      // Okno vytvoříme až po inicializaci prohlížeče a tématu.
       SetDefaultTheme();
+      MainWindow = new MainWindow();
+      MainWindow.Show();
     }
 
     private void SetDefaultTheme()
@@ -149,6 +156,9 @@ namespace ZZZO
       if (primary != default)
       {
         b.SetPrimaryColor(primary);
+        Resources["PozadiNajetiPolozky"] = new SolidColorBrush(Color.FromArgb(0x18, primary.R, primary.G, primary.B));
+        Resources["PozadiVybranePolozky"] = new SolidColorBrush(Color.FromArgb(0x38, primary.R, primary.G, primary.B));
+        Resources["OkrajVybranePolozky"] = new SolidColorBrush(Color.FromArgb(0xCC, primary.R, primary.G, primary.B));
       }
 
       if (secondary != default)

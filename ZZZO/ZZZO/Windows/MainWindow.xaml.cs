@@ -15,6 +15,45 @@ namespace ZZZO.Windows
     {
       InitializeComponent();
       App.Current.SetDataContexts(this);
+      App.Current.Core.PrejitNaChybu += chyba =>
+      {
+        if (chyba.Oblast == Common.Validace.OblastValidace.Program)
+        {
+          TcZasedani.SelectedIndex = 1;
+          var vm = (ViewModels.ProgramViewModel)UcProgram.DataContext;
+          var bod = vm.Core.Zasedani.Program.VsechnyBody().FirstOrDefault(b => b.Id == chyba.PolozkaId || b.Usneseni.Any(u => u.Id == chyba.PolozkaId));
+          if (bod != null)
+          {
+            vm.ChosenProgramEntry = bod;
+            var usneseni = bod.Usneseni.FirstOrDefault(u => u.Id == chyba.PolozkaId);
+            if (usneseni != null) { vm.EntryViewModel.ChosenUsneseni = usneseni; vm.EntryViewModel.VybranaZalozka = 1; }
+            else vm.EntryViewModel.VybranaZalozka = 0;
+            UcProgram.LvProgram.ScrollIntoView(vm.Radky.FirstOrDefault(r => r.Bod == bod));
+            if (usneseni == null) UcProgram.UcProgramEntry.NazevBodu.Focus();
+          }
+        }
+        else
+        {
+          TcZasedani.SelectedIndex = 0;
+          var vm = (ViewModels.BasicInfoViewModel)UcBasicInfo.DataContext;
+          if (chyba.Oblast == Common.Validace.OblastValidace.Zastupitele)
+          {
+            vm.ChosenZastupitel = vm.Zastupitele.FirstOrDefault(z => z.Id == chyba.PolozkaId) ?? vm.Zastupitele.FirstOrDefault();
+            if (vm.ChosenZastupitel != null) UcBasicInfo.LvZastupitele.ScrollIntoView(vm.ChosenZastupitel);
+            UcBasicInfo.LvZastupitele.Focus();
+          }
+          else
+          {
+            var cil = chyba.Vlastnost switch
+            {
+              nameof(Common.API.Zasedani.Poradi) => UcBasicInfo.TbPoradi,
+              nameof(Common.API.Zasedani.PocetHostu) => UcBasicInfo.TbHoste,
+              _ => UcBasicInfo.TbObec
+            };
+            cil.BringIntoView(); cil.Focus();
+          }
+        }
+      };
 
       Utils.HookKeyShortctut(
         this,

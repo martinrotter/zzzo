@@ -22,9 +22,10 @@
     tinymce.init({
       selector: editorIdSelector,
       language: "cs",
+      entity_encoding: "raw",
       browser_spellcheck: true,
+      license_key: "gpl",
       allow_html_in_named_anchor: true,
-      auto_focus: true,
       resize: false,
       table_use_colgroups: false,
       table_default_attributes: {},
@@ -35,35 +36,28 @@
       width: "99%",
       height: "99vh",
       setup: function(ed) {
-        /*
-        ed.on('keyup', function(e) {
-          console.log("keyup");
+        ed.on('init', function() { CefSharp.PostMessage(JSON.stringify({druh: 'pripraven'})); });
+        ed.on('input change undo redo', function() {
+          if (!nastavuji) CefSharp.PostMessage(getEditorContent());
         });
-        */
-        ed.on('input', function(e) {
-          notifyEditorContent(ed);
-        });
-        ed.on('change', function(e) {
-          notifyEditorContent(ed);
-        });
-        /*
-        ed.on('focusout', function(e) {
-          notifyEditorContent(ed);
-        });
-        */
       }
     });
 
-    function notifyEditorContent(ed) {
-      CefSharp.PostMessage(ed.getContent());
-    }
-
+    let verzeObsahu = 0;
+    let poradiZpravy = 0;
+    let nastavuji = false;
     function getEditorContent() {
-      return tinymce.get(editorId).getContent();
+      return JSON.stringify({druh: 'obsah', verze: verzeObsahu, poradi: ++poradiZpravy, html: tinymce.get(editorId).getContent()});
     }
-
-    function setEditorContent(content) {
-      tinymce.get(editorId).setContent(content == null ? "" : content);
+    function setEditorContent(content, verze) {
+      nastavuji = true;
+      try {
+        const editor = tinymce.get(editorId);
+        verzeObsahu = verze;
+        editor.setContent(content || "");
+        editor.undoManager.clear();
+        editor.setDirty(false);
+      } finally { nastavuji = false; }
     }
   </script>
 

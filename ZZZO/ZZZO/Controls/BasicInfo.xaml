@@ -4,24 +4,57 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:ZZZO.Controls"
+             xmlns:c="clr-namespace:ZZZO.Converters"
              xmlns:validation="clr-namespace:ZZZO.Validation"
              xmlns:viewmodels="clr-namespace:ZZZO.ViewModels"
              d:DataContext="{d:DesignInstance Type=viewmodels:BasicInfoViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="800"
              d:DesignWidth="900">
-  <WrapPanel Orientation="Vertical">
-    <TextBox materialDesign:HintAssist.Hint="Název obce"
+  <UserControl.Resources>
+    <c:ValidaceConverter x:Key="Validace"/>
+    <Style x:Key="ZaskrtavaciPoleZastupitele" TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+      <Setter Property="Margin" Value="0"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style x:Key="PritomnaRole" TargetType="CheckBox" BasedOn="{StaticResource ZaskrtavaciPoleZastupitele}">
+      <Setter Property="IsEnabled" Value="{Binding JePritomen}"/>
+    </Style>
+    <Style x:Key="TextZastupitele" TargetType="TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="TextAlignment" Value="Left"/>
+      <Setter Property="Margin" Value="4,0"/>
+    </Style>
+    <Style x:Key="ZahlaviJmenaZastupitele" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style x:Key="EditorJmenaZastupitele" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+      <Setter Property="Margin" Value="0"/>
+      <Setter Property="Padding" Value="4,2"/>
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="TextAlignment" Value="Left"/>
+      <Setter Property="SpellCheck.IsEnabled" Value="False"/>
+    </Style>
+  </UserControl.Resources>
+  <DockPanel>
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+  <StackPanel>
+    <TextBox Name="TbObec" materialDesign:HintAssist.Hint="Název obce"
              ToolTip="Název obce"
              Width="200"
              HorizontalAlignment="Left">
       <TextBox.Text>
         <Binding Path="Core.Zasedani.NazevObce"
-                 UpdateSourceTrigger="PropertyChanged">
-          <Binding.ValidationRules>
-            <validation:RegexValidationRule RegularExpression=".+"
-                                            ValidatesOnTargetUpdated="True" />
-          </Binding.ValidationRules>
+                 UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
         </Binding>
       </TextBox.Text>
     </TextBox>
@@ -43,11 +76,29 @@
       <Border Margin="10,0,0,0"
               BorderBrush="{DynamicResource PrimaryHueMidBrush}"
               BorderThickness="1">
-        <Image Stretch="Uniform"
-               Width="64"
-               Height="64"
-               ToolTip="Logo obce"
-               Source="{Binding Core.Zasedani.LogoObce, UpdateSourceTrigger=PropertyChanged}" />
+        <Grid>
+          <Image Stretch="Uniform"
+                 Width="64"
+                 Height="64"
+                 ToolTip="Logo obce"
+                 Source="{Binding Core.Zasedani.LogoObce, UpdateSourceTrigger=PropertyChanged}" />
+          <Border x:Name="PlaceholderBezZnaku" Width="64" Height="64" Margin="9"
+                  Background="#F4F6F7" BorderBrush="#D5DBDF" BorderThickness="1"
+                  IsHitTestVisible="False" ToolTip="Znak obce není vybrán">
+            <Border.Style>
+              <Style TargetType="Border">
+                <Setter Property="Visibility" Value="Collapsed"/>
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Core.Zasedani.LogoObce}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Visible"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+            <TextBlock Text="Bez znaku" Foreground="#68717A" FontSize="11"
+                       TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </Grid>
       </Border>
       <Button VerticalAlignment="Center"
               Command="{Binding UpdateVillageLogoCmd}">
@@ -74,34 +125,26 @@
     </WrapPanel>
 
     <WrapPanel Margin="0">
-      <TextBox ToolTip="Pořadí ZO. Zadejte číslo - o kolikáte zasedání se jedná. Bez tečky."
+      <TextBox Name="TbPoradi" ToolTip="Pořadí ZO. Zadejte číslo - o kolikáte zasedání se jedná. Bez tečky."
                materialDesign:ValidationAssist.UsePopup="True"
                materialDesign:HintAssist.Hint="Pořadí ZO"
                Width="100"
                HorizontalAlignment="Left">
         <TextBox.Text>
           <Binding Path="Core.Zasedani.Poradi"
-                   UpdateSourceTrigger="PropertyChanged">
-            <Binding.ValidationRules>
-              <validation:RegexValidationRule RegularExpression="\d{1,3}"
-                                              ValidatesOnTargetUpdated="True" />
-            </Binding.ValidationRules>
-          </Binding>
+                   UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
+            </Binding>
         </TextBox.Text>
       </TextBox>
 
-      <TextBox materialDesign:ValidationAssist.UsePopup="True"
+      <TextBox Name="TbHoste" materialDesign:ValidationAssist.UsePopup="True"
                materialDesign:HintAssist.Hint="Počet hostů"
                Width="100"
                HorizontalAlignment="Left">
         <TextBox.Text>
           <Binding Path="Core.Zasedani.PocetHostu"
-                   UpdateSourceTrigger="PropertyChanged">
-            <Binding.ValidationRules>
-              <validation:RegexValidationRule RegularExpression="\d{1,3}"
-                                              ValidatesOnTargetUpdated="True" />
-            </Binding.ValidationRules>
-          </Binding>
+                   UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
+            </Binding>
         </TextBox.Text>
       </TextBox>
     </WrapPanel>
@@ -113,56 +156,36 @@
           <TextBox materialDesign:HintAssist.Hint="Ulice">
             <TextBox.Text>
               <Binding Path="Core.Zasedani.AdresaKonani.Ulice"
-                       UpdateSourceTrigger="PropertyChanged">
-                <Binding.ValidationRules>
-                  <validation:RegexValidationRule RegularExpression=".+"
-                                                  ValidatesOnTargetUpdated="True" />
-                </Binding.ValidationRules>
-              </Binding>
+                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
+                    </Binding>
             </TextBox.Text>
           </TextBox>
           <TextBox materialDesign:HintAssist.Hint="Číslo popisné">
             <TextBox.Text>
               <Binding Path="Core.Zasedani.AdresaKonani.CisloPopisneOrientacni"
-                       UpdateSourceTrigger="PropertyChanged">
-                <Binding.ValidationRules>
-                  <validation:RegexValidationRule RegularExpression=".+"
-                                                  ValidatesOnTargetUpdated="True" />
-                </Binding.ValidationRules>
-              </Binding>
+                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
+                    </Binding>
             </TextBox.Text>
           </TextBox>
           <TextBox materialDesign:HintAssist.Hint="Obec">
             <TextBox.Text>
               <Binding Path="Core.Zasedani.AdresaKonani.Obec"
-                       UpdateSourceTrigger="PropertyChanged">
-                <Binding.ValidationRules>
-                  <validation:RegexValidationRule RegularExpression=".+"
-                                                  ValidatesOnTargetUpdated="True" />
-                </Binding.ValidationRules>
-              </Binding>
+                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
+                    </Binding>
             </TextBox.Text>
           </TextBox>
           <TextBox materialDesign:HintAssist.Hint="PSČ">
             <TextBox.Text>
               <Binding Path="Core.Zasedani.AdresaKonani.Psc"
-                       UpdateSourceTrigger="PropertyChanged">
-                <Binding.ValidationRules>
-                  <validation:RegexValidationRule RegularExpression="\d{3} ?\d{2}"
-                                                  ValidatesOnTargetUpdated="True" />
-                </Binding.ValidationRules>
-              </Binding>
+                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
+                    </Binding>
             </TextBox.Text>
           </TextBox>
           <TextBox materialDesign:HintAssist.Hint="Popis místa (uvádějte v 6. pádu)">
             <TextBox.Text>
               <Binding Path="Core.Zasedani.AdresaKonani.PopisMista"
-                       UpdateSourceTrigger="PropertyChanged">
-                <Binding.ValidationRules>
-                  <validation:RegexValidationRule RegularExpression=".+"
-                                                  ValidatesOnTargetUpdated="True" />
-                </Binding.ValidationRules>
-              </Binding>
+                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
+                    </Binding>
             </TextBox.Text>
           </TextBox>
         </StackPanel>
@@ -170,8 +193,10 @@
 
       <GroupBox Header="Zastupitelé">
         <StackPanel Orientation="Vertical">
-          <DataGrid materialDesign:DataGridAssist.CellPadding="4 2 2 2"
-                    materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"
+          <DataGrid materialDesign:DataGridAssist.CellPadding="6,3"
+                    materialDesign:DataGridAssist.ColumnHeaderPadding="8,8"
+                    RowHeight="40" HeadersVisibility="Column"
+                    GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E6EBE9"
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
                     IsSynchronizedWithCurrentItem="True"
@@ -186,43 +211,63 @@
                     Name="LvZastupitele"
                     SelectedValue="{Binding ChosenZastupitel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     ItemsSource="{Binding Zastupitele}">
+            <DataGrid.CellStyle>
+              <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+              </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.ColumnHeaderStyle>
+              <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+              </Style>
+            </DataGrid.ColumnHeaderStyle>
             <DataGrid.Columns>
-              <DataGridTextColumn Header="Jméno"
+              <DataGridTemplateColumn Width="30" IsReadOnly="True">
+                <DataGridTemplateColumn.CellTemplate><DataTemplate>
+                  <TextBlock Foreground="#AA5B00" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock.Text><MultiBinding Converter="{StaticResource Validace}" ConverterParameter="Ikona"><Binding Path="Id"/><Binding Path="DataContext.Core.Chyby" RelativeSource="{RelativeSource AncestorType=Window}"/></MultiBinding></TextBlock.Text>
+                    <TextBlock.ToolTip><MultiBinding Converter="{StaticResource Validace}"><Binding Path="Id"/><Binding Path="DataContext.Core.Chyby" RelativeSource="{RelativeSource AncestorType=Window}"/></MultiBinding></TextBlock.ToolTip>
+                  </TextBlock>
+                </DataTemplate></DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="Jméno" HeaderStyle="{StaticResource ZahlaviJmenaZastupitele}" MinWidth="110" ElementStyle="{StaticResource TextZastupitele}" EditingElementStyle="{StaticResource EditorJmenaZastupitele}"
                                   Width="Auto"
                                   Binding="{Binding Jmeno, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridTextColumn Header="Příjmení"
+              <DataGridTextColumn Header="Příjmení" HeaderStyle="{StaticResource ZahlaviJmenaZastupitele}" MinWidth="130" ElementStyle="{StaticResource TextZastupitele}" EditingElementStyle="{StaticResource EditorJmenaZastupitele}"
                                   Width="Auto"
                                   Binding="{Binding Prijmeni, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Přítomen"
+              <DataGridCheckBoxColumn Header="Přítomen" ElementStyle="{StaticResource ZaskrtavaciPoleZastupitele}" EditingElementStyle="{StaticResource ZaskrtavaciPoleZastupitele}"
                                       Width="Auto"
                                       Binding="{Binding JePritomen, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Řídící"
+              <DataGridCheckBoxColumn Header="Řídící" ElementStyle="{StaticResource PritomnaRole}" EditingElementStyle="{StaticResource PritomnaRole}"
                                       Width="Auto"
                                       Binding="{Binding JeRidici, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Zapisovatel"
+              <DataGridCheckBoxColumn Header="Zapisovatel" ElementStyle="{StaticResource PritomnaRole}" EditingElementStyle="{StaticResource PritomnaRole}"
                                       Width="Auto"
                                       Binding="{Binding JeZapisovatel, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Ověřovatel"
+              <DataGridCheckBoxColumn Header="Ověřovatel" ElementStyle="{StaticResource PritomnaRole}" EditingElementStyle="{StaticResource PritomnaRole}"
                                       Width="Auto"
                                       Binding="{Binding JeOverovatel, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridCheckBoxColumn Header="Starosta"
+              <DataGridCheckBoxColumn Header="Starosta" ElementStyle="{StaticResource ZaskrtavaciPoleZastupitele}" EditingElementStyle="{StaticResource ZaskrtavaciPoleZastupitele}"
                                       Width="Auto"
                                       Binding="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
             </DataGrid.Columns>
           </DataGrid>
 
           <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding AddZastupitelCmd}"
+            <Button Content="+ Zastupitel" Command="{Binding AddZastupitelCmd}"
                     ToolTip="Přidat zasupitele">
-              <materialDesign:PackIcon Kind="PlusCircle" />
             </Button>
-            <Button Command="{Binding RemoveZastupitelCmd}"
+            <Button Content="Odstranit" Command="{Binding RemoveZastupitelCmd}"
                     ToolTip="Smazat zastupitele">
-              <materialDesign:PackIcon Kind="MinusCircle" />
             </Button>
+            <Button Content="Zrušit role" Command="{Binding ZrusitRoleCmd}" ToolTip="Zrušit řídícího, zapisovatele a ověřovatele u vybrané osoby"/>
           </StackPanel>
         </StackPanel>
       </GroupBox>
     </StackPanel>
-  </WrapPanel>
+  </StackPanel>
+  </ScrollViewer>
+  </DockPanel>
 </UserControl>

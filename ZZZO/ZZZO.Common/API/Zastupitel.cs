@@ -2,6 +2,7 @@
 
 public class Zastupitel : ObservableObject
 {
+  public Guid Id { get; set; } = Guid.NewGuid();
   #region Proměnné
 
   private bool _jeOverovatel;

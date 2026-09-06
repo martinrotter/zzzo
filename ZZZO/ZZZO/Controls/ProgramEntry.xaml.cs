@@ -9,15 +9,6 @@ namespace ZZZO.Controls
   /// </summary>
   public partial class ProgramEntry : UserControl
   {
-    #region Vlastnosti
-
-    private BodProgramu BodProgramu
-    {
-      get => DataContext as BodProgramu;
-    }
-
-    #endregion
-
     #region Konstruktory
 
     public ProgramEntry()

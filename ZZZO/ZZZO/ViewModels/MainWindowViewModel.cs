@@ -108,10 +108,10 @@ public class MainWindowViewModel : ViewModelBase
       }
     };
 
-    NewZasedaniCmd = new RelayCommand(obj => NewZasedani(), obj => true);
-    LoadZasedaniCmd = new RelayCommand(obj => LoadZasedani(), obj => true);
-    SaveZasedaniCmd = new RelayCommand(obj => SaveZasedani(), obj => true);
-    SaveZasedaniAsCmd = new RelayCommand(obj => SaveZasedaniAs(), obj => true);
+    NewZasedaniCmd = new RelayCommand(async obj => await ProvestAsync(() => { if (UlozitPredPokracovanim()) Core.NewZaseDani(Zasedani.VytvoritNove()); return Task.CompletedTask; }), obj => !_pracuje);
+    LoadZasedaniCmd = new RelayCommand(async obj => await ProvestAsync(() => { if (UlozitPredPokracovanim()) Core.LoadZasedani(); return Task.CompletedTask; }), obj => !_pracuje);
+    SaveZasedaniCmd = new RelayCommand(async obj => await ProvestAsync(() => { Core.SaveZasedani(false); return Task.CompletedTask; }), obj => !_pracuje && Core.ZasedaniLoaded);
+    SaveZasedaniAsCmd = new RelayCommand(async obj => await ProvestAsync(() => { Core.SaveZasedani(true); return Task.CompletedTask; }), obj => !_pracuje && Core.ZasedaniLoaded);
     AboutAppCmd = new RelayCommand(obj => ShowAboutDialog(), obj => true);
   }
 
@@ -119,93 +119,34 @@ public class MainWindowViewModel : ViewModelBase
 
   #region Metody
 
-  private void LoadZasedani()
+  private bool _pracuje;
+  private bool _zavrit;
+  private async Task ProvestAsync(Func<Task> akce)
   {
-    if (!SaveIfDirtyAndContinue())
-    {
-      return;
-    }
-
-    try
-    {
-      Core.LoadZasedani();
-    }
-    catch (Exception ex)
-    {
-      MessageBox.Show($"Chyba při načítání zápisu: {ex.Message}.", "Nelze načíst zápis", MessageBoxButton.OK, MessageBoxImage.Error);
-    }
+    if (_pracuje) return;
+    _pracuje = true;
+    try { await TinyMceEditor.DokoncitVseAsync(); await akce(); }
+    catch (Exception ex) { MessageBox.Show(ex.Message, "Operaci nelze dokončit", MessageBoxButton.OK, MessageBoxImage.Error); }
+    finally { _pracuje = false; }
   }
 
-  private void NewZasedani()
+  private async void OnAppClosing(object sender, CancelEventArgs e)
   {
-    if (!SaveIfDirtyAndContinue())
+    if (_zavrit) return;
+    e.Cancel = true;
+    await ProvestAsync(() =>
     {
-      return;
-    }
-
-    Zasedani zas = Zasedani.GenerateSample();
-
-    Core.NewZaseDani(zas);
+      if (UlozitPredPokracovanim()) { _zavrit = true; ((Window)sender).Close(); }
+      return Task.CompletedTask;
+    });
   }
 
-  private void OnAppClosing(object sender, CancelEventArgs e)
+  private bool UlozitPredPokracovanim()
   {
-    if (!SaveIfDirtyAndContinue())
-    {
-      e.Cancel = true;
-    }
-  }
-
-  private bool SaveIfDirtyAndContinue()
-  {
-    if (Core.ZasedaniIsDirty)
-    {
-      if (MessageBox.Show(
-            "Máte nějaké neuložené změny, chcete nejdříve uložit vaši současnou práci?",
-            "Neuložené změny",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question,
-            MessageBoxResult.Yes) == MessageBoxResult.Yes)
-      {
-        if (!SaveZasedani())
-        {
-          // User did not save his unsaved work, abort.
-          return false;
-        }
-      }
-      else
-      {
-        // User does not need to save changes.
-      }
-    }
-
-    return true;
-  }
-
-  private bool SaveZasedani()
-  {
-    try
-    {
-      return Core.SaveZasedani(false);
-    }
-    catch (Exception ex)
-    {
-      MessageBox.Show($"Chyba při ukládání zápisu: {ex.Message}.", "Nelze uložit zápis", MessageBoxButton.OK, MessageBoxImage.Error);
-      return false;
-    }
-  }
-
-  private bool SaveZasedaniAs()
-  {
-    try
-    {
-      return Core.SaveZasedani(true);
-    }
-    catch (Exception ex)
-    {
-      MessageBox.Show($"Chyba při ukládání zápisu: {ex.Message}.", "Nelze uložit zápis", MessageBoxButton.OK, MessageBoxImage.Error);
-      return false;
-    }
+    if (!Core.ZasedaniIsDirty) return true;
+    var odpoved = MessageBox.Show("Uložit změny před pokračováním?", "Neuložené změny",
+      MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+    return odpoved == MessageBoxResult.No || odpoved == MessageBoxResult.Yes && Core.SaveZasedani(false);
   }
 
   private void ShowAboutDialog()

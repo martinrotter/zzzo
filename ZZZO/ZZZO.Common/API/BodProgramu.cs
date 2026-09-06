@@ -1,159 +1,66 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace ZZZO.Common.API;
 
+public enum RezimBodu
+{
+  [Description("Informativní")] Informativni,
+  [Description("Bere na vědomí")] BereNaVedomi,
+  [Description("S usneseními")] SUsnesenimi
+}
+
 public class BodProgramu : ObservableObject
 {
-  #region Enumy
-
   public enum TypBoduProgramu
   {
-    [Description("Schvalování zapisovatele/ověřovatelů")]
-    SchvaleniZapisOver = 0,
-
-    [Description("Schvalování programu zasedání")]
-    SchvaleniProgramu = 1,
-
-    [Description("Řádný bod zasedání")]
-    BodZasedani = 2,
-
-    [Description("Doplněný bod zasedání")]
-    DoplnenyBodZasedani = 3,
-
-    [Description("Kontrola minulého zápisu")]
-    KontrolaMinulehoZapisu = 4,
+    [Description("Schválení zapisovatele a ověřovatelů")] SchvaleniZapisOver,
+    [Description("Schválení programu")] SchvaleniProgramu,
+    [Description("Řádný bod")] BodZasedani,
+    [Description("Doplněný bod")] DoplnenyBodZasedani,
+    [Description("Kontrola minulého zápisu")] KontrolaMinulehoZapisu
   }
+  public Guid Id { get; set; } = Guid.NewGuid();
+  private string _nadpis = "";
+  private string _prubehHtml = "";
+  private TypBoduProgramu _typ = TypBoduProgramu.BodZasedani;
+  private RezimBodu _rezim;
+  public string Nadpis { get => _nadpis; set => SetProperty(ref _nadpis, value ?? ""); }
+  public string PrubehHtml { get => _prubehHtml; set => SetProperty(ref _prubehHtml, value ?? ""); }
+  public TypBoduProgramu Typ { get => _typ; set => SetProperty(ref _typ, value); }
+  public RezimBodu Rezim { get => _rezim; set => SetProperty(ref _rezim, value); }
+  public ObservableCollection<Usneseni> Usneseni { get; } = new();
+  public ObservableCollection<BodProgramu> Podbody { get; } = new();
+  [JsonIgnore] public bool JeBezny => Typ is TypBoduProgramu.BodZasedani or TypBoduProgramu.DoplnenyBodZasedani;
 
-  #endregion
-
-  public bool MuzeEditovatUsneseni
+  public BodProgramu Duplikovat(IEnumerable<Zastupitel> zastupitele)
   {
-    get => Typ == TypBoduProgramu.DoplnenyBodZasedani ||
-           Typ == TypBoduProgramu.BodZasedani;
-  }
-
-  public bool JeEditovatelny
-  {
-    get => Typ == TypBoduProgramu.DoplnenyBodZasedani ||
-           Typ == TypBoduProgramu.BodZasedani ||
-           Typ == TypBoduProgramu.KontrolaMinulehoZapisu;
-  }
-
-  #region Proměnné
-
-  private bool _jePodbod;
-  private string _nadpis;
-  private string _nadpisPoradi;
-  private string _text;
-  private TypBoduProgramu _typ;
-  private ObservableCollection<Usneseni> _usneseni = new ObservableCollection<Usneseni>();
-
-  #endregion
-
-  #region Vlastnosti
-
-  public bool JePodbod
-  {
-    get => _jePodbod;
-    set
+    var kopie = new BodProgramu { Nadpis = Nadpis + " (kopie)", Typ = Typ, PrubehHtml = PrubehHtml, Rezim = Rezim };
+    foreach (var u in Usneseni)
     {
-      if (value == _jePodbod)
-      {
-        return;
-      }
-
-      _jePodbod = value;
-      OnPropertyChanged();
+      var nove = kopie.PridatUsneseni(zastupitele);
+      nove.TextHtml = u.TextHtml;
+      foreach (var hlas in nove.VolbyZastupitelu)
+        hlas.Volba = u.VolbyZastupitelu.FirstOrDefault(h => h.ZastupitelId == hlas.ZastupitelId)?.Volba ?? HlasovaniZastupitele.VolbaHlasovani.Pro;
     }
+    foreach (var podbod in Podbody) kopie.Podbody.Add(podbod.Duplikovat(zastupitele));
+    return kopie;
   }
 
-  public string Nadpis
+  public void ZmenitRezim(RezimBodu rezim, IEnumerable<Zastupitel> zastupitele)
   {
-    get => _nadpis;
-    set
-    {
-      if (value == _nadpis)
-      {
-        return;
-      }
-
-      _nadpis = value;
-      OnPropertyChanged();
-    }
+    if (rezim == RezimBodu.SUsnesenimi && Usneseni.Count == 0) PridatUsneseni(zastupitele);
+    else if (rezim != RezimBodu.SUsnesenimi) Usneseni.Clear();
+    Rezim = rezim;
   }
-
-  public string NadpisPoradi
+  public Usneseni PridatUsneseni(IEnumerable<Zastupitel> zastupitele)
   {
-    get => _nadpisPoradi;
-    set
-    {
-      if (value == _nadpisPoradi)
-      {
-        return;
-      }
-
-      _nadpisPoradi = value;
-      OnPropertyChanged();
-    }
+    var usneseni = new Usneseni();
+    foreach (var zastupitel in zastupitele)
+      usneseni.VolbyZastupitelu.Add(new HlasovaniZastupitele { Zastupitel = zastupitel });
+    Usneseni.Add(usneseni);
+    Rezim = RezimBodu.SUsnesenimi;
+    return usneseni;
   }
-
-  public string Text
-  {
-    get => _text;
-    set
-    {
-      if (value == _text)
-      {
-        return;
-      }
-
-      _text = value;
-      OnPropertyChanged();
-    }
-  }
-
-  public TypBoduProgramu Typ
-  {
-    get => _typ;
-    set
-    {
-      if (value == _typ)
-      {
-        return;
-      }
-
-      _typ = value;
-
-      OnPropertyChanged();
-      OnPropertyChanged(nameof(JeEditovatelny));
-      OnPropertyChanged(nameof(MuzeEditovatUsneseni));
-    }
-  }
-
-  public ObservableCollection<Usneseni> Usneseni
-  {
-    get => _usneseni;
-    set
-    {
-      if (Equals(value, _usneseni))
-      {
-        return;
-      }
-
-      _usneseni = value;
-      OnPropertyChanged();
-    }
-  }
-
-  #endregion
-
-  #region Konstruktory
-
-  public BodProgramu()
-  {
-    Typ = TypBoduProgramu.BodZasedani;
-  }
-
-  #endregion
 }

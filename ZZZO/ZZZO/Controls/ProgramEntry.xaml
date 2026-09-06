@@ -1,88 +1,41 @@
 ﻿<UserControl x:Class="ZZZO.Controls.ProgramEntry"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:ZZZO.Controls"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:converters="clr-namespace:ZZZO.Converters"
-             xmlns:viewModels="clr-namespace:ZZZO.ViewModels"
-             d:DataContext="{d:DesignInstance Type=viewModels:ProgramEntryViewModel}"
-             mc:Ignorable="d"
-             d:DesignHeight="800"
-             d:DesignWidth="500">
-  <UserControl.Resources>
-    <converters:NotNullConverter x:Key="NotNullConverter" />
-    <converters:EnumConverter x:Key="EnumConverter" />
-    <converters:NotNullToVisibleConverter x:Key="NotNullToVisibleConverter" />
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-  </UserControl.Resources>
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
-    <StackPanel Grid.Row="0"
-                Grid.Column="0"
-                Orientation="Vertical">
-      <ComboBox ItemsSource="{Binding TypyBoduProgramu}" SelectedValue="{Binding ProgramEntry.Typ}">
-        <ComboBox.ItemTemplate>
-          <DataTemplate>
-            <TextBlock Text="{Binding Converter={StaticResource EnumConverter}}" />
-          </DataTemplate>
-        </ComboBox.ItemTemplate>
-      </ComboBox>
-      <TextBox materialDesign:HintAssist.Hint="Nadpis bodu programu"
-               MinLines="4"
-               MaxLines="4"
-               TextWrapping="Wrap"
-               AcceptsReturn="True"
-               Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
-               Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}" />
-      <CheckBox Content="Jedná se o podbod předchozího bodu programu"
-                Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}"
-                IsChecked="{Binding ProgramEntry.JePodbod, UpdateSourceTrigger=PropertyChanged}" />
-      <GroupBox Header="Text bodu programu"
-                Visibility="{Binding ProgramEntry.JeEditovatelny, Converter={StaticResource BooleanToVisibilityConverter}}">
-        <local:TinyMceEditor Margin="-14 -14 0 0"
-                             SnapsToDevicePixels="True"
-                             UseLayoutRounding="True"
-                             HtmlContent="{Binding ProgramEntry.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Height="400" />
-      </GroupBox>
-    </StackPanel>
-
-    <GroupBox Grid.Row="0"
-              Grid.Column="1"
-              Header="Usnesení">
-      <StackPanel Orientation="Vertical">
-        <WrapPanel Orientation="Horizontal">
-          <Button Command="{Binding AddUsneseniCmd}"
-                  IsEnabled="{Binding ProgramEntry.MuzeEditovatUsneseni}"
-                  ToolTip="Přidat nové usnesení">
-            <materialDesign:PackIcon Kind="PlusCircle" />
-          </Button>
-          <Button ToolTip="Smazat vybrané usnesení"
-                  IsEnabled="{Binding ProgramEntry.MuzeEditovatUsneseni}"
-                  Command="{Binding RemoveUsneseniCmd}">
-            <materialDesign:PackIcon Kind="MinusCircle" />
-          </Button>
-        </WrapPanel>
-        <ComboBox IsSynchronizedWithCurrentItem="True"
-                  Name="CmbUsneseni"
-                  SelectedValue="{Binding ChosenUsneseni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  IsEnabled="{Binding LzeEditovatUsneseni}"
-                  ItemsSource="{Binding ProgramEntry.Usneseni}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Text}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-
-        <local:Resolution DataContext="{Binding ResolutionViewModel}"
-                          Visibility="{Binding ElementName=CmbUsneseni, Path=SelectedValue, Converter={StaticResource NotNullToVisibleConverter}}" />
-      </StackPanel>
-    </GroupBox>
-  </Grid>
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="clr-namespace:ZZZO.Controls" xmlns:c="clr-namespace:ZZZO.Converters">
+ <UserControl.Resources><c:EnumConverter x:Key="Enum"/><c:NotNullConverter x:Key="NotNull"/><c:ValidaceConverter x:Key="Validace"/></UserControl.Resources>
+ <Grid IsEnabled="{Binding ProgramEntry, Converter={StaticResource NotNull}}">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+  <StackPanel>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="Typ bodu" Margin="8,0"/><ComboBox ItemsSource="{Binding TypyBoduProgramu}" SelectedItem="{Binding ProgramEntry.Typ}"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={StaticResource Enum}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
+    <StackPanel Grid.Column="1"><TextBlock Text="Způsob projednání" Margin="8,0"/><ComboBox ItemsSource="{Binding Rezimy}" SelectedItem="{Binding Rezim}"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={StaticResource Enum}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
+   </Grid>
+   <TextBlock Text="Název bodu" Margin="8,5,8,0"/>
+   <TextBox Name="NazevBodu" Text="{Binding ProgramEntry.Nadpis, UpdateSourceTrigger=PropertyChanged}"/>
+  </StackPanel>
+  <TabControl Grid.Row="1" Margin="0,9,0,0" SelectedIndex="{Binding VybranaZalozka}">
+   <TabItem Header="Průběh projednání"><local:TinyMceEditor x:Name="EditorBodu" Polozka="{Binding ProgramEntry}"/></TabItem>
+   <TabItem Header="{Binding NadpisUsneseni}" IsEnabled="{Binding MaUsneseni}">
+    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="80" MinHeight="55"/><RowDefinition Height="5"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+     <WrapPanel x:Name="PanelAkciUsneseni"><Button Content="+ Usnesení" Command="{Binding AddUsneseniCmd}"/><Button Content="Odstranit" Command="{Binding RemoveUsneseniCmd}"/><Button Content="↑" Command="{Binding UsneseniNahoruCmd}"/><Button Content="↓" Command="{Binding UsneseniDoluCmd}"/></WrapPanel>
+     <ListBox Grid.Row="1" Name="SeznamUsneseni" Margin="0,8,0,0" ItemsSource="{Binding ProgramEntry.Usneseni}" SelectedItem="{Binding ChosenUsneseni}">
+      <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+       <Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Background" Value="Transparent"/>
+       <Setter Property="BorderBrush" Value="Transparent"/><Setter Property="BorderThickness" Value="1"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+       <Style.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource PozadiNajetiPolozky}"/></Trigger>
+        <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource PozadiVybranePolozky}"/><Setter Property="BorderBrush" Value="{DynamicResource OkrajVybranePolozky}"/></Trigger>
+        <MultiTrigger><MultiTrigger.Conditions><Condition Property="IsSelected" Value="True"/><Condition Property="IsKeyboardFocusWithin" Value="True"/></MultiTrigger.Conditions><Setter Property="BorderThickness" Value="2"/></MultiTrigger>
+       </Style.Triggers>
+      </Style></ListBox.ItemContainerStyle>
+      <ListBox.ItemTemplate><DataTemplate><DockPanel>
+       <TextBlock DockPanel.Dock="Right" Foreground="#AA5B00"><TextBlock.Text><MultiBinding Converter="{StaticResource Validace}" ConverterParameter="Ikona"><Binding Path="Id"/><Binding Path="DataContext.Core.Chyby" RelativeSource="{RelativeSource AncestorType=Window}"/></MultiBinding></TextBlock.Text></TextBlock>
+       <TextBlock Text="{Binding Vytah}" TextTrimming="CharacterEllipsis" MinHeight="20"/>
+      </DockPanel></DataTemplate></ListBox.ItemTemplate>
+     </ListBox>
+     <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch"/>
+     <local:Resolution Grid.Row="3" DataContext="{Binding ResolutionViewModel}"/>
+    </Grid>
+   </TabItem>
+  </TabControl>
+ </Grid>
 </UserControl>
