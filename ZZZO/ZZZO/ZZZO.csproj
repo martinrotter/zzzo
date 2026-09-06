@@ -15,7 +15,7 @@
     <LargeAddressAware>true</LargeAddressAware>
     <LargeAddressAwareAfterTargets>AfterBuild</LargeAddressAwareAfterTargets>
     <LargeAddressAwareTargetAssembly>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\$(AssemblyName).exe</LargeAddressAwareTargetAssembly>
-    <AssemblyVersion>0.0.6</AssemblyVersion>
+    <AssemblyVersion>0.0.7</AssemblyVersion>
     <ProductVersion>$(AssemblyVersion)</ProductVersion>
     <InformationalVersion>$(AssemblyVersion)$(SourceRevisionId)</InformationalVersion>
     <Copyright>Martin Rotter</Copyright>

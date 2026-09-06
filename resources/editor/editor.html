@@ -25,16 +25,21 @@
       entity_encoding: "raw",
       browser_spellcheck: true,
       license_key: "gpl",
+      promotion: false,
+      branding: false,
+      statusbar: false,
       allow_html_in_named_anchor: true,
       resize: false,
       table_use_colgroups: false,
       table_default_attributes: {},
       table_default_styles: {},
+      table_sizing_mode: "responsive",
       plugins: 'code charmap image link searchreplace table visualchars lists',
       menubar: "edit view insert format table tools help",
-      toolbar: ['alignleft aligncenter alignright | underline bold italic | link subscript superscript', 'styles | bullist numlist'],
-      width: "99%",
-      height: "99vh",
+      toolbar: 'alignleft aligncenter alignright | underline bold italic | link subscript superscript | styles bullist numlist',
+      toolbar_mode: "sliding",
+      width: "100%",
+      height: "100vh",
       setup: function(ed) {
         ed.on('init', function() { CefSharp.PostMessage(JSON.stringify({druh: 'pripraven'})); });
         ed.on('input change undo redo', function() {
@@ -62,11 +67,6 @@
   </script>
 
   <style>
-    .tox-promotion, .tox-statusbar__branding {
-      visibility: collapse;
-      width: 0px !important;
-    }
-
     .tox-editor-header {
       padding: 0px !important;
     }
@@ -81,7 +81,8 @@
     }
 
     .tox-tbtn {
-      margin: 1px !important;
+      margin: 0px 1px !important;
+      height: 30px !important;
     }
 
     .tox-menubar {
@@ -91,7 +92,7 @@
 
     .tox-toolbar__group {
       padding-left: 0px !important;
-      padding-right: 5px !important;
+      padding-right: 3px !important;
     }
   </style>
 </head>

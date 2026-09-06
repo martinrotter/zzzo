@@ -78,6 +78,13 @@ internal static class TestyGui
         program.ChosenProgramEntry = bod;
         var editor = okno.UcProgram.UcProgramEntry.EditorBodu;
         await PockatAsync(async () => editor.CanExecuteJavascriptInMainFrame && (await editor.EvaluateScriptAsync("typeof getEditorContent === 'function' && !!tinymce.get('tinymce-editor') && tinymce.get('tinymce-editor').initialized")).Result is true);
+        string verzeTinyMce = Convert.ToString((await editor.EvaluateScriptAsync("tinymce.majorVersion + '.' + tinymce.minorVersion")).Result)!;
+        Program.Overit(verzeTinyMce == "8.9.0", "GUI používá TinyMCE 8.9.0");
+        string jednoduchaTabulka = Convert.ToString((await editor.EvaluateScriptAsync("(() => { const e = tinymce.get('tinymce-editor'); e.setContent(''); e.execCommand('mceInsertTable', false, { rows: 2, columns: 2 }); return e.getContent(); })()")).Result)!;
+        Program.Overit(jednoduchaTabulka.Contains("<table>") && jednoduchaTabulka.Contains("<tbody>") &&
+          !jednoduchaTabulka.Contains("<colgroup") && !jednoduchaTabulka.Contains(" style=") &&
+          !jednoduchaTabulka.Contains(" border=") && !jednoduchaTabulka.Contains("cellpadding") && !jednoduchaTabulka.Contains("cellspacing"),
+          "GUI TinyMCE generuje jednoduché HTML tabulek bez prezentačních atributů: " + jednoduchaTabulka);
         await TinyMceEditor.DokoncitVseAsync();
         await editor.EvaluateScriptAsync("tinymce.get('tinymce-editor').setContent('<p>Rozepsaný průběh.</p>');");
         // Nečekáme na ztrátu fokusu ani na časovač editoru.
