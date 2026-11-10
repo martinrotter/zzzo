@@ -3,68 +3,22 @@
 
 <head>
   <meta charset="utf-8">
-  <title>HTML editor</title>
+  <title>Editor textu</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body {
+    html, body {
+      height: 100%;
       margin: 0px;
       padding: 0px;
+      overflow: hidden;
     }
   </style>
 
   <script src="tinymce/tinymce.min.js"></script>
 
-  <script>
-    const editorId = "tinymce-editor";
-    const editorIdSelector = "#" + editorId;
-
-    tinymce.init({
-      selector: editorIdSelector,
-      language: "cs",
-      entity_encoding: "raw",
-      browser_spellcheck: true,
-      license_key: "gpl",
-      promotion: false,
-      branding: false,
-      statusbar: false,
-      allow_html_in_named_anchor: true,
-      resize: false,
-      table_use_colgroups: false,
-      table_default_attributes: {},
-      table_default_styles: {},
-      table_sizing_mode: "responsive",
-      plugins: 'code charmap image link searchreplace table visualchars lists',
-      menubar: "edit view insert format table tools help",
-      toolbar: 'alignleft aligncenter alignright | underline bold italic | link subscript superscript | styles bullist numlist',
-      toolbar_mode: "sliding",
-      width: "100%",
-      height: "100vh",
-      setup: function(ed) {
-        ed.on('init', function() { CefSharp.PostMessage(JSON.stringify({druh: 'pripraven'})); });
-        ed.on('input change undo redo', function() {
-          if (!nastavuji) CefSharp.PostMessage(getEditorContent());
-        });
-      }
-    });
-
-    let verzeObsahu = 0;
-    let poradiZpravy = 0;
-    let nastavuji = false;
-    function getEditorContent() {
-      return JSON.stringify({druh: 'obsah', verze: verzeObsahu, poradi: ++poradiZpravy, html: tinymce.get(editorId).getContent()});
-    }
-    function setEditorContent(content, verze) {
-      nastavuji = true;
-      try {
-        const editor = tinymce.get(editorId);
-        verzeObsahu = verze;
-        editor.setContent(content || "");
-        editor.undoManager.clear();
-        editor.setDirty(false);
-      } finally { nastavuji = false; }
-    }
-  </script>
+  <script src="editor-content.js"></script>
+  <script src="editor.js" defer></script>
 
   <style>
     .tox-editor-header {
@@ -73,6 +27,14 @@
 
     .tox-tinymce {
       border: 0px !important;
+      border-radius: 0 !important;
+    }
+
+    /* Keep the focus border inside the viewport, including short editors. */
+    body .tox .tox-edit-area::before {
+      inset: 2px;
+      border-width: 1px;
+      border-radius: 2px;
     }
 
     .tox-mbtn, .tox-toolbar-overlord {

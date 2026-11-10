@@ -44,155 +44,92 @@
       <Setter Property="TextAlignment" Value="Left"/>
       <Setter Property="SpellCheck.IsEnabled" Value="False"/>
     </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+      <Setter Property="Height" Value="38"/>
+      <Setter Property="Margin" Value="4"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
   </UserControl.Resources>
-  <DockPanel>
-  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-  <StackPanel>
-    <TextBox Name="TbObec" materialDesign:HintAssist.Hint="Název obce"
-             ToolTip="Název obce"
-             Width="200"
-             HorizontalAlignment="Left">
-      <TextBox.Text>
-        <Binding Path="Core.Zasedani.NazevObce"
-                 UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-        </Binding>
-      </TextBox.Text>
-    </TextBox>
-
-    <WrapPanel Grid.Row="1">
-      <DatePicker materialDesign:HintAssist.Hint="Datum konání"
-                  ToolTip="Datum konání"
-                  Name="DpDenKonani"
-                  SelectedDate="{Binding Core.Zasedani.DatumKonani, UpdateSourceTrigger=PropertyChanged}" />
-      <materialDesign:TimePicker materialDesign:HintAssist.Hint="Čas konání"
-                                 ToolTip="Čas konání"
-                                 Name="DpCasKonani"
-                                 Is24Hours="True"
-                                 WithSeconds="False"
-                                 SelectedTime="{Binding Core.Zasedani.CasKonani, UpdateSourceTrigger=PropertyChanged}" />
-    </WrapPanel>
-
-    <WrapPanel>
-      <Border Margin="10,0,0,0"
-              BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-              BorderThickness="1">
-        <Grid>
-          <Image Stretch="Uniform"
-                 Width="64"
-                 Height="64"
-                 ToolTip="Logo obce"
-                 Source="{Binding Core.Zasedani.LogoObce, UpdateSourceTrigger=PropertyChanged}" />
-          <Border x:Name="PlaceholderBezZnaku" Width="64" Height="64" Margin="5"
-                  Background="#F4F6F7" BorderBrush="#D5DBDF" BorderThickness="1"
-                  IsHitTestVisible="False" ToolTip="Znak obce není vybrán">
-            <Border.Style>
-              <Style TargetType="Border">
-                <Setter Property="Visibility" Value="Collapsed"/>
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding Core.Zasedani.LogoObce}" Value="{x:Null}">
-                    <Setter Property="Visibility" Value="Visible"/>
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </Border.Style>
-            <TextBlock Text="Bez znaku" Foreground="#68717A" FontSize="11"
-                       TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          </Border>
-        </Grid>
-      </Border>
-      <Button VerticalAlignment="Center"
-              Command="{Binding UpdateVillageLogoCmd}">
-        <WrapPanel>
-          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Badge" />
-          <TextBlock Margin="5,0,0,0">Vybrat znak</TextBlock>
-        </WrapPanel>
-      </Button>
-      <Button VerticalAlignment="Center"
-              CommandParameter="{Binding Core.Zasedani.NazevObce}"
-              Command="{Binding ShowCityLogosCmd}">
-        <WrapPanel>
-          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Download" />
-          <TextBlock Margin="5,0,0,0">Stáhnout znak</TextBlock>
-        </WrapPanel>
-      </Button>
-      <Button VerticalAlignment="Center"
-              Command="{Binding RemoveVillageLogoCmd}">
-        <WrapPanel>
-          <materialDesign:PackIcon VerticalAlignment="Center" Kind="Delete" />
-          <TextBlock Margin="5,0,0,0">Smazat znak</TextBlock>
-        </WrapPanel>
-      </Button>
-    </WrapPanel>
-
-    <WrapPanel Margin="0">
-      <TextBox Name="TbPoradi" ToolTip="Pořadí ZO. Zadejte číslo - o kolikáte zasedání se jedná. Bez tečky."
-               materialDesign:ValidationAssist.UsePopup="True"
-               materialDesign:HintAssist.Hint="Pořadí ZO"
-               Width="100"
-               HorizontalAlignment="Left">
-        <TextBox.Text>
-          <Binding Path="Core.Zasedani.Poradi"
-                   UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-            </Binding>
-        </TextBox.Text>
-      </TextBox>
-
-      <TextBox Name="TbHoste" materialDesign:ValidationAssist.UsePopup="True"
-               materialDesign:HintAssist.Hint="Počet hostů"
-               Width="100"
-               HorizontalAlignment="Left">
-        <TextBox.Text>
-          <Binding Path="Core.Zasedani.PocetHostu"
-                   UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-            </Binding>
-        </TextBox.Text>
-      </TextBox>
-    </WrapPanel>
-
-    <StackPanel Orientation="Horizontal">
-      <GroupBox Header="Adresa konání">
-        <StackPanel MinWidth="200"
-                    Orientation="Vertical">
-          <TextBox materialDesign:HintAssist.Hint="Ulice">
-            <TextBox.Text>
-              <Binding Path="Core.Zasedani.AdresaKonani.Ulice"
-                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-                    </Binding>
-            </TextBox.Text>
-          </TextBox>
-          <TextBox materialDesign:HintAssist.Hint="Číslo popisné">
-            <TextBox.Text>
-              <Binding Path="Core.Zasedani.AdresaKonani.CisloPopisneOrientacni"
-                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-                    </Binding>
-            </TextBox.Text>
-          </TextBox>
-          <TextBox materialDesign:HintAssist.Hint="Obec">
-            <TextBox.Text>
-              <Binding Path="Core.Zasedani.AdresaKonani.Obec"
-                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-                    </Binding>
-            </TextBox.Text>
-          </TextBox>
-          <TextBox materialDesign:HintAssist.Hint="PSČ">
-            <TextBox.Text>
-              <Binding Path="Core.Zasedani.AdresaKonani.Psc"
-                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-                    </Binding>
-            </TextBox.Text>
-          </TextBox>
-          <TextBox materialDesign:HintAssist.Hint="Popis místa (uvádějte v 6. pádu)">
-            <TextBox.Text>
-              <Binding Path="Core.Zasedani.AdresaKonani.PopisMista"
-                       UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True">
-                    </Binding>
-            </TextBox.Text>
-          </TextBox>
-        </StackPanel>
-      </GroupBox>
-
-      <GroupBox Header="Zastupitelé">
-        <StackPanel Orientation="Vertical">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="2*" MinWidth="300" MaxWidth="380"/>
+      <ColumnDefinition Width="5*"/>
+    </Grid.ColumnDefinitions>
+    <ScrollViewer x:Name="UdajeZasedani" Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  PanningMode="VerticalOnly">
+      <StackPanel>
+        <GroupBox Header="Zasedání" Padding="3">
+          <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="1.1*"/></Grid.ColumnDefinitions>
+            <TextBox Name="TbObec" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Název obce" ToolTip="Název obce"
+                     Text="{Binding Core.Zasedani.NazevObce, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+            <DatePicker Name="DpDenKonani" Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="Datum konání" ToolTip="Datum konání"
+                        SelectedDate="{Binding Core.Zasedani.DatumKonani, UpdateSourceTrigger=PropertyChanged}"/>
+            <materialDesign:TimePicker Name="DpCasKonani" Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="Čas konání" ToolTip="Čas konání"
+                                      Is24Hours="True" WithSeconds="False"
+                                      SelectedTime="{Binding Core.Zasedani.CasKonani, UpdateSourceTrigger=PropertyChanged}"/>
+            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+              <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+              <TextBox Name="TbPoradi" Grid.Column="0" materialDesign:HintAssist.Hint="Pořadí ZO"
+                       ToolTip="Pořadí ZO. Zadejte číslo - o kolikáté zasedání se jedná. Bez tečky." materialDesign:ValidationAssist.UsePopup="True"
+                       Text="{Binding Core.Zasedani.Poradi, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+              <TextBox Name="TbHoste" Grid.Column="1" materialDesign:HintAssist.Hint="Počet hostů" materialDesign:ValidationAssist.UsePopup="True"
+                       Text="{Binding Core.Zasedani.PocetHostu, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+            </Grid>
+          </Grid>
+        </GroupBox>
+        <GroupBox Header="Adresa konání" Padding="3">
+          <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="1.1*"/></Grid.ColumnDefinitions>
+            <TextBox Grid.Row="0" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Ulice"
+                     Text="{Binding Core.Zasedani.AdresaKonani.Ulice, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+            <TextBox Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="Číslo popisné"
+                     Text="{Binding Core.Zasedani.AdresaKonani.CisloPopisneOrientacni, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" materialDesign:HintAssist.Hint="PSČ"
+                     Text="{Binding Core.Zasedani.AdresaKonani.Psc, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+            <TextBox Grid.Row="2" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Obec"
+                     Text="{Binding Core.Zasedani.AdresaKonani.Obec, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+            <TextBox Grid.Row="3" Grid.ColumnSpan="2" materialDesign:HintAssist.Hint="Popis místa" ToolTip="Uvádějte v 6. pádu, např. v obecním úřadě."
+                     Text="{Binding Core.Zasedani.AdresaKonani.PopisMista, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"/>
+          </Grid>
+        </GroupBox>
+        <GroupBox Header="Znak obce" Padding="3">
+          <Grid Margin="8,6">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Border Grid.RowSpan="2" BorderBrush="#D5DBDF" BorderThickness="1" Margin="0,0,8,0" Width="74" Height="74" VerticalAlignment="Center">
+              <Grid>
+                <Image Stretch="Uniform" Margin="4" ToolTip="Logo obce" Source="{Binding Core.Zasedani.LogoObce, UpdateSourceTrigger=PropertyChanged}"/>
+                <Border x:Name="PlaceholderBezZnaku" Background="#F4F6F7" IsHitTestVisible="False" ToolTip="Znak obce není vybrán">
+                  <Border.Style>
+                    <Style TargetType="Border">
+                      <Setter Property="Visibility" Value="Collapsed"/>
+                      <Style.Triggers><DataTrigger Binding="{Binding Core.Zasedani.LogoObce}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+                    </Style>
+                  </Border.Style>
+                  <TextBlock Text="Bez znaku" Foreground="#68717A" FontSize="11" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+              </Grid>
+            </Border>
+            <Button Grid.Column="1" Grid.Row="0" Margin="3" Command="{Binding UpdateVillageLogoCmd}" ToolTip="Vybrat znak ze souboru">
+              <StackPanel Orientation="Horizontal"><materialDesign:PackIcon Kind="FolderOpenOutline" VerticalAlignment="Center"/><TextBlock Margin="5,0,0,0" Text="Vybrat"/></StackPanel>
+            </Button>
+            <Button Grid.Column="1" Grid.Row="1" Margin="3" Command="{Binding ShowCityLogosCmd}" CommandParameter="{Binding Core.Zasedani.NazevObce}" ToolTip="Stáhnout znak obce">
+              <StackPanel Orientation="Horizontal"><materialDesign:PackIcon Kind="Download" VerticalAlignment="Center"/><TextBlock Margin="5,0,0,0" Text="Stáhnout"/></StackPanel>
+            </Button>
+            <Button Grid.Column="2" Grid.RowSpan="2" Margin="3" Padding="6" Width="32" MinWidth="32" VerticalAlignment="Center"
+                    Command="{Binding RemoveVillageLogoCmd}" ToolTip="Smazat znak" AutomationProperties.Name="Smazat znak obce">
+              <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18"/>
+            </Button>
+          </Grid>
+        </GroupBox>
+      </StackPanel>
+    </ScrollViewer>
+    <GroupBox Grid.Column="1" Header="Zastupitelé">
+      <Grid Margin="4">
+        <Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
           <DataGrid materialDesign:DataGridAssist.CellPadding="5,2"
                     materialDesign:DataGridAssist.ColumnHeaderPadding="6,5"
                     RowHeight="34" HeadersVisibility="Column"
@@ -200,7 +137,9 @@
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
                     IsSynchronizedWithCurrentItem="True"
-                    Height="250"
+                    Grid.Row="0"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto"
                     SelectionMode="Single"
                     SelectionUnit="FullRow"
                     CanUserReorderColumns="False"
@@ -231,11 +170,11 @@
                   </TextBlock>
                 </DataTemplate></DataGridTemplateColumn.CellTemplate>
               </DataGridTemplateColumn>
-              <DataGridTextColumn Header="Jméno" HeaderStyle="{StaticResource ZahlaviJmenaZastupitele}" MinWidth="110" ElementStyle="{StaticResource TextZastupitele}" EditingElementStyle="{StaticResource EditorJmenaZastupitele}"
-                                  Width="Auto"
+              <DataGridTextColumn Header="Jméno" HeaderStyle="{StaticResource ZahlaviJmenaZastupitele}" MinWidth="100" ElementStyle="{StaticResource TextZastupitele}" EditingElementStyle="{StaticResource EditorJmenaZastupitele}"
+                                  Width="*"
                                   Binding="{Binding Jmeno, UpdateSourceTrigger=PropertyChanged}" />
-              <DataGridTextColumn Header="Příjmení" HeaderStyle="{StaticResource ZahlaviJmenaZastupitele}" MinWidth="130" ElementStyle="{StaticResource TextZastupitele}" EditingElementStyle="{StaticResource EditorJmenaZastupitele}"
-                                  Width="Auto"
+              <DataGridTextColumn Header="Příjmení" HeaderStyle="{StaticResource ZahlaviJmenaZastupitele}" MinWidth="120" ElementStyle="{StaticResource TextZastupitele}" EditingElementStyle="{StaticResource EditorJmenaZastupitele}"
+                                  Width="1.25*"
                                   Binding="{Binding Prijmeni, UpdateSourceTrigger=PropertyChanged}" />
               <DataGridCheckBoxColumn Header="Přítomen" ElementStyle="{StaticResource ZaskrtavaciPoleZastupitele}" EditingElementStyle="{StaticResource ZaskrtavaciPoleZastupitele}"
                                       Width="Auto"
@@ -254,20 +193,12 @@
                                       Binding="{Binding JeStarosta, UpdateSourceTrigger=PropertyChanged}" />
             </DataGrid.Columns>
           </DataGrid>
-
-          <StackPanel Orientation="Horizontal">
-            <Button Content="+ Zastupitel" Command="{Binding AddZastupitelCmd}"
-                    ToolTip="Přidat zasupitele">
-            </Button>
-            <Button Content="Odstranit" Command="{Binding RemoveZastupitelCmd}"
-                    ToolTip="Smazat zastupitele">
-            </Button>
-            <Button Content="Zrušit role" Command="{Binding ZrusitRoleCmd}" ToolTip="Zrušit řídícího, zapisovatele a ověřovatele u vybrané osoby"/>
-          </StackPanel>
-        </StackPanel>
-      </GroupBox>
-    </StackPanel>
-  </StackPanel>
-  </ScrollViewer>
-  </DockPanel>
+        <WrapPanel x:Name="AkceZastupitelu" Grid.Row="1" Margin="0,6,0,0">
+          <Button Content="+ Zastupitel" Command="{Binding AddZastupitelCmd}" ToolTip="Přidat zastupitele"/>
+          <Button Content="Odstranit" Command="{Binding RemoveZastupitelCmd}" ToolTip="Smazat zastupitele"/>
+          <Button Content="Zrušit role" Command="{Binding ZrusitRoleCmd}" ToolTip="Zrušit řídícího, zapisovatele a ověřovatele u vybrané osoby"/>
+        </WrapPanel>
+      </Grid>
+    </GroupBox>
+  </Grid>
 </UserControl>

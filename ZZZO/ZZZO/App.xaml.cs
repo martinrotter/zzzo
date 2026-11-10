@@ -37,6 +37,7 @@ namespace ZZZO
 
     internal string AdresarMezipametiProhlizece { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZZZO", "Cef");
     internal string SouborNastaveni { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ZZZO", "nastaveni.json");
+    internal bool SpustitSkryteProTest { get; set; }
 
     public App()
     {
@@ -119,6 +120,12 @@ namespace ZZZO
       // Okno vytvoříme až po inicializaci prohlížeče a tématu.
       SetDefaultTheme();
       MainWindow = new MainWindow();
+      if (SpustitSkryteProTest)
+      {
+        MainWindow.Opacity = 0;
+        MainWindow.ShowActivated = false;
+        MainWindow.ShowInTaskbar = false;
+      }
       MainWindow.Show();
     }
 

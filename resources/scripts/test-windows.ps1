@@ -1,5 +1,8 @@
 param(
     [switch]$Gui,
+    [switch]$Pdf,
+    [switch]$Preview,
+    [switch]$Editor,
     [string]$Konfigurace = "Release"
 )
 $ErrorActionPreference = "Stop"
@@ -10,5 +13,10 @@ dotnet publish $projektTestu -c $Konfigurace -r win-x86 --self-contained true -v
 if ($LASTEXITCODE -ne 0) { throw "Sestavení testů selhalo: $LASTEXITCODE." }
 $spoustecTestu = Join-Path $adresarTestu "ZZZO.Tests.exe"
 if (-not (Test-Path -LiteralPath $spoustecTestu -PathType Leaf)) { throw "Chybí spouštěč testů: $spoustecTestu" }
-if ($Gui) { & $spoustecTestu --gui } else { & $spoustecTestu }
+$argumentyTestu = @()
+if ($Gui) { $argumentyTestu += '--gui' }
+if ($Pdf) { $argumentyTestu += '--pdf' }
+if ($Preview) { $argumentyTestu += '--preview' }
+if ($Editor) { $argumentyTestu += '--editor' }
+& $spoustecTestu @argumentyTestu
 if ($LASTEXITCODE -ne 0) { throw "Regresní testy selhaly: $LASTEXITCODE." }

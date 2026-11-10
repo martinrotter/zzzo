@@ -1,72 +1,18 @@
-﻿using System.Windows.Controls;
-using System.Windows.Input;
+using System.Windows.Controls;
 
-namespace ZZZO.Controls
+namespace ZZZO.Controls;
+
+public partial class Generator : UserControl
 {
-  public partial class Generator : UserControl
+  public Generator()
   {
-    #region Konstruktory
-
-    public Generator()
+    InitializeComponent();
+    DataContextChanged += (_, e) =>
     {
-      InitializeComponent();
-
-      var pozice = new PoziceNahledu(WebBrowser);
-      DataContextChanged += (_, e) =>
-      {
-        if (e.OldValue is ViewModels.GeneratorViewModel stary) { stary.ZobrazitNahledAsync = null; stary.VymazatNahled = null; }
-        if (e.NewValue is ViewModels.GeneratorViewModel novy) { novy.ZobrazitNahledAsync = pozice.ZobrazitAsync; novy.VymazatNahled = pozice.Vymazat; }
-      };
-      WebBrowser.PreviewMouseWheel += BrowserPreviewMouseWheel;
-      WebBrowser.KeyUp += BrowserKeyUp;
-    }
-
-    #endregion
-
-    #region Metody
-
-    private void BrowserKeyUp(object sender, KeyEventArgs e)
-    {
-      if (Keyboard.Modifiers != ModifierKeys.Control)
-      {
-        return;
-      }
-
-      if (e.Key == Key.Add)
-      {
-        WebBrowser.ZoomInCommand.Execute(null);
-      }
-
-      if (e.Key == Key.Subtract)
-      {
-        WebBrowser.ZoomOutCommand.Execute(null);
-      }
-
-      if (e.Key == Key.NumPad0)
-      {
-        WebBrowser.ZoomLevel = 0;
-      }
-    }
-
-    private void BrowserPreviewMouseWheel(object sender, MouseWheelEventArgs e)
-    {
-      if (Keyboard.Modifiers != ModifierKeys.Control)
-      {
-        return;
-      }
-
-      if (e.Delta > 0)
-      {
-        WebBrowser.ZoomInCommand.Execute(null);
-      }
-      else
-      {
-        WebBrowser.ZoomOutCommand.Execute(null);
-      }
-
-      e.Handled = true;
-    }
-
-    #endregion
+      if (e.OldValue is ViewModels.GeneratorViewModel old)
+      { old.ZobrazitNahledAsync = null; old.VymazatNahled = null; old.Tisknout = null; }
+      if (e.NewValue is ViewModels.GeneratorViewModel current)
+      { current.ZobrazitNahledAsync = Nahled.ZobrazitAsync; current.VymazatNahled = Nahled.Vymazat; current.Tisknout = Nahled.Tisknout; }
+    };
   }
 }

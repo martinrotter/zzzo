@@ -26,10 +26,27 @@ internal static class Program
     try
     {
       Directory.CreateDirectory(Vystupy);
+      int review = Array.IndexOf(args, "--review-meeting");
+      if (review >= 0)
+      {
+        if (review + 1 >= args.Length) throw new ArgumentException("Za --review-meeting uveďte cestu k datům zasedání.");
+        var meeting = Zasedani.LoadFromFile(args[review + 1]);
+        byte[] document = new GeneratorDocx().Generate(meeting, null).GetAwaiter().GetResult();
+        File.WriteAllBytes(Path.Combine(Vystupy, "review-zapis.docx"), document);
+        var converter = new PrevodnikPdf();
+        byte[] pdf = converter.PrevestAsync(document).GetAwaiter().GetResult();
+        File.WriteAllBytes(Path.Combine(Vystupy, "review-zapis.pdf"), pdf);
+        using var stream = new MemoryStream(pdf, false);
+        using var reader = PdfiumViewer.Core.PdfDocument.Load(stream);
+        Console.WriteLine($"Vygenerováno {reader.PageCount} stran ({converter.PouzityPrevodnik}): {Path.Combine(Vystupy, "review-zapis.pdf")}");
+        return 0;
+      }
       foreach (string log in new[] { "gui-error.txt", "startup-error.txt", "binding-errors.txt" }) File.WriteAllText(Path.Combine(Vystupy, log), "");
       OveritModel();
-      OveritGenerator();
+      TestyDokumentu.Spustit(args.Contains("--pdf") || args.Contains("--preview") || args.Contains("--editor"));
       OveritHranicniStavy();
+      if (args.Contains("--editor")) return TestyEditoru.Spustit();
+      if (args.Contains("--preview")) return TestyNahledu.Spustit();
       if (args.Contains("--gui")) return TestyGui.Spustit();
       Console.WriteLine($"OK: {Pocet} kontrol.");
       return 0;
@@ -167,46 +184,4 @@ internal static class Program
     Overit(prazdne.Zastupitele.Count == 0 && prazdne.Program.BodyProgramu.Count == 3, "nové zasedání bez fiktivních osob");
   }
 
-  private static void OveritGenerator()
-  {
-    var zas = Ukazka();
-    var info = PridatBod(zas, "INFORMACE & <text>", RezimBodu.Informativni);
-    info.PrubehHtml = "<p>Text &amp; &lt;doslova&gt; <strong>tučně</strong>.</p>";
-    var vedomi = PridatBod(zas, "VZETÍ NA VĚDOMÍ", RezimBodu.BereNaVedomi);
-    var s = PridatBod(zas, "ROZHODNUTÍ", RezimBodu.SUsnesenimi);
-    s.Usneseni[0].TextHtml = "<p>Schvaluje <strong>smlouvu</strong> &amp; dodatek.</p><ul><li>Podmínka</li></ul>";
-    s.PridatUsneseni(zas.Zastupitele).TextHtml = "<p>Schvaluje rozpočet.</p>";
-    var pod = new BodProgramu { Nadpis = "PODBOD" }; s.Podbody.Add(pod);
-    pod.PridatUsneseni(zas.Zastupitele).TextHtml = "<p>Podbodové usnesení.</p>";
-    string pred = Encoding.UTF8.GetString(zas.ToJson());
-    var gen = new GeneratorHtml();
-    byte[] data = gen.Generate(zas, new Progress<int>(), new GeneratorHtmlParams { HtmlStyle = "svésedlice.css", KindOfDocument = TypDokumentu.Zapis }).GetAwaiter().GetResult();
-    string html = Encoding.UTF8.GetString(data);
-    Overit(Encoding.UTF8.GetString(zas.ToJson()) == pred, "generátor nemění vstupní data");
-    Overit(!html.Contains("Bez znaku", StringComparison.OrdinalIgnoreCase), "GUI placeholder znaku není ve výstupním HTML");
-    var doc = new HtmlDocument(); doc.LoadHtml(html);
-    string text = HtmlEntity.DeEntitize(doc.DocumentNode.InnerText);
-    Overit(text.Split("bere na vědomí").Length - 1 == 1, "bere na vědomí pouze explicitně a jednou");
-    Overit(doc.DocumentNode.SelectNodes("//h3")?.Count == 1, "podbody mají nadpis h3");
-    Overit(doc.DocumentNode.SelectNodes("//strong")?.Count >= 3, "HTML usnesení zachováno v zápisu i přehledu");
-    Overit(doc.DocumentNode.SelectNodes("//div[@class='signature']/hr")?.Count == 3, "podpisové čáry jsou HTML, nikoli viditelný kód");
-    Overit(!html.Contains("&lt;hr") && html.Contains("&lt;doslova&gt;"), "bez globálního HTML unescape");
-    Overit(doc.DocumentNode.SelectSingleNode("//style").InnerText == GeneratorHtml.GetStyle("svésedlice.css"), "původní CSS vloženo beze změny");
-    Overit(html.Contains("resolution-vote-box success") && html.Contains("resolution-decision-success"), "původní stylové třídy hlasování");
-    Overit(html.Contains("Celkový počet přijatých usnesení je 3."), "přehled zahrnuje všechna běžná usnesení i podbod");
-    File.WriteAllBytes(Path.Combine(Vystupy, "zapis.html"), data);
-    var pozvanka = gen.Generate(zas, null, new GeneratorHtmlParams { HtmlStyle = "svésedlice.css", KindOfDocument = TypDokumentu.Pozvanka }).GetAwaiter().GetResult();
-    doc.LoadHtml(Encoding.UTF8.GetString(pozvanka));
-    Overit(doc.DocumentNode.SelectSingleNode("//li/ol/li") != null, "pozvánka má platné zanoření seznamu");
-    File.WriteAllBytes(Path.Combine(Vystupy, "pozvanka.html"), pozvanka);
-    foreach (var b in zas.Program.BodyProgramu.Where(b => !b.JeBezny).ToArray()) zas.Program.BodyProgramu.Remove(b);
-    Overit(gen.Generate(zas, null, new GeneratorHtmlParams { KindOfDocument = TypDokumentu.Pozvanka }).GetAwaiter().GetResult().Length > 0, "pozvánka bez procedurálních bodů");
-    bool blokovano = false;
-    try { gen.Generate(zas, null, new GeneratorHtmlParams { KindOfDocument = TypDokumentu.Zapis }).GetAwaiter().GetResult(); }
-    catch (InvalidOperationException) { blokovano = true; }
-    Overit(blokovano, "zápis blokován chybějícími speciálními body");
-    var xml = new XmlDocument(); var cil = xml.CreateElement("div"); xml.AppendChild(cil);
-    HtmlObsah.Vlozit(cil, "<script>alert(1)</script><p onclick='x()'><a href='javascript:alert(1)'>A</a><strong>B</strong>&lt;x&gt;</p>");
-    Overit(!cil.OuterXml.Contains("script") && !cil.OuterXml.Contains("onclick") && cil.OuterXml.Contains("<strong>B</strong>"), "bezpečné vkládání HTML");
-  }
 }

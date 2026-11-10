@@ -20,17 +20,17 @@
   </UserControl.Resources>
 
   <DockPanel>
-  <GroupBox Header="HTML + PDF">
+  <GroupBox Header="DOCX + PDF">
     <DockPanel>
       <WrapPanel DockPanel.Dock="Top">
-        <ComboBox IsEnabled="{Binding Pracuje, Converter={StaticResource InverseBooleanConverter}}" materialDesign:TextFieldAssist.PrefixText="Styl → "
+        <ComboBox IsEnabled="{Binding Pracuje, Converter={StaticResource InverseBooleanConverter}}" materialDesign:TextFieldAssist.PrefixText="Šablona → "
                   Style="{StaticResource KompaktniComboBox}"
-                  ItemsSource="{Binding GeneratorHtml.Styles}"
-                  SelectedValue="{Binding SelectedHtmlStyle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                  ItemsSource="{Binding GeneratorDocx.Templates}"
+                  SelectedValue="{Binding SelectedTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <ComboBox IsEnabled="{Binding Pracuje, Converter={StaticResource InverseBooleanConverter}}" materialDesign:TextFieldAssist.PrefixText="Dokument → "
                   Style="{StaticResource KompaktniComboBox}"
-                  ItemsSource="{Binding GeneratorHtml.KindsOfDocuments}"
+                  ItemsSource="{Binding GeneratorDocx.KindsOfDocuments}"
                   SelectedValue="{Binding SelectedKindOfDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
           <ComboBox.ItemTemplate>
             <DataTemplate>
@@ -43,18 +43,16 @@
                 Command="{Binding GenerateDocumentCmd}" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
                 Margin="{StaticResource FormMargin}"
-                Command="{Binding ExportHtmlCmd}"
-                Content="Exportovat do HTML" />
+                Command="{Binding ExportDocxCmd}"
+                Content="Exportovat do DOCX" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
                 Margin="{StaticResource FormMargin}"
                 Content="Exportovat do PDF"
-                Command="{Binding ExportPdfCmd}"
-                CommandParameter="{Binding ElementName=WebBrowser}" />
+                Command="{Binding ExportPdfCmd}" />
         <Button Style="{StaticResource MaterialDesignRaisedSecondaryLightButton}"
                 Margin="{StaticResource FormMargin}"
                 Content="Tisknout"
-                Command="{Binding PrintCmd}"
-                CommandParameter="{Binding ElementName=WebBrowser}" />
+                Command="{Binding PrintCmd}" />
         <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                      Name="PbGenerator"
                      Width="34"
@@ -63,9 +61,7 @@
                      Maximum="100"
                      IsIndeterminate="{Binding Pracuje}" />
       </WrapPanel>
-      <TextBlock DockPanel.Dock="Top" Text="{Binding Stav}" TextWrapping="Wrap" Margin="5"/>
-      <wpf:ChromiumWebBrowser
-        Name="WebBrowser" />
+      <local:NahledPdf x:Name="Nahled" />
     </DockPanel>
   </GroupBox>
   </DockPanel>

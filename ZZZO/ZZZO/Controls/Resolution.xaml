@@ -8,7 +8,7 @@
  </UserControl.Resources>
  <Grid IsEnabled="{Binding Usneseni, Converter={StaticResource NotNull}}">
   <Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="260"/><ColumnDefinition Width="4"/><ColumnDefinition x:Name="SloupecHlasovani" Width="355" MinWidth="320"/></Grid.ColumnDefinitions>
-  <local:TinyMceEditor x:Name="EditorUsneseni" Polozka="{Binding Usneseni}"/>
+  <local:TinyMceEditor x:Name="EditorUsneseni" Polozka="{Binding Usneseni}" Sablona="{Binding Core.Zasedani.DocxTemplate}"/>
   <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch"/>
   <DockPanel Grid.Column="2" Margin="5,0,0,0">
    <StackPanel DockPanel.Dock="Top">

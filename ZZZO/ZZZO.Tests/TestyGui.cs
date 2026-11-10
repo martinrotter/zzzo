@@ -37,6 +37,7 @@ internal static class TestyGui
     var app = new App
     {
       AdresarMezipametiProhlizece = Path.Combine(Program.Vystupy, "cef-" + Guid.NewGuid().ToString("N")),
+      SpustitSkryteProTest = true,
       SouborNastaveni = souborNastaveni
     };
     app.DispatcherUnhandledException += (_, e) => { Console.Error.WriteLine(e.Exception); File.WriteAllText(Path.Combine(Program.Vystupy, "startup-error.txt"), e.Exception.ToString()); e.Handled = true; app.Shutdown(1); };
@@ -72,6 +73,7 @@ internal static class TestyGui
         Program.Overit(((Thickness)app.FindResource("FormMargin")).Left == 5 && okno.TcZasedani.Padding.Left == 5,
           "GUI používá kompaktní sdílené mezery");
         okno.ShowInTaskbar = false; okno.Left = -20000; okno.Top = 0;
+        okno.Opacity = 1;
         var zas = Program.Ukazka();
         var bod = Program.PridatBod(zas, "Test editoru", RezimBodu.SUsnesenimi);
         bod.PrubehHtml = "<p>Původní průběh.</p>";
@@ -89,10 +91,10 @@ internal static class TestyGui
         string verzeTinyMce = Convert.ToString((await editor.EvaluateScriptAsync("tinymce.majorVersion + '.' + tinymce.minorVersion")).Result)!;
         Program.Overit(verzeTinyMce == "8.9.0", "GUI používá TinyMCE 8.9.0");
         string jednoduchaTabulka = Convert.ToString((await editor.EvaluateScriptAsync("(() => { const e = tinymce.get('tinymce-editor'); e.setContent(''); e.execCommand('mceInsertTable', false, { rows: 2, columns: 2 }); return e.getContent(); })()")).Result)!;
-        Program.Overit(jednoduchaTabulka.Contains("<table>") && jednoduchaTabulka.Contains("<tbody>") &&
-          !jednoduchaTabulka.Contains("<colgroup") && !jednoduchaTabulka.Contains(" style=") &&
+        Program.Overit(jednoduchaTabulka.Contains("<table") && jednoduchaTabulka.Contains("<tbody>") &&
+          jednoduchaTabulka.Contains("<colgroup") && jednoduchaTabulka.Contains("width") &&
           !jednoduchaTabulka.Contains(" border=") && !jednoduchaTabulka.Contains("cellpadding") && !jednoduchaTabulka.Contains("cellspacing"),
-          "GUI TinyMCE generuje jednoduché HTML tabulek bez prezentačních atributů: " + jednoduchaTabulka);
+          "GUI TinyMCE ukládá geometrii tabulky bez nadbytečných prezentačních atributů: " + jednoduchaTabulka);
         await TinyMceEditor.DokoncitVseAsync();
         await editor.EvaluateScriptAsync("tinymce.get('tinymce-editor').setContent('<p>Rozepsaný průběh.</p>');");
         // Nečekáme na ztrátu fokusu ani na časovač editoru.
@@ -121,38 +123,73 @@ internal static class TestyGui
         okno.TcZasedani.SelectedIndex = 0;
         await Task.Delay(100);
         await OveritSeznamZastupiteluAsync(okno);
+        await OveritRozlozeniZakladnichUdajuAsync(okno);
         Program.Overit(okno.UcBasicInfo.DpDenKonani.ActualHeight <= 40 && okno.UcBasicInfo.DpCasKonani.ActualHeight <= 40 &&
           okno.UcBasicInfo.DpDenKonani.Padding == new Thickness(0) && okno.UcBasicInfo.DpCasKonani.Padding == new Thickness(0),
           "GUI datum a čas jsou kompaktní a jejich obsah je vertikálně vyrovnaný");
         UlozitSnimek(okno, "zakladni-udaje.png");
         okno.TcZasedani.SelectedIndex = 2;
         var generator = (GeneratorViewModel)okno.UcGenerator.DataContext;
-        var prohlizec = okno.UcGenerator.WebBrowser;
-        await PockatAsync(() => Task.FromResult(prohlizec.IsBrowserInitialized));
+        var nahled = okno.UcGenerator.Nahled;
         bod.PrubehHtml = string.Concat(Enumerable.Repeat("<p>Dlouhý průběh pro kontrolu pozice náhledu.</p>", 70));
         await generator.VygenerovatAsync();
-        UlozitSnimek(okno, "generator.png");
         Program.Overit(generator.CanGenerateOutputs, "GUI aktuální náhled lze exportovat: " + generator.Stav);
-        await prohlizec.EvaluateScriptAsync("scrollTo(0, 1400);");
-        double pred = Convert.ToDouble((await prohlizec.EvaluateScriptAsync("scrollY")).Result);
+        await PockatAsync(() => Task.FromResult(nahled.Prohlizec.Items[0] is System.Windows.Controls.Image { Source: BitmapSource }));
+        var prvniStrana = (System.Windows.Controls.Image)nahled.Prohlizec.Items[0];
+        int puvodniPixely = ((BitmapSource)prvniStrana.Source).PixelWidth;
+        nahled.NastavitZoom(2);
+        await PockatAsync(() => Task.FromResult(prvniStrana.Source is BitmapSource bitmap && bitmap.PixelWidth >= puvodniPixely * 1.9));
+        Program.Overit(Math.Abs(nahled.Zoom - 2) < 0.01, "GUI při zoomu PDF znovu vykreslí ve vyšším rozlišení");
+        Program.Overit(nahled.Scroll.ScrollableWidth > 0, "GUI při přiblížení dovolí vodorovný posun celé stránky");
+        nahled.NastavitZoom(1);
+        await PockatAsync(() => Task.FromResult(prvniStrana.Source is BitmapSource bitmap && bitmap.PixelWidth <= puvodniPixely * 1.1));
+        Program.Overit(nahled.Prohlizec.Document.Search("Dlouhý průběh", false, false, 0, nahled.PageCount - 1).Items.Count >= 70,
+          "GUI PDF obsahuje hledatelný text");
+        nahled.ScrollTo(0);
+        await Task.Delay(100);
+        UlozitSnimek(okno, "generator.png");
+        nahled.ScrollTo(1400);
+        double pred = nahled.VerticalOffset;
         await generator.VygenerovatAsync();
         Program.Overit(generator.CanGenerateOutputs, "GUI opakované generování: " + generator.Stav);
-        double po = Convert.ToDouble((await prohlizec.EvaluateScriptAsync("scrollY")).Result);
+        double po = nahled.VerticalOffset;
         Program.Overit(pred > 100 && Math.Abs(pred - po) <= 2, "GUI scroll zůstává při přegenerování");
+        Program.Overit(await TestyNahledu.VykresleneAsync(nahled), "GUI obnovený náhled není šedý bez dalšího posunu");
         generator.SelectedKindOfDocument = TypDokumentu.Pozvanka;
         Program.Overit(!generator.CanGenerateOutputs, "GUI změna typu zablokuje starý export");
         await generator.VygenerovatAsync();
         generator.SelectedKindOfDocument = TypDokumentu.Zapis;
         await generator.VygenerovatAsync();
-        po = Convert.ToDouble((await prohlizec.EvaluateScriptAsync("scrollY")).Result);
+        po = nahled.VerticalOffset;
         Program.Overit(Math.Abs(pred - po) <= 2, "GUI samostatná pozice pozvánky a zápisu");
-        bool pdf = await prohlizec.PrintToPdfAsync(Path.Combine(Program.Vystupy, "zapis.pdf"), new PdfPrintSettings
+        Program.Overit(generator.CanExportPdf && generator.GeneratedPdf.SequenceEqual(nahled.PdfData), "GUI náhled je přesně exportované PDF z DOCX");
+        using var tisk = nahled.VytvoritTisk();
+        Program.Overit(tisk.GetType().Name == "PdfPrintDocument" && nahled.PageCount > 1,
+          "GUI tisk vede přímo přes PDFium bez pevného rozlišení bitmap");
+        File.WriteAllBytes(Path.Combine(Program.Vystupy, "gui-zapis.pdf"), generator.GeneratedPdf);
+        string sablona = Path.Combine(ZZZO.Common.Constants.PathsAndFiles.AppTemplatesFolder, generator.SelectedTemplate);
+        byte[] obsahSablony = File.ReadAllBytes(sablona);
+        try
         {
-          DisplayHeaderFooter = true, PrintBackground = true, PreferCssPageSize = true,
-          HeaderTemplate = "<div class='text center'></div>",
-          FooterTemplate = ZZZO.Common.Generators.GeneratorHtml.GetStyle("svésedlice.css.footer")
-        });
-        Program.Overit(pdf, "GUI skutečný PDF export");
+          using (var stream = new FileStream(sablona, FileMode.Append)) stream.WriteByte(0);
+          Program.Overit(!generator.CanGenerateOutputs, "GUI změna souboru šablony zablokuje zastaralý export");
+        }
+        finally { File.WriteAllBytes(sablona, obsahSablony); }
+        string puvodniPrevodnik = Environment.GetEnvironmentVariable("ZZZO_LIBREOFFICE");
+        string puvodniRezimPrevodu = Environment.GetEnvironmentVariable("ZZZO_PDF_CONVERTER");
+        try
+        {
+          Environment.SetEnvironmentVariable("ZZZO_PDF_CONVERTER", "libreoffice");
+          Environment.SetEnvironmentVariable("ZZZO_LIBREOFFICE", Path.Combine(Program.Vystupy, "chybejici-soffice.exe"));
+          await generator.VygenerovatAsync();
+          Program.Overit(generator.CanGenerateOutputs && !generator.CanExportPdf && nahled.PdfData == null,
+            "GUI bez převodníku dovolí DOCX a zablokuje PDF i starý náhled");
+        }
+        finally
+        {
+          Environment.SetEnvironmentVariable("ZZZO_LIBREOFFICE", puvodniPrevodnik);
+          Environment.SetEnvironmentVariable("ZZZO_PDF_CONVERTER", puvodniRezimPrevodu);
+        }
         bod.Nadpis += " změna";
         Program.Overit(!generator.CanGenerateOutputs, "GUI změna dat zablokuje starý export");
         // Hierarchie se přesouvá včetně podbodů; chybějící usnesení je vidět i na řádku rodiče.
@@ -318,11 +355,34 @@ internal static class TestyGui
     Program.Overit(Equals(presuny.Header, "Upravit"), "GUI podnabídka přesunů má stručný název Upravit");
     presuny.IsSubmenuOpen = true;
     await Task.Delay(150);
-    Program.Overit(nabidka.IsOpen && presuny.Items.OfType<System.Windows.Controls.MenuItem>().Count() == 4 &&
+    Program.Overit(nabidka.IsOpen && presuny.Items.OfType<System.Windows.Controls.MenuItem>().Count() == 2 &&
       presuny.Items.OfType<System.Windows.Controls.MenuItem>().All(p => p.Command != null),
-      "GUI šipkové akce jsou v podmenu s funkčními příkazy");
+      "GUI podmenu obsahuje pouze změnu zanoření bodu");
     presuny.IsSubmenuOpen = false;
     nabidka.IsOpen = false;
+    var vmProgramu = (ProgramViewModel)program.DataContext;
+    var vybranyBodPredPresunem = vmProgramu.ChosenProgramEntry;
+    var body = vmProgramu.Core.Zasedani.Program.KolekceBodu(vybranyBodPredPresunem);
+    int predPresunem = body.IndexOf(vybranyBodPredPresunem);
+    Program.Overit(program.PosunoutBodVyse.Command == vmProgramu.MoveProgramEntryUpCmd && program.PosunoutBodNize.Command == vmProgramu.MoveProgramEntryDownCmd,
+      "GUI šipky pro přesun jsou dostupné přímo pod seznamem");
+    if (predPresunem > 0)
+    {
+      program.PosunoutBodVyse.Command.Execute(null);
+      Program.Overit(body.IndexOf(vybranyBodPredPresunem) == predPresunem - 1 && vmProgramu.ChosenProgramEntry == vybranyBodPredPresunem,
+        "GUI přímá šipka posune bod nahoru a zachová výběr");
+      program.PosunoutBodNize.Command.Execute(null);
+      Program.Overit(body.IndexOf(vybranyBodPredPresunem) == predPresunem, "GUI přímá šipka posune bod zpět dolů");
+    }
+    vmProgramu.ChosenProgramEntry = body[0];
+    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+    await Task.Delay(100);
+    Program.Overit(!program.PosunoutBodVyse.IsEnabled, "GUI horní šipka je na prvním bodu neaktivní");
+    vmProgramu.ChosenProgramEntry = body[^1];
+    System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+    await Task.Delay(100);
+    Program.Overit(!program.PosunoutBodNize.IsEnabled, "GUI dolní šipka je na posledním bodu neaktivní");
+    vmProgramu.ChosenProgramEntry = vybranyBodPredPresunem;
     program.PridatBod.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
     await Task.Delay(100);
     Program.Overit(program.PridatBod.ContextMenu.Items.OfType<System.Windows.Controls.MenuItem>().Any(p =>
@@ -332,10 +392,40 @@ internal static class TestyGui
     var sirka = sloupec.Width;
     sloupec.Width = new GridLength(230);
     program.UpdateLayout();
-    Program.Overit(program.PanelAkci.ActualHeight <= 40 && program.PridatBod.ActualWidth > 75 &&
-      program.AkceBodu.ActualWidth > 60, "GUI akce zůstávají na jediném řádku i v nejužším panelu");
+    var tlacitka = new[] { program.PridatBod, program.PosunoutBodVyse, program.PosunoutBodNize, program.AkceBodu };
+    Program.Overit(program.PanelAkci.ActualHeight <= 40 && tlacitka.All(b => b.ActualWidth >= 28 &&
+      b.TranslatePoint(new Point(b.ActualWidth, b.ActualHeight), program.PanelAkci).X <= program.PanelAkci.ActualWidth),
+      "GUI čtyři akce se vejdou na jediný řádek i v nejužším panelu");
     sloupec.Width = sirka;
     program.UpdateLayout();
+  }
+
+  private static async Task OveritRozlozeniZakladnichUdajuAsync(MainWindow okno)
+  {
+    double puvodniSirka = okno.Width, puvodniVyska = okno.Height;
+    var udaje = okno.UcBasicInfo;
+    var seznam = udaje.LvZastupitele;
+    double malaSirka = 0, malaVyska = 0;
+    foreach (var velikost in new[] { (Sirka: 1050, Vyska: 720), (Sirka: 1600, Vyska: 1000) })
+    {
+      okno.Width = velikost.Sirka; okno.Height = velikost.Vyska;
+      await Task.Delay(200);
+      okno.UpdateLayout();
+      var pravydolni = seznam.TranslatePoint(new Point(seznam.ActualWidth, seznam.ActualHeight), udaje);
+      var akce = udaje.AkceZastupitelu.TranslatePoint(new Point(udaje.AkceZastupitelu.ActualWidth, udaje.AkceZastupitelu.ActualHeight), udaje);
+      Program.Overit(seznam.ActualHeight > udaje.ActualHeight - 150 && pravydolni.X <= udaje.ActualWidth &&
+        akce.Y <= udaje.ActualHeight && akce.Y > pravydolni.Y,
+        $"GUI tabulka využívá výšku a její akce zůstávají dostupné při {velikost.Sirka}×{velikost.Vyska}");
+      Program.Overit(seznam.Columns.Sum(c => c.ActualWidth) <= seznam.ActualWidth &&
+        seznam.Columns.Sum(c => c.ActualWidth) >= seznam.ActualWidth - 25 && udaje.UdajeZasedani.ExtentWidth <= udaje.UdajeZasedani.ViewportWidth + 1,
+        $"GUI sloupce zastupitelů využijí šířku bez vodorovného posouvání při {velikost.Sirka}×{velikost.Vyska}");
+      UlozitSnimek(okno, $"zakladni-udaje-{velikost.Sirka}.png");
+      if (velikost.Sirka == 1050) { malaSirka = seznam.ActualWidth; malaVyska = seznam.ActualHeight; }
+      else Program.Overit(seznam.ActualWidth > malaSirka + 400 && seznam.ActualHeight > malaVyska + 220,
+        "GUI seznam zastupitelů se zvětšuje v obou směrech spolu s oknem");
+    }
+    okno.Width = puvodniSirka; okno.Height = puvodniVyska;
+    await Task.Delay(150);
   }
 
   private static async Task OveritSeznamZastupiteluAsync(MainWindow okno)

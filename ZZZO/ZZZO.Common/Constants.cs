@@ -47,6 +47,7 @@ namespace ZZZO.Common
       public static string AppBaseFolder;
       public static string AppDataFolder;
       public static string AppStylesFolder;
+      public static string AppTemplatesFolder;
       public static string AppTinyMceFolder;
 
       #endregion
@@ -58,6 +59,7 @@ namespace ZZZO.Common
         AppBaseFolder = Utils.GetExecutingAssemblyFolder();
         AppDataFolder = Path.Combine(AppBaseFolder, "Data");
         AppStylesFolder = Path.Combine(AppDataFolder, "Styles");
+        AppTemplatesFolder = Path.Combine(AppDataFolder, "Templates");
         AppTinyMceFolder = Path.Combine(AppDataFolder, "TinyMceEditor");
       }
 

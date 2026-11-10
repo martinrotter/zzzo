@@ -1,10 +1,7 @@
-﻿using System.ComponentModel;
 using System.IO;
-using System.Text;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Input;
-using CefSharp;
-using CefSharp.Wpf;
 using ZZZO.Commands;
 using ZZZO.Common.Generators;
 using ZZZO.Controls;
@@ -15,32 +12,36 @@ namespace ZZZO.ViewModels;
 public class GeneratorViewModel : ViewModelBase
 {
   public ZzzoCore Core { get; }
-  public GeneratorHtml GeneratorHtml { get; } = new();
-  public Func<string, TypDokumentu, Task> ZobrazitNahledAsync { get; set; }
+  public GeneratorDocx GeneratorDocx { get; } = new();
+  public Func<byte[], TypDokumentu, Task> ZobrazitNahledAsync { get; set; }
   public Action VymazatNahled { get; set; }
+  public Action Tisknout { get; set; }
   private bool _pracuje;
   private long _revizeNahledu = -1;
   private TypDokumentu _druh = TypDokumentu.Zapis;
   private TypDokumentu _druhNahledu;
-  private string _stylNahledu;
-  private string _stav = "Vygenerujte náhled dokumentu.";
+  private string _sablonaNahledu;
+  private byte[] _otiskSablony;
+  private string _stav = "Vygenerujte dokument ze šablony DOCX.";
   public string Stav { get => _stav; private set => SetProperty(ref _stav, value); }
   public bool Pracuje { get => _pracuje; private set { SetProperty(ref _pracuje, value); ObnovitPrikazy(); } }
-  public bool CanGenerateOutputs => !Pracuje && GeneratedData != null && _revizeNahledu == Core.Revize && _druhNahledu == SelectedKindOfDocument && _stylNahledu == SelectedHtmlStyle;
+  public bool CanGenerateOutputs => !Pracuje && GeneratedData != null && _revizeNahledu == Core.Revize &&
+    _druhNahledu == SelectedKindOfDocument && _sablonaNahledu == SelectedTemplate && SablonaJeAktualni();
+  public bool CanExportPdf => CanGenerateOutputs && GeneratedPdf != null;
   public byte[] GeneratedData { get; private set; }
-  public string GeneratedHtml => GeneratedData == null ? null : Encoding.UTF8.GetString(GeneratedData);
+  public byte[] GeneratedPdf { get; private set; }
   public TypDokumentu SelectedKindOfDocument
   {
     get => _druh;
     set { if (SetProperty(ref _druh, value)) Zneplatnit(); }
   }
-  public string SelectedHtmlStyle
+  public string SelectedTemplate
   {
-    get => Core.Zasedani?.HtmlStyle ?? GeneratorHtml.Styles.FirstOrDefault();
-    set { if (Core.Zasedani != null && value != SelectedHtmlStyle) { Core.Zasedani.HtmlStyle = value; OnPropertyChanged(); Zneplatnit(); } }
+    get => Core.Zasedani?.DocxTemplate ?? GeneratorDocx.Templates.FirstOrDefault();
+    set { if (Core.Zasedani != null && value != SelectedTemplate) { Core.Zasedani.DocxTemplate = value; OnPropertyChanged(); Zneplatnit(); } }
   }
   public ICommand GenerateDocumentCmd { get; }
-  public ICommand ExportHtmlCmd { get; }
+  public ICommand ExportDocxCmd { get; }
   public ICommand ExportPdfCmd { get; }
   public ICommand PrintCmd { get; }
 
@@ -51,37 +52,46 @@ public class GeneratorViewModel : ViewModelBase
     Core.PropertyChanged += (_, e) =>
     {
       if (e.PropertyName != nameof(Core.Zasedani)) return;
-      GeneratedData = null;
+      GeneratedData = GeneratedPdf = null;
       _revizeNahledu = -1;
       VymazatNahled?.Invoke();
-      OnPropertyChanged(nameof(SelectedHtmlStyle));
+      OnPropertyChanged(nameof(SelectedTemplate));
       Zneplatnit();
     };
     GenerateDocumentCmd = new RelayCommandEmpty(async () => await VygenerovatAsync(), () => !Pracuje && Core.Zasedani != null);
-    ExportHtmlCmd = new RelayCommandEmpty(async () => await ExportovatAsync(null, false), () => CanGenerateOutputs);
-    ExportPdfCmd = new RelayCommand<ChromiumWebBrowser>(async b => await ExportovatAsync(b, true), b => CanGenerateOutputs && b != null);
-    PrintCmd = new RelayCommand<ChromiumWebBrowser>(async b =>
+    ExportDocxCmd = new RelayCommandEmpty(async () => await ExportovatAsync(false), () => CanGenerateOutputs);
+    ExportPdfCmd = new RelayCommandEmpty(async () => await ExportovatAsync(true), () => CanExportPdf);
+    PrintCmd = new RelayCommandEmpty(async () =>
     {
-      try { await TinyMceEditor.DokoncitVseAsync(); if (CanGenerateOutputs) b.Print(); else Zneplatnit(); }
+      try { await TinyMceEditor.DokoncitVseAsync(); if (CanExportPdf) Tisknout?.Invoke(); else Zneplatnit(); }
       catch (Exception ex) { ZobrazitChybu(ex); }
-    }, b => CanGenerateOutputs && b != null);
+    }, () => CanExportPdf && Tisknout != null);
   }
 
-  private void ObnovitPrikazy() { OnPropertyChanged(nameof(CanGenerateOutputs)); CommandManager.InvalidateRequerySuggested(); }
+  private bool SablonaJeAktualni()
+  {
+    try { return _otiskSablony != null && SHA256.HashData(GeneratorDocx.ReadTemplate(SelectedTemplate)).SequenceEqual(_otiskSablony); }
+    catch (IOException) { return false; } catch (UnauthorizedAccessException) { return false; }
+  }
+  private void ObnovitPrikazy()
+  {
+    OnPropertyChanged(nameof(CanGenerateOutputs)); OnPropertyChanged(nameof(CanExportPdf)); CommandManager.InvalidateRequerySuggested();
+  }
   private void Zneplatnit()
   {
-    Stav = GeneratedData == null ? "Vygenerujte náhled dokumentu." : "Data nebo nastavení se změnila. Přegenerujte náhled před exportem.";
+    Stav = GeneratedData == null ? "Vygenerujte dokument ze šablony DOCX." : "Data nebo nastavení se změnila. Přegenerujte dokument před exportem.";
     ObnovitPrikazy();
   }
   private static void ZobrazitChybu(Exception ex) => MessageBox.Show(ex.Message, "Dokument nelze zpracovat", MessageBoxButton.OK, MessageBoxImage.Error);
 
   public async Task VygenerovatAsync()
   {
-    if (Pracuje) return;
+    if (Pracuje || Core.Zasedani == null) return;
     Pracuje = true;
+    _revizeNahledu = -1;
     try
     {
-      Stav = "Připravuji dokument…";
+      Stav = "Připravuji DOCX ze šablony…";
       await TinyMceEditor.DokoncitVseAsync();
       Core.AktualizovatValidaci();
       var chyby = Core.Chyby.Where(c => c.Blokuje(SelectedKindOfDocument)).ToList();
@@ -94,47 +104,46 @@ public class GeneratorViewModel : ViewModelBase
       var snimek = zasedani.VytvoritSnimek();
       long revize = Core.Revize;
       var druh = SelectedKindOfDocument;
-      string styl = SelectedHtmlStyle;
-      byte[] data = await GeneratorHtml.Generate(snimek, new Progress<int>(), new GeneratorHtmlParams { HtmlStyle = styl, KindOfDocument = druh });
+      string sablona = SelectedTemplate;
+      byte[] zdrojSablony = GeneratorDocx.ReadTemplate(sablona);
+      byte[] data = await GeneratorDocx.Generate(snimek, new Progress<int>(), new GeneratorDocxParams { TemplateData = zdrojSablony, KindOfDocument = druh });
+      byte[] pdf = null;
+      string chybaPrevodu = null;
+      var prevodnik = new PrevodnikPdf();
+      Stav = "Převádím DOCX do PDF pro náhled…";
+      try { pdf = await prevodnik.PrevestAsync(data); }
+      catch (Exception ex) when (ex is IOException or InvalidOperationException or TimeoutException or System.ComponentModel.Win32Exception) { chybaPrevodu = ex.Message; }
       if (Core.Zasedani != zasedani) return;
-      if (ZobrazitNahledAsync == null) throw new InvalidOperationException("Náhled ještě není připraven.");
-      await ZobrazitNahledAsync(Encoding.UTF8.GetString(data), druh);
+      GeneratedData = data; GeneratedPdf = pdf;
+      _revizeNahledu = revize; _druhNahledu = druh; _sablonaNahledu = sablona; _otiskSablony = SHA256.HashData(zdrojSablony);
+      if (pdf != null && ZobrazitNahledAsync != null)
+      {
+        try { await ZobrazitNahledAsync(pdf, druh); }
+        catch (Exception ex) { VymazatNahled?.Invoke(); chybaPrevodu = "PDF vzniklo, náhled se nezdařil: " + ex.Message; }
+      }
+      else VymazatNahled?.Invoke();
       if (Core.Zasedani != zasedani) return;
-      GeneratedData = data;
-      _revizeNahledu = revize;
-      _druhNahledu = druh;
-      _stylNahledu = styl;
-      Stav = revize == Core.Revize && druh == SelectedKindOfDocument && styl == SelectedHtmlStyle
-        ? "Náhled je aktuální. Připraveno k exportu." : "Během generování se změnila data. Přegenerujte náhled.";
-      OnPropertyChanged(nameof(GeneratedHtml));
+      bool aktualni = revize == Core.Revize && druh == SelectedKindOfDocument && sablona == SelectedTemplate && SablonaJeAktualni();
+      Stav = !aktualni ? "Během generování se změnila data nebo šablona. Přegenerujte dokument."
+        : chybaPrevodu != null ? "DOCX je připraven k exportu. " + chybaPrevodu
+        : $"DOCX i PDF jsou aktuální. PDF připravil {prevodnik.PouzityPrevodnik}.";
     }
-    catch (Exception ex) { _revizeNahledu = -1; Stav = "Generování se nezdařilo; předchozí náhled nelze exportovat. " + ex.Message; }
+    catch (Exception ex) { _revizeNahledu = -1; Stav = "Generování se nezdařilo; předchozí dokument nelze exportovat. " + ex.Message; }
     finally { Pracuje = false; }
   }
 
-  private async Task ExportovatAsync(ChromiumWebBrowser prohlizec, bool pdf)
+  private async Task ExportovatAsync(bool pdf)
   {
     try
     {
       await TinyMceEditor.DokoncitVseAsync();
-      if (!CanGenerateOutputs) { Zneplatnit(); return; }
-      string pripona = pdf ? "pdf" : "html";
+      if (pdf ? !CanExportPdf : !CanGenerateOutputs) { Zneplatnit(); return; }
       string suffix = EnumConverter.GetEnumDescription(_druhNahledu).ToLower();
-      // Dialog exportu nesmí změnit cestu pracovního souboru ani revizi dat.
-      string soubor = ZzzoCore.ChooseSaveFile(Core.Zasedani.VytvoritSnimek(), pripona, true, suffix);
+      string soubor = ZzzoCore.ChooseSaveFile(Core.Zasedani.VytvoritSnimek(), pdf ? "pdf" : "docx", true, suffix);
       if (string.IsNullOrWhiteSpace(soubor)) return;
-      if (!CanGenerateOutputs) { Zneplatnit(); return; }
+      if (pdf ? !CanExportPdf : !CanGenerateOutputs) { Zneplatnit(); return; }
       Pracuje = true;
-      if (!pdf) File.WriteAllBytes(soubor, GeneratedData);
-      else
-      {
-        bool ulozeno = await prohlizec.PrintToPdfAsync(soubor, new PdfPrintSettings
-        {
-          DisplayHeaderFooter = true, Landscape = false, PrintBackground = true, PreferCssPageSize = true,
-          HeaderTemplate = "<div class='text center'></div>", FooterTemplate = GeneratorHtml.GetStyle(_stylNahledu + ".footer")
-        });
-        if (!ulozeno) throw new IOException("Prohlížeč nepotvrdil uložení PDF.");
-      }
+      await File.WriteAllBytesAsync(soubor, pdf ? GeneratedPdf : GeneratedData);
       Stav = "Dokument byl exportován.";
     }
     catch (Exception ex) { ZobrazitChybu(ex); }

@@ -22,9 +22,18 @@ $requiredFiles = @(
     "resources.pak"
     "locales\cs.pak"
     "Data\TinyMceEditor\editor.html"
+    "Data\TinyMceEditor\editor.js"
+    "Data\TinyMceEditor\editor-content.js"
+    "Data\TinyMceEditor\content.css"
     "Data\TinyMceEditor\tinymce\tinymce.min.js"
-    "Data\Styles\svésedlice.css"
-    "Data\Styles\svésedlice.css.footer"
+    "Data\Templates\svésedlice.docx"
+    "Data\Fonts\EBGaramond-Regular.ttf"
+    "Data\Fonts\OFL.txt"
+    "DocumentFormat.OpenXml.dll"
+    "PdfiumViewer.dll"
+    "pdfium.dll"
+    "Data\Fonts\NotoSansSymbols2-Regular.ttf"
+    "Data\Fonts\NotoSansSymbols2-OFL.txt"
 )
 
 foreach ($fileName in $requiredFiles) {
@@ -37,6 +46,10 @@ foreach ($fileName in $requiredFiles) {
 $obsoleteSubprocess = Join-Path $publishDirectory "CefSharp.BrowserSubprocess.exe"
 if (Test-Path -LiteralPath $obsoleteSubprocess) {
     throw "Unexpected standalone CefSharp subprocess found: $obsoleteSubprocess"
+}
+
+if (Test-Path -LiteralPath (Join-Path $publishDirectory "Docnet.Core.dll")) {
+    throw "Unexpected obsolete Docnet renderer in publish output."
 }
 
 $docasnyArchiv = Join-Path (Split-Path -Parent $publishDirectory) ("zzzo-" + [Guid]::NewGuid().ToString("N") + ".zip")

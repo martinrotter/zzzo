@@ -24,6 +24,7 @@ public class Zasedani : ObservableObject
   private string _vystupniSoubor;
   private ObservableCollection<Zastupitel> _zastupitele = new ObservableCollection<Zastupitel>();
   private string _htmlStyle;
+  private string _docxTemplate;
 
   #endregion
 
@@ -231,6 +232,12 @@ public class Zasedani : ObservableObject
       _htmlStyle = value;
       OnPropertyChanged();
     }
+  }
+
+  public string DocxTemplate
+  {
+    get => _docxTemplate;
+    set => SetProperty(ref _docxTemplate, value);
   }
 
   [JsonProperty("Zastupitele", Order = -2)]

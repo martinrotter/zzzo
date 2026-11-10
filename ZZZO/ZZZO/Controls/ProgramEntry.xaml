@@ -16,7 +16,7 @@
               Style="{StaticResource MaterialDesignFilledTabControl}"
               ItemContainerStyle="{StaticResource KompaktniVnitrniTabItem}"
               SelectedIndex="{Binding VybranaZalozka}">
-   <TabItem Header="Průběh projednání"><local:TinyMceEditor x:Name="EditorBodu" Polozka="{Binding ProgramEntry}"/></TabItem>
+    <TabItem Header="Průběh projednání"><local:TinyMceEditor x:Name="EditorBodu" Polozka="{Binding ProgramEntry}" Sablona="{Binding Core.Zasedani.DocxTemplate}"/></TabItem>
    <TabItem Header="{Binding NadpisUsneseni}" IsEnabled="{Binding MaUsneseni}">
     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition x:Name="RadekSeznamuUsneseni" Height="74" MinHeight="52"/><RowDefinition Height="4"/><RowDefinition Height="*" MinHeight="120"/></Grid.RowDefinitions>
      <WrapPanel x:Name="PanelAkciUsneseni" Margin="0,4,0,0"><Button Content="+ Usnesení" Command="{Binding AddUsneseniCmd}"/><Button Content="Odstranit" Command="{Binding RemoveUsneseniCmd}"/><Button Content="↑" Command="{Binding UsneseniNahoruCmd}"/><Button Content="↓" Command="{Binding UsneseniDoluCmd}"/></WrapPanel>

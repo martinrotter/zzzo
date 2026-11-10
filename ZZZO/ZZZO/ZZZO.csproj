@@ -28,6 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="PdfiumViewer.Net.WPF" Version="3.0.4" />
+    <PackageReference Include="bblanchon.PDFium.Win32" Version="159.0.8138" />
     <PackageReference Include="CefSharp.Wpf.NETCore" Version="151.3.240" />
     <PackageReference Include="HtmlAgilityPack" Version="1.13.0" />
     <PackageReference Include="LargeAddressAware" Version="1.0.6" PrivateAssets="all" />
@@ -52,9 +54,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\resources\styles\*">
-      <Link>Data\Styles\%(Filename)%(Extension)</Link>
-      <TargetPath>Data\Styles\%(Filename)%(Extension)</TargetPath>
+    <Content Include="..\..\resources\templates\*.docx">
+      <Link>Data\Templates\%(Filename)%(Extension)</Link>
+      <TargetPath>Data\Templates\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\resources\fonts\*">
+      <Link>Data\Fonts\%(Filename)%(Extension)</Link>
+      <TargetPath>Data\Fonts\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\resources\licenses\*">
+      <Link>Data\Licenses\%(Filename)%(Extension)</Link>
+      <TargetPath>Data\Licenses\%(Filename)%(Extension)</TargetPath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
